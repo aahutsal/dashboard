@@ -1,30 +1,24 @@
-import React from 'react';
-import logo from './logo.svg';
-import { Button } from 'antd';
+import React, { Fragment } from 'react';
+import { Route } from 'react-router';
+import { BrowserRouter } from 'react-router-dom';
+
+import { ApolloProvider } from '@apollo/react-hooks';
+import apolloClient from './apollo/client';
+import Titles from './containers/Titles';
+import Payments from './containers/Payments';
+
 import './App.css';
 
 function App() {
-  return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.tsx</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-      <div className="App">
-        <Button type="primary">Button</Button>
-        <p>Simple display of ant design</p>
-      </div>
-    </div>
+  return (    
+      <ApolloProvider client={apolloClient}>
+        <BrowserRouter>
+          <Fragment>
+            <Route path="/" exact component={Titles} />
+            <Route path="/payments" exact component={Payments} />
+          </Fragment>
+        </BrowserRouter>
+      </ApolloProvider>
   );
 }
 
