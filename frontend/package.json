@@ -18,8 +18,9 @@
   "scripts": {
     "start-local": "cross-env PORT=5000 react-scripts start",
     "build": "react-scripts build",
-    "test": "react-scripts test",
-    "eject": "react-scripts eject"
+    "test": "cross-env CI=true react-scripts test",
+    "eject": "react-scripts eject",
+    "lint": "npx eslint src/*"
   },
   "eslintConfig": {
     "extends": "react-app"
@@ -47,7 +48,14 @@
     "@types/react-router": "^5.1.7",
     "@types/react-router-dom": "^5.1.5",
     "@types/styled-components": "^5.1.0",
+    "@typescript-eslint/eslint-plugin": "^2.24.0",
+    "@typescript-eslint/parser": "2.33.0",
     "cross-env": "^7.0.2",
+    "eslint-config-airbnb-typescript": "^7.2.1",
+    "eslint-plugin-import": "^2.20.1",
+    "eslint-plugin-jsx-a11y": "^6.2.3",
+    "eslint-plugin-react": "^7.19.0",
+    "eslint-plugin-react-hooks": "^2.5.0",
     "react-scripts": "3.4.1",
     "typescript": "^3.7.5"
   }
