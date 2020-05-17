@@ -1,0 +1,21 @@
+{
+    "containerDefinitions": [
+        {
+            "portMappings": [
+                {
+                    "containerPort": 4000,
+                    "hostPort": 0,
+                    "protocol": "tcp"
+                }
+            ],
+            "cpu": 0,
+            "memory": 500,
+            "image": "728191876882.dkr.ecr.eu-central-1.amazonaws.com/wr-dashboard",
+            "name": "dashboard"
+        }
+    ],
+    "family": "dashboard-task",
+    "requiresCompatibilities": [
+        "EC2"
+    ]
+}
