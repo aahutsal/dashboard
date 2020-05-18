@@ -10,15 +10,15 @@ import Payments from './containers/Payments';
 import './App.css';
 
 function App() {
-  return (    
-      <ApolloProvider client={apolloClient}>
-        <BrowserRouter>
-          <Fragment>
-            <Route path="/" exact component={Titles} />
-            <Route path="/payments" exact component={Payments} />
-          </Fragment>
-        </BrowserRouter>
-      </ApolloProvider>
+  return (
+    <ApolloProvider client={apolloClient}>
+      <BrowserRouter>
+        <Fragment>
+          <Route path="/" exact component={Titles} />
+          <Route path="/payments" exact component={Payments} />
+        </Fragment>
+      </BrowserRouter>
+    </ApolloProvider>
   );
 }
 

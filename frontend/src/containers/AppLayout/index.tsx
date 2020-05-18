@@ -1,3 +1,4 @@
+/* eslint-disable */
 import React, { Fragment, useEffect } from 'react';
 import { Layout, Menu } from 'antd';
 import { UserOutlined } from '@ant-design/icons';
