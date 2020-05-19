@@ -1,0 +1,29 @@
+name: Dashboard CI
+
+on:
+  pull_request:
+    branches:
+      - master
+    paths:
+      - 'frontend/*'
+      - '.github/workflows/frontend-ci.yml'
+
+jobs:
+  lint:
+    name: CI
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v2
+
+    - name: Install Dependencies and Lint
+      run: |
+       cd frontend/
+       npm install
+       npm run lint
+
+    - name: Test Code
+      run: |
+       cd frontend/
+       npm run test

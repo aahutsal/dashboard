@@ -1,37 +1,39 @@
-import React from "react";
-import { Dropdown, Menu } from "antd";
+import React from 'react';
+import { Button, Dropdown, Menu } from 'antd';
 import { UserOutlined, DownOutlined } from '@ant-design/icons';
-import { disconnect } from "../../../stores/Web3";
+import { disconnect } from '../../../stores/Web3';
 
 type UserMenuProps = {
   account: string;
 };
 
-const shortenAddr = (addr: string) =>
-  `${addr.substr(0, 6)}..${addr.substr(38, 4)}`;
+const shortenAddr = (addr: string) => `${addr.substr(0, 6)}..${addr.substr(38, 4)}`;
 
-const userMenu = (
+const userActions = (
   <Menu>
     <Menu.Item>
-      <a onClick={disconnect}>
+      <Button onClick={disconnect} type="link">
         Disconnect
-      </a>
+      </Button>
     </Menu.Item>
   </Menu>
 );
 
-export const UserMenu: React.FC<UserMenuProps> = ({ account }) => {
-  return (
-    <Dropdown overlay={userMenu} trigger={['click']}>
-      <span
-        className="ant-dropdown-link"
-        onClick={e => e.preventDefault()}
-        style={{ cursor: 'pointer' }}
-      >
-        <UserOutlined /> {shortenAddr(account)} <DownOutlined />
-      </span>
-    </Dropdown>
-  )
-};
+const UserMenu: React.FC<UserMenuProps> = ({ account } : UserMenuProps) => (
+  <Dropdown overlay={userActions} trigger={['click']}>
+    <Button
+      className="ant-dropdown-link"
+      onClick={(e) => e.preventDefault()}
+      style={{ cursor: 'pointer' }}
+      type="link"
+    >
+      <UserOutlined />
+      {' '}
+      {shortenAddr(account)}
+      {' '}
+      <DownOutlined />
+    </Button>
+  </Dropdown>
+);
 
 export default UserMenu;

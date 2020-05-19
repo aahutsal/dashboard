@@ -1,4 +1,4 @@
-name: GraphQL Backend
+name: Backend CD
 
 on:
   push:
@@ -6,34 +6,10 @@ on:
       - master
     paths:
       - 'backend/*'
-      - '.github/workflows/backend.yml'
-  pull_request:
-    branches:
-      - master
-    paths:
-      - 'backend/*'
-      - '.github/workflows/backend.yml'
+      - '.github/workflows/backend-cd.yml'
 
 jobs:
-  CI:
-    runs-on: ubuntu-latest
-    steps:
-    - name: Checkout
-      uses: actions/checkout@v2
-
-    - name: Lint Code
-      run: |
-        cd backend
-        npm ci
-        npm run lint
-
-    - name: Test Code
-      run: | 
-        cd backend
-        npm run test
-
   CD:
-    needs: CI
     runs-on: ubuntu-latest
     steps:
     - name: Checkout
