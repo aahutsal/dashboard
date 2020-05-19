@@ -1,7 +1,5 @@
-/* eslint-disable */
-import React, { Fragment, useEffect } from 'react';
+import React, { useEffect } from 'react';
 import { Layout, Menu } from 'antd';
-import { UserOutlined } from '@ant-design/icons';
 import { Link } from 'react-router-dom';
 import styled from 'styled-components';
 
@@ -9,7 +7,9 @@ import { useQuery } from "@apollo/react-hooks";
 
 import { GET_PROVIDER_INFO } from '../../apollo/queries';
 import logo from './logo.png';
-import ConnectButton, { recheckConnection } from './components/ConnectButton';
+import ConnectButton from './components/ConnectButton';
+import UserMenu from './components/UserMenu';
+import { recheckConnection } from '../../stores/Web3';
 
 interface AppLayoutProps {
   section: string;
@@ -28,7 +28,7 @@ const Header = styled(Layout.Header)`
 
 const TopMenu = styled(Menu)`
   border-bottom: 0;
-  
+
   & .ant-menu-item:hover,
   & .ant-menu-item-selected {
     border-color: transparent;
@@ -48,19 +48,17 @@ const Logo = () => (
   </div>
 );
 
-const shortenAddr = (addr: string) => 
-  `${addr.substr(0, 6)}..${addr.substr(38, 4)}`;
-
 const AppLayout: React.FC<AppLayoutProps> = ({ section, children }) => {
   useEffect(() => {
     recheckConnection();
   }, []);
   const { data } = useQuery(GET_PROVIDER_INFO);
+  const isLoggedIn = data.providerInfo && data.providerInfo.account;
   return (
     <DashboardLayout theme="dark">
       <Header>
         <Link to="/">
-        <Logo/> 
+        <Logo/>
         </Link>
         <TopMenu
           mode="horizontal"
@@ -74,12 +72,9 @@ const AppLayout: React.FC<AppLayoutProps> = ({ section, children }) => {
             <Link to="/payments">Payments</Link>
           </Menu.Item>
         </TopMenu>
-        <div style={{ width: '100%', textAlign: 'right' }}>
-          {data.providerInfo && data.providerInfo.account ? (
-            <div style={{ whiteSpace: 'nowrap' }}>
-              <UserOutlined /> {shortenAddr(data.providerInfo.account)}
-            </div>
-          ) : <ConnectButton/>}
+        <div style={{ width: '100%', textAlign: 'right', whiteSpace: 'nowrap' }}>
+          { isLoggedIn && <UserMenu account={data.providerInfo.account} /> }
+          { !isLoggedIn && <ConnectButton/> }
         </div>
       </Header>
       <Content>
