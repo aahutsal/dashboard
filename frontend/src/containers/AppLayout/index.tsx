@@ -1,9 +1,9 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, ReactNode } from 'react';
 import { Layout, Menu } from 'antd';
 import { Link } from 'react-router-dom';
 import styled from 'styled-components';
 
-import { useQuery } from "@apollo/react-hooks";
+import { useQuery } from '@apollo/react-hooks';
 
 import { GET_PROVIDER_INFO } from '../../apollo/queries';
 import logo from './logo.png';
@@ -13,7 +13,8 @@ import { recheckConnection } from '../../stores/Web3';
 
 interface AppLayoutProps {
   section: string;
-};
+  children: ReactNode;
+}
 
 const DashboardLayout = styled(Layout)`
   background-color: #FFF;
@@ -48,7 +49,7 @@ const Logo = () => (
   </div>
 );
 
-const AppLayout: React.FC<AppLayoutProps> = ({ section, children }) => {
+const AppLayout: React.FC<AppLayoutProps> = ({ section, children }: AppLayoutProps) => {
   useEffect(() => {
     recheckConnection();
   }, []);
@@ -58,7 +59,7 @@ const AppLayout: React.FC<AppLayoutProps> = ({ section, children }) => {
     <DashboardLayout theme="dark">
       <Header>
         <Link to="/">
-        <Logo/>
+          <Logo />
         </Link>
         <TopMenu
           mode="horizontal"
@@ -74,7 +75,7 @@ const AppLayout: React.FC<AppLayoutProps> = ({ section, children }) => {
         </TopMenu>
         <div style={{ width: '100%', textAlign: 'right', whiteSpace: 'nowrap' }}>
           { isLoggedIn && <UserMenu account={data.providerInfo.account} /> }
-          { !isLoggedIn && <ConnectButton/> }
+          { !isLoggedIn && <ConnectButton /> }
         </div>
       </Header>
       <Content>

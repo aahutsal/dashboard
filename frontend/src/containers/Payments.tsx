@@ -1,5 +1,5 @@
 import * as React from 'react';
-import AppLayout from './AppLayout/';
+import AppLayout from './AppLayout';
 
 export default () => (
   <AppLayout section="payments">

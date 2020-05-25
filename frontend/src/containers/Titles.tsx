@@ -1,6 +1,6 @@
 import * as React from 'react';
-import AppLayout from './AppLayout/';
 import { Table } from 'antd';
+import AppLayout from './AppLayout';
 
 const dataSource = [
   {
@@ -41,7 +41,7 @@ const columns = [
     dataIndex: 'poster',
     key: 'poster',
     width: 100,
-    render: (url: string) => <img src={url} height={150}/>
+    render: (url: string) => <img src={url} height={150} alt="Movie Poster" />,
   },
   {
     title: 'Name',
@@ -53,6 +53,7 @@ const columns = [
 export default () => (
   <AppLayout section="titles">
     <h1>Titles</h1>
-    <Table showHeader={false} bordered={false} dataSource={dataSource} columns={columns} />;
+    <Table showHeader={false} bordered={false} dataSource={dataSource} columns={columns} />
+    ;
   </AppLayout>
 );
