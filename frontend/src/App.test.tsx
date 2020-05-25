@@ -6,4 +6,4 @@ test('connect button is available', () => {
   const { getByText } = render(<App />);
   const linkElement = getByText(/Connect/i);
   expect(linkElement).toBeInTheDocument();
-})
+});
