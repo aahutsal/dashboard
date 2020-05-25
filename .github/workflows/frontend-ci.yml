@@ -3,7 +3,7 @@ name: Dashboard CI
 on:
   push:
     paths:
-      - 'frontend/*'
+      - 'frontend/**'
       - '.github/workflows/frontend-ci.yml'
 
 jobs:
