@@ -23,8 +23,6 @@ const UserMenu: React.FC<UserMenuProps> = ({ account } : UserMenuProps) => (
   <Dropdown overlay={userActions} trigger={['click']}>
     <Button
       className="ant-dropdown-link"
-      onClick={(e) => e.preventDefault()}
-      style={{ cursor: 'pointer' }}
       type="link"
     >
       <UserOutlined />

@@ -1,9 +1,7 @@
 name: Dashboard CI
 
 on:
-  pull_request:
-    branches:
-      - master
+  push:
     paths:
       - 'frontend/*'
       - '.github/workflows/frontend-ci.yml'
