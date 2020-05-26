@@ -1,3 +1,84 @@
 type Query {
-  helloWorld: String!
+  movies: [Movie]!,
+  movie(id: ID!): Movie,
+}
+
+enum PriceType {
+  WHITERABBIT
+  RIGHTSHOLDER
+}
+
+enum ApprovalStatus {
+  APPROVED
+  PENDING
+  REJECTED
+}
+
+enum ActiveStatus {
+  ACTIVE
+  INACTIVE
+}
+
+type Pricing {
+  type(option: PriceType): String,
+  amount: Float,
+  region: String,
+}
+
+type RightsHolder {
+  id: ID!,
+  name: String,
+  contact: String,
+  address: String,
+  movies: [Movie]!,
+  status(option: ApprovalStatus): String 
+}
+
+type MovieRecord {
+  source: String,
+  value: String,
+}
+
+type Movie {
+  id: ID!,
+  IMDB: String,
+  ISAN: String,
+  ownerAddress: String,
+  payoutAddress: String,
+  record: MovieRecord,
+  chainTitle: [String],
+  rightsHolder: RightsHolder,
+  pricing: [Pricing],
+  status(option: ActiveStatus): String
+}
+
+# Updates section
+input MovieInput {
+  IMDB: String,
+  ISAN: String,
+  ownerAddress: String,
+  payoutAddress: String,
+}
+
+input IRightsHolder {
+  name: String,
+  contact: String,
+  address: String,
+  status: String 
+}
+
+input AttachInput {
+  movies: [ ID ],
+  rightsHolder: IRightsHolder
+}
+
+type MovieResponse {
+  success: Boolean!,
+  message: String,
+  movies: [ Movie ],
+}
+
+type Mutation {
+  addMovie(movies: [MovieInput]): MovieResponse!,
+  attachRightsHolder(info: AttachInput): MovieResponse!,
 }
