@@ -1,6 +1,7 @@
 type Query {
+  user(accountAddress: String): User,
   movies: [Movie]!,
-  movie(id: ID!): Movie,
+  movie(IMDB: String!): Movie,
 }
 
 enum PriceType {
@@ -14,9 +15,9 @@ enum ApprovalStatus {
   REJECTED
 }
 
-enum ActiveStatus {
-  ACTIVE
-  INACTIVE
+enum UserRole {
+  ADMIN
+  RIGHTSHOLDER
 }
 
 type Pricing {
@@ -25,12 +26,13 @@ type Pricing {
   region: String,
 }
 
-type RightsHolder {
-  id: ID!,
+type User {
+  accountAddress: String!,
   name: String,
-  contact: String,
-  address: String,
-  movies: [Movie]!,
+  email: String,
+  phone: String,
+  roles: [UserRole]
+  movies: [Movie]
   status(option: ApprovalStatus): String 
 }
 
@@ -43,33 +45,28 @@ type Movie {
   id: ID!,
   IMDB: String,
   ISAN: String,
-  ownerAddress: String,
-  payoutAddress: String,
   record: MovieRecord,
   chainTitle: [String],
-  rightsHolder: RightsHolder,
+  rightsHolder: User,
   pricing: [Pricing],
-  status(option: ActiveStatus): String
+  status(option: ApprovalStatus): String
+}
+
+input MovieRecordInput {
+  source: String,
+  value: String
 }
 
 # Updates section
 input MovieInput {
   IMDB: String,
   ISAN: String,
-  ownerAddress: String,
-  payoutAddress: String,
-}
-
-input IRightsHolder {
-  name: String,
-  contact: String,
-  address: String,
-  status: String 
+  record: MovieRecordInput,
 }
 
 input AttachInput {
   movies: [ ID ],
-  rightsHolder: IRightsHolder
+  rightsHolder: UserInput
 }
 
 type MovieResponse {
@@ -78,7 +75,22 @@ type MovieResponse {
   movies: [ Movie ],
 }
 
+input UserInput {
+  accountAddress: String,
+  name: String,
+  email: String,
+  phone: String,
+  roles: [UserRole],
+}
+
+type UserResponse {
+  success: Boolean!,
+  message: String,
+  user: User,
+}
+
 type Mutation {
-  addMovie(movies: [MovieInput]): MovieResponse!,
+  addUser(user: UserInput): UserResponse,
+  addMovie(movies: [MovieInput], userId: String): MovieResponse!,
   attachRightsHolder(info: AttachInput): MovieResponse!,
 }

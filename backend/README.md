@@ -6,66 +6,79 @@ Graphql powered backend server
 - Visit `http://localhost:4000/graphql`
 - Click play button to load test query
 
+## Available get requests
 
-# Available get requests
-### Get movies using specific IDs
-```
+### Get movie by IMDB id
+
+```graphql
 {
-  movies {
-    id
+  movie(IMDB: "0096283") {
     IMDB
+    ISAN
+    status
+    record {
+      source
+    }
     rightsHolder {
       name
-      contact
+      email
       status
     }
-  }
-}
-```
-### Get movie by id
-```
-{
-  movie(id: "b018053a-57f8-4eed-8046-b940ac83d0be") {
-    id
-    IMDB
-    rightsHolder {
-      name
-      contact
-      status
+    pricing {
+      region
     }
   }
 }
 ```
 
-# Available update requests
+### Get user data and movies registered by the user
+
+```graphql
+{
+  user(accountAddress: "0xaf0939af286A35DBfab7DEd7c777A5F6E8BE26A8") {
+    email
+    name
+    movies {
+      IMDB
+      ISAN
+    }
+  }
+}
+```
+
+## Available update requests
+
+### Add User
+
+```graphql
+mutation {
+  addUser(user: {
+    accountAddress: "0xaf0939af286A35DBfab7DEd7c777A5F6E8BE26A8",
+    name: "Kosta",
+    email: "kosta@leapdao.org",
+    roles: [RIGHTSHOLDER]
+  }) {
+    success
+    message
+    user { name }
+  }
+}
+```
 
 ### Add Movie
 
-```
+```graphql
 mutation {
-  addMovie(movies: [ {IMDB: "Secondary Peace", ISAN: "First Output", payoutAddress: "0xdkfadjf", ownerAddress: "0xkdjklfj"}]) {
+  addMovie(
+    movies: [ {
+      IMDB: "0096283",
+      ISAN: "0000-0001-07AD-0000-Y-0000-0000-9",
+    }],
+    userId: "0xaf0939af286A35DBfab7DEd7c777A5F6E8BE26A8"
+  ) {
     message
     movies {
-      id
       IMDB
-    }
-  }
-}
-```
-
-### Update RightsHolder
-
-```
-mutation {
-  attachRightsHolder(info: { movies: ["b018053a-57f8-4eed-8046-b940ac83d0be", "9467ae49-2c1f-43b5-a18f-bb87dfa5661b"], rightsHolder: { name:"Joel", contact: "email", address: "Regional"}}) {
-    message
-    movies {
-      id
-      rightsHolder {
-        name
-        contact
-        address
-      }
     }
   }
 }

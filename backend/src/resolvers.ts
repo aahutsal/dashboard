@@ -1,21 +1,26 @@
 import { IResolvers } from 'graphql-tools';
 import { Movie, MovieResponse } from './datasources/Movie';
+import { UserResponse, User } from './datasources/models/User';
 
 const resolverMap: IResolvers = {
     Query: {
-        movies: (_, __,  { dataSources }): Promise<Movie[]> => {
-            return dataSources.dynamo.all();
+        movie: (_, { IMDB }, { dataSources }): Promise<Movie> => {
+            return dataSources.movieAPI.findById(IMDB);
         },
-        movie: (_, { id }, { dataSources }): Promise<{ item: Movie }> => {
-            return dataSources.dynamo.find(id);
+        user: (_, { accountAddress }, { dataSources }): Promise<User> => {
+            return dataSources.userAPI.findById(accountAddress);
         },
     },
     Mutation: {
-        addMovie: async (_, { movies }, { dataSources }): Promise<MovieResponse> => {
+        addMovie: async (_, { movies, userId }, { dataSources }): Promise<MovieResponse> => {
             const results: Movie[] = [];
+            const user = await dataSources.userAPI.findById(userId);
             for (const input of movies) {
                 const mapped = Object.assign(new Movie, input);
-                const saved = await dataSources.dynamo.add(mapped);
+                if (input.record) {
+                    mapped.record.value = JSON.parse(input.record.value || {})
+                }
+                const saved = await dataSources.movieAPI.add(mapped, user);
                 results.push(saved)
             }
 
@@ -28,24 +33,32 @@ const resolverMap: IResolvers = {
                 movies: results,
             };
         },
-        attachRightsHolder: async(_, { info }, { dataSources }): Promise<MovieResponse> => {
-            const results: Movie[] = [];
-            for (const id of info.movies) {
-                const found = await dataSources.dynamo.find(id);
-                found.rightsHolder = info.rightsHolder;
-                await dataSources.dynamo.update(found);
-                results.push(found)
-            }
-
+        addUser: async (_, { user }, { dataSources }): Promise<UserResponse> => {
+            const mapped = Object.assign(new User(), user);
+            
+            const savedUser = await dataSources.userAPI.add(mapped)
+                .catch((e: Error) => {
+                    console.error(e);
+                    return {
+                        success: false,
+                        message: `Failed to add User:${e.message}`,
+                    };
+                });
             return {
-                success: results && results.length === info.movies.length,
-                message:
-                    results.length === info.movies.length
-                        ? 'Movie updates successfully'
-                        : `Movie updates failed`,
-                movies: results,
+                success: true,
+                message: 'User has been added successfully',
+                user: savedUser,
             };
-        }
+        },
+    },
+    Movie : {
+        rightsHolder: (parent, _ , { dataSources }): Promise<User> =>
+            dataSources.userAPI.findById(parent.pk.split('#')[1]),
+    },
+    User: {
+        movies: async (parent, _ , { dataSources }): Promise<Movie[]> =>
+            dataSources.movieAPI.findByUser(parent.pk.split('#')[1]),
     }
 };
+
 export default resolverMap;

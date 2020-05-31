@@ -9,7 +9,11 @@
     "start-db": "npx local-dynamo --database_dir=./db --port=4567",
     "build": "ncp src/schema dist/schema && tsc",
     "lint": "npx eslint src/",
-    "test": "npx jest"
+    "test": "npx jest",
+    "db:create": "ts-node src/datasources/migrations/createTable",
+    "db:delete": "ts-node src/datasources/migrations/deleteTable",
+    "db:local:create": "cross-env NODE_ENV=dev npm run db:create",
+    "db:local:delete": "cross-env NODE_ENV=dev npm run db:delete"
   },
   "keywords": [],
   "author": "",
