@@ -10,7 +10,7 @@ enum PriceType {
 export class MovieResponse {
   success!: boolean;
   message!: string;
-  movies!: Movie[];
+  movies?: Movie[];
 }
 
 export class Pricing {

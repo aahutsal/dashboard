@@ -1,7 +1,7 @@
 type Query {
-  user(accountAddress: String): User,
-  movies: [Movie]!,
-  movie(IMDB: String!): Movie,
+  user(accountAddress: String): User
+  movies: [Movie]!
+  movie(IMDB: String!): Movie
 }
 
 enum PriceType {
@@ -21,76 +21,81 @@ enum UserRole {
 }
 
 type Pricing {
-  type(option: PriceType): String,
-  amount: Float,
-  region: String,
+  type(option: PriceType): String
+  amount: Float
+  region: String
 }
 
 type User {
-  accountAddress: String!,
-  name: String,
-  email: String,
-  phone: String,
+  accountAddress: String!
+  name: String
+  email: String
+  phone: String
   roles: [UserRole]
   movies: [Movie]
   status(option: ApprovalStatus): String 
 }
 
+type MovieMetadata {
+  title: String
+  posterUrl: String 
+}
+
 type MovieRecord {
-  source: String,
-  value: String,
+  source: String
+  value: String
 }
 
 type Movie {
-  id: ID!,
-  IMDB: String,
-  ISAN: String,
-  record: MovieRecord,
-  chainTitle: [String],
-  rightsHolder: User,
-  pricing: [Pricing],
+  id: ID!
+  IMDB: String
+  ISAN: String
+  record: MovieRecord
+  metadata: MovieMetadata
+  chainTitle: [String]
+  rightsHolder: User
+  pricing: [Pricing]
   status(option: ApprovalStatus): String
 }
 
 input MovieRecordInput {
-  source: String,
+  source: String
   value: String
 }
 
 # Updates section
 input MovieInput {
-  IMDB: String,
-  ISAN: String,
-  record: MovieRecordInput,
+  IMDB: String
+  ISAN: String
+  record: MovieRecordInput
 }
 
 input AttachInput {
-  movies: [ ID ],
+  movies: [ ID ]
   rightsHolder: UserInput
 }
 
 type MovieResponse {
-  success: Boolean!,
-  message: String,
-  movies: [ Movie ],
+  success: Boolean!
+  message: String
+  movies: [ Movie ]
 }
 
 input UserInput {
-  accountAddress: String,
-  name: String,
-  email: String,
-  phone: String,
-  roles: [UserRole],
+  accountAddress: String
+  name: String
+  email: String
+  phone: String
+  roles: [UserRole]
 }
 
 type UserResponse {
-  success: Boolean!,
-  message: String,
-  user: User,
+  success: Boolean!
+  message: String
+  user: User
 }
 
 type Mutation {
-  addUser(user: UserInput): UserResponse,
-  addMovie(movies: [MovieInput], userId: String): MovieResponse!,
-  attachRightsHolder(info: AttachInput): MovieResponse!,
+  addUser(user: UserInput): UserResponse
+  addMovie(movies: [MovieInput]): MovieResponse!
 }

@@ -1,35 +1,52 @@
 import Web3 from 'web3';
-import { provider } from 'web3-core';
+import { provider as Provider } from 'web3-core';
 import Onboard from 'bnc-onboard';
 
 import logo from '../images/logo.png';
 import { BLOCKNATIVE_API_KEY, NETWORK_ID } from '../config';
 import client from '../apollo/client';
-import { SET_PROVIDER_INFO } from '../apollo/mutations';
+import { SET_APP_STATE } from '../apollo/mutations';
+import requestSignature from './utils/requestSignature';
 
 const WALLET_NAME_KEY = 'selectedWallet';
-
-export type ProviderProps = {
-  __typename: 'ProviderInfo',
-  name: string | null;
-  account: string;
-  network: number;
-};
 
 const web3ReadOnly = new Web3(
   new Web3.providers.HttpProvider('https://dai.poa.network'),
 );
 
 let web3 = web3ReadOnly;
-let providerName: string | null;
 
-export const getWeb3 = () => web3;
+const provider = {
+  __typename: 'Provider',
+  name: '',
+  account: '',
+  network: 0,
+};
 
+const auth = {
+  __typename: 'Auth',
+  message: '',
+  timestamp: 0,
+  valid: false,
+};
 
-const setProvider = (_provider: provider, _providerName: string) => {
+const authKey = () => `wr-auth-${provider.account}`;
+
+const resetAuth = () => {
+  auth.message = '';
+  auth.timestamp = 0;
+  auth.valid = false;
+};
+
+const setAppState = (state: object) => {
+  client.mutate({ mutation: SET_APP_STATE, variables: { stateChange: state } });
+};
+
+const setProvider = (_provider: Provider, _providerName: string) => {
   web3 = new Web3(_provider);
-  providerName = _providerName;
-  window.localStorage.setItem(WALLET_NAME_KEY, providerName);
+  provider.name = _providerName;
+  setAppState({ provider });
+  window.localStorage.setItem(WALLET_NAME_KEY, provider.name);
 };
 
 const getAccountFrom: Function = async (_web3: Web3): Promise<string | null> => {
@@ -40,16 +57,44 @@ const getAccountFrom: Function = async (_web3: Web3): Promise<string | null> => 
 const getNetworkIdFrom = (_web3: Web3) => _web3.eth.net.getId();
 
 const setWeb3ProviderInfo: Function = async () => {
-  const account = await getAccountFrom(web3);
-  const network = await getNetworkIdFrom(web3);
+  provider.account = await getAccountFrom(web3);
+  provider.network = await getNetworkIdFrom(web3);
+  resetAuth();
+  setAppState({ provider, auth });
+};
 
-  const providerInfo = {
-    __typename: 'ProviderInfo',
-    name: providerName,
-    account,
-    network,
-  };
-  client.mutate({ mutation: SET_PROVIDER_INFO, variables: { providerInfo } });
+export const recheckAuthToken = (): boolean => {
+  if (!auth.timestamp) {
+    const storedAuth = JSON.parse(window.localStorage.getItem(authKey()) || '{}');
+    auth.message = storedAuth.message || '';
+    auth.timestamp = storedAuth.timestamp || 0;
+  }
+
+  // token is younger than 24 hours, return true
+  auth.valid = Date.now() - auth.timestamp < 86400000;
+  setAppState({ auth });
+  return auth.valid;
+};
+
+export const refreshAuthToken = async () => {
+  if (recheckAuthToken()) return Promise.resolve();
+
+  const timestamp = Date.now();
+
+  return requestSignature(
+    { timestamp },
+    provider.account,
+    web3,
+  ).then((signature: string) => {
+    auth.message = signature;
+    auth.timestamp = timestamp;
+    auth.valid = true;
+    window.localStorage.setItem(authKey(), JSON.stringify(auth));
+    setAppState({ auth });
+  }).catch((e: Error) => {
+    // eslint-disable-next-line no-console
+    console.error(e);
+  });
 };
 
 const onboard = Onboard({
@@ -70,6 +115,7 @@ const onboard = Onboard({
     address: async (address) => {
       if (address) {
         await setWeb3ProviderInfo();
+        await refreshAuthToken();
       }
     },
   },
@@ -105,15 +151,23 @@ export const recheckConnection = async () => {
   const lastUsedProvider = window.localStorage.getItem(WALLET_NAME_KEY);
   if (lastUsedProvider) {
     await recheckWallet(lastUsedProvider);
+    await recheckAuthToken();
   }
 };
 
-export const connect = () => recheckWallet(providerName);
+export const connect = () => recheckWallet(provider.name);
 
 export const disconnect = async () => {
   onboard.walletReset();
   web3 = web3ReadOnly;
-  providerName = null;
+  provider.name = '';
+  resetAuth();
+  setAppState({ provider, auth });
+  window.localStorage.removeItem(authKey());
   window.localStorage.removeItem(WALLET_NAME_KEY);
   await setWeb3ProviderInfo();
 };
+
+export const getWeb3 = () => web3;
+
+export const getAuth = () => auth;

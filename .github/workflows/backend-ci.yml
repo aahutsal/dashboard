@@ -4,7 +4,11 @@ on:
   push:
     paths:
       - 'backend/**'
-      - '.github/workflows/backend.yml'
+      - '.github/workflows/backend-ci.yml'
+
+defaults:
+  run:
+    working-directory: backend
 
 jobs:
   CI:
@@ -13,13 +17,23 @@ jobs:
     - name: Checkout
       uses: actions/checkout@v2
 
+    - name: Cache node modules
+      uses: actions/cache@v1
+      env:
+        cache-name: cache-node-modules
+      with:
+        path: ~/.npm # npm cache files are stored in `~/.npm` on Linux/macOS
+        key: ${{ runner.os }}-build-${{ env.cache-name }}-${{ hashFiles('backend/package-lock.json') }}
+        restore-keys: |
+          ${{ runner.os }}-build-${{ env.cache-name }}-
+          ${{ runner.os }}-build-
+          ${{ runner.os }}-
+
+    - name: Install and build deps
+      run: npm ci && cd ../common && npm i && npm run build
+
     - name: Lint Code
-      run: |
-        cd backend
-        npm ci
-        npm run lint
+      run: npm run lint
 
     - name: Test Code
-      run: | 
-        cd backend
-        npm run test
+      run: npm run test

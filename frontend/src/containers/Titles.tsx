@@ -1,59 +1,40 @@
-import * as React from 'react';
+import React, { useEffect, useState } from 'react';
 import { Table } from 'antd';
+import { useQuery } from '@apollo/react-hooks';
 import AppLayout from './AppLayout';
-
-const dataSource = [
-  {
-    key: '1',
-    name: 'The Shawshank Redemption',
-    poster: 'https://image.tmdb.org/t/p/w300_and_h450_bestv2/avedvodAZUcwqevBfm8p4G2NziQ.jpg',
-  },
-  {
-    key: '2',
-    name: 'Pinocchio',
-    poster: 'https://image.tmdb.org/t/p/w300_and_h450_bestv2/zXMBkSTiukK7101pXuCg99ywVFn.jpg',
-  },
-  {
-    key: '3',
-    name: 'Coco',
-    poster: 'https://image.tmdb.org/t/p/w300_and_h450_bestv2/askg3SMvhqEl4OL52YuvdtY40Yb.jpg',
-  },
-  {
-    key: '4',
-    name: 'Pulp Fiction',
-    poster: 'https://image.tmdb.org/t/p/w300_and_h450_bestv2/suaEOtk1N1sgg2MTM7oZd2cfVp3.jpg',
-  },
-  {
-    key: '5',
-    name: 'Gone Girl',
-    poster: 'https://image.tmdb.org/t/p/w300_and_h450_bestv2/5Tqdk3eezqu945KcBtz3SYQxidN.jpg',
-  },
-  {
-    key: '6',
-    name: 'My Neighbor Totoro',
-    poster: 'https://image.tmdb.org/t/p/w300_and_h450_bestv2/fxYazFVeOCHpHwuqGuiqcCTw162.jpg',
-  },
-];
+import { GET_PROVIDER_INFO } from '../apollo/queries';
+import API, { Movie } from '../stores/API';
 
 const columns = [
   {
     title: '',
-    dataIndex: 'poster',
+    dataIndex: ['metadata', 'posterUrl'],
     key: 'poster',
     width: 100,
     render: (url: string) => <img src={url} height={150} alt="Movie Poster" />,
   },
   {
     title: 'Name',
-    dataIndex: 'name',
+    dataIndex: ['metadata', 'title'],
     key: 'name',
   },
 ];
 
-export default () => (
-  <AppLayout section="titles">
-    <h1>Titles</h1>
-    <Table showHeader={false} bordered={false} dataSource={dataSource} columns={columns} />
-    ;
-  </AppLayout>
-);
+export default () => {
+  const { data: providerData } = useQuery(GET_PROVIDER_INFO);
+  const [movies, setMovies] = useState<Movie[]>([]);
+  useEffect(() => {
+    if (!providerData || !providerData.provider.account) {
+      setMovies([]);
+      return;
+    }
+    API.getUser(providerData.provider.account).then((user) => setMovies(user.movies));
+  }, [providerData]);
+  return (
+    <AppLayout section="titles">
+      <h1>Titles</h1>
+      <Table showHeader={false} bordered={false} dataSource={movies} columns={columns} />
+      ;
+    </AppLayout>
+  );
+};

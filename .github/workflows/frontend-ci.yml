@@ -1,10 +1,14 @@
-name: Dashboard CI
+name: Frontend CI
 
 on:
   push:
     paths:
       - 'frontend/**'
       - '.github/workflows/frontend-ci.yml'
+
+defaults:
+  run:
+    working-directory: frontend
 
 jobs:
   lint:
@@ -15,13 +19,19 @@ jobs:
     - name: Checkout
       uses: actions/checkout@v2
 
-    - name: Install Dependencies and Lint
-      run: |
-       cd frontend/
-       npm install
-       npm run lint
+    - name: Cache node modules
+      uses: actions/cache@v1
+      env:
+        cache-name: cache-node-modules
+      with:
+        path: ~/.npm
+        key: ${{ runner.os }}-build-${{ env.cache-name }}-${{ hashFiles('package-lock.json') }}
+
+    - name: Install and build deps
+      run: npm install && cd ../common && npm i && npm run build
+
+    - name: Lint
+      run: npm run lint
 
     - name: Test Code
-      run: |
-       cd frontend/
-       npm run test
+      run: npm run test

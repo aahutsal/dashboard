@@ -1,4 +1,4 @@
-import { equals } from '@aws/dynamodb-expressions';
+import { equals, beginsWith } from '@aws/dynamodb-expressions';
 import { DataSource } from 'apollo-datasource';
 import { Movie } from './Movie';
 import DBConnection from './DB';
@@ -7,7 +7,7 @@ import { ApprovalStatus } from './models/Base';
 import { toArray } from '../util';
 
 // TODO: rename to MovieAPI
-export default class Dynamo extends DataSource {
+class Dynamo extends DataSource {
 
     // Add new record
     async add(movie: Movie, user: User): Promise<{item: Movie}> {
@@ -33,7 +33,10 @@ export default class Dynamo extends DataSource {
 
     async findByUser(userId: string): Promise<Movie[]> {
         return toArray(
-            DBConnection.query(Movie, { pk: `USER#${userId}` })
+            DBConnection.query(Movie, {
+                pk: `USER#${userId}`,
+                sk: beginsWith('MOVIE#')
+            })
         );
     }
 
@@ -59,3 +62,5 @@ export default class Dynamo extends DataSource {
         return await DBConnection.update({ item: movie });
     }
 }
+
+export default new Dynamo();

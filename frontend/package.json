@@ -5,6 +5,7 @@
   "dependencies": {
     "@ant-design/icons": "^4.1.0",
     "@apollo/react-hooks": "^3.1.5",
+    "@whiterabbitjs/dashboard-common": "file:../common",
     "antd": "^4.2.2",
     "apollo-boost": "^0.4.8",
     "bnc-onboard": "^1.9.1",
@@ -23,8 +24,8 @@
     "build": "react-scripts build",
     "test": "cross-env CI=true react-scripts test",
     "eject": "react-scripts eject",
-    "lint": "npx eslint src/**/*.{ts,tsx}",
-    "lint:fix": "npx eslint --fix src/**/*.{ts,tsx}"
+    "lint": "eslint \"src/**/*.{ts,tsx}\"",
+    "lint:fix": "eslint \"src/**/*.{ts,tsx}\" --fix"
   },
   "eslintConfig": {
     "extends": "react-app"
@@ -55,6 +56,7 @@
     "@typescript-eslint/eslint-plugin": "^2.24.0",
     "@typescript-eslint/parser": "2.33.0",
     "cross-env": "^7.0.2",
+    "eslint": "^6.6.0",
     "eslint-config-airbnb-typescript": "^7.2.1",
     "eslint-plugin-import": "^2.20.1",
     "eslint-plugin-jsx-a11y": "^6.2.3",

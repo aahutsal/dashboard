@@ -1,0 +1,15 @@
+{
+  "name": "@whiterabbitjs/dashboard-common",
+  "version": "0.0.0",
+  "description": "",
+  "private": true,
+  "main": "dist/index.js",
+  "license": "MPL-2.0",
+  "scripts": {
+    "start-local": "tsc -w",
+    "build": "tsc"
+  },
+  "devDependencies": {
+    "typescript": "^3.7.5"
+  }
+}

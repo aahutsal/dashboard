@@ -1,5 +1,5 @@
 import { attribute } from '@aws/dynamodb-data-mapper-annotations';
-import { Base } from './Base';
+import { ApprovalStatus, Base } from './Base';
 
 enum UserRole {
   ADMIN = "ADMIN",
@@ -27,4 +27,9 @@ export class User extends Base {
 
     @attribute()
     roles!: Array<UserRole>;
+
+    isRightsHolder(): boolean {
+      return this.status === ApprovalStatus.APPROVED 
+        && this.roles.includes(UserRole.RIGHTSHOLDER);
+    }
 }

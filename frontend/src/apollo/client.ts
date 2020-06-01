@@ -1,24 +1,42 @@
 import ApolloClient from 'apollo-boost';
+import { GET_AUTH } from './queries';
 
-const defaultState = {
-  providerInfo: null,
-};
+const backendEndpoint = process.env.NODE_ENV === 'development'
+  ? 'http://localhost:4000/graphql'
+  : 'https://be-dashboard.whiterabbit.one/graphql';
 
-const createClient = () => {
-  const client = new ApolloClient({
-    resolvers: {
-      Mutation: {
-        setProviderInfo: (_root, { providerInfo }, { cache }) => {
-          cache.writeData({
-            data: { providerInfo },
-          });
-          return null;
-        },
+const client = new ApolloClient({
+  uri: backendEndpoint,
+  resolvers: {
+    Mutation: {
+      setAppState: (_root, { stateChange }, { cache }) => {
+        cache.writeData({
+          data: { ...stateChange },
+        });
+        return null;
       },
     },
-  });
-  client.writeData({ data: defaultState });
-  return client;
-};
+  },
+  request: (operation) => {
+    const data = client.query({ query: GET_AUTH }).then((res) => res.data) as any;
+    operation.setContext({
+      headers: {
+        'x-wr-signature': data.message,
+        'x-wr-sigdata': JSON.stringify({ timestamp: data.timestamp }),
+      },
+    });
+  },
+});
 
-export default createClient();
+client.writeData({
+  data: {
+    auth: {
+      __typename: 'Auth',
+    },
+    provider: {
+      __typename: 'Provider',
+    },
+  },
+});
+
+export default client;

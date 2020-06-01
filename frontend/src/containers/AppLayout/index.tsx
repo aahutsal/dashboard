@@ -1,15 +1,15 @@
 import React, { useEffect, ReactNode } from 'react';
-import { Layout, Menu } from 'antd';
+import { Layout, Menu, Button } from 'antd';
 import { Link } from 'react-router-dom';
 import styled from 'styled-components';
 
 import { useQuery } from '@apollo/react-hooks';
 
-import { GET_PROVIDER_INFO } from '../../apollo/queries';
+import { GET_PROVIDER_INFO, GET_AUTH } from '../../apollo/queries';
 import logo from './logo.png';
 import ConnectButton from './components/ConnectButton';
 import UserMenu from './components/UserMenu';
-import { recheckConnection } from '../../stores/Web3';
+import { recheckConnection, refreshAuthToken } from '../../stores/Web3';
 
 interface AppLayoutProps {
   section: string;
@@ -53,8 +53,10 @@ const AppLayout: React.FC<AppLayoutProps> = ({ section, children }: AppLayoutPro
   useEffect(() => {
     recheckConnection();
   }, []);
-  const { data } = useQuery(GET_PROVIDER_INFO);
-  const isLoggedIn = data.providerInfo && data.providerInfo.account;
+  const { data: providerData } = useQuery(GET_PROVIDER_INFO);
+  const isLoggedIn = providerData && providerData.provider.account;
+  const { data: authData } = useQuery(GET_AUTH);
+  const isAuthTokenValid = authData && authData.auth.valid;
   return (
     <DashboardLayout theme="dark">
       <Header>
@@ -69,13 +71,15 @@ const AppLayout: React.FC<AppLayoutProps> = ({ section, children }: AppLayoutPro
           <Menu.Item key="titles">
             <Link to="/">Titles</Link>
           </Menu.Item>
-          <Menu.Item key="payments">
-            <Link to="/payments">Payments</Link>
-          </Menu.Item>
         </TopMenu>
         <div style={{ width: '100%', textAlign: 'right', whiteSpace: 'nowrap' }}>
-          { isLoggedIn && <UserMenu account={data.providerInfo.account} /> }
+          { isLoggedIn && isAuthTokenValid && <UserMenu account={providerData.provider.account} /> }
           { !isLoggedIn && <ConnectButton /> }
+          { isLoggedIn && !isAuthTokenValid && (
+            <Button type="primary" onClick={refreshAuthToken}>
+              Sign in
+            </Button>
+          )}
         </div>
       </Header>
       <Content>

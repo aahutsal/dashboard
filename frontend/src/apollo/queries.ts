@@ -1,15 +1,36 @@
 import gql from 'graphql-tag';
 
-export const GET_ACCOUNT = gql`
+export const GET_PROVIDER_INFO = gql`
   {
-    account @client
+    provider @client {
+      account @client
+    }
   }
 `;
 
-export const GET_PROVIDER_INFO = gql`
+export const GET_AUTH = gql`
   {
-    providerInfo @client {
-      account @client
+    auth @client {
+      message @client
+      timestamp @client
+      valid @client
+    }
+  }
+`;
+
+export const GET_USER = gql`
+  query GET_USER($accountAddress: String) {
+    user(accountAddress: $accountAddress) {
+      name
+      email
+      status
+      movies {
+        IMDB
+        metadata {
+          title
+          posterUrl
+        }
+      }
     }
   }
 `;

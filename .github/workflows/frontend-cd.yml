@@ -1,4 +1,4 @@
-name: Dashboard CD
+name: Frontend CD
 
 on:
   push:
@@ -17,7 +17,7 @@ jobs:
     - name: Checkout
       uses: actions/checkout@v2
 
-    - name: Install Dependencies and Lint
+    - name: Install Dependencies
       run: |
        cd frontend/
        npm install
