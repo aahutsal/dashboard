@@ -1,7 +1,6 @@
 import { DataSource } from 'apollo-datasource';
 import DBConnection from './DB';
 import { User } from './models/User';
-import { ApprovalStatus } from './models/Base';
 
 class UserAPI extends DataSource {
 
@@ -9,7 +8,6 @@ class UserAPI extends DataSource {
     async add(user: User): Promise<{item: User}> {
         user.pk = `USER#${user.accountAddress}`;
         user.sk = 'PROFILE';
-        user.status = ApprovalStatus.PENDING;
         return DBConnection.put({ item: user });
     }
 

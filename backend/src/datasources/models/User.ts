@@ -1,5 +1,5 @@
 import { attribute } from '@aws/dynamodb-data-mapper-annotations';
-import { ApprovalStatus, Base } from './Base';
+import { ApprovalStatus, Base, PendingStatus } from './Base';
 
 enum UserRole {
   ADMIN = "ADMIN",
@@ -13,23 +13,26 @@ export class UserResponse {
 }
 
 export class User extends Base {
-    @attribute()
-    accountAddress!: string;
+  constructor() {
+    super();
+    this.status = ApprovalStatus.PENDING;
+    this.pendingStatus = PendingStatus.USER;
+  }
 
-    @attribute()
-    name!: string;
+  @attribute()
+  accountAddress!: string;
 
-    @attribute()
-    email!: string;
+  @attribute()
+  name!: string;
 
-    @attribute()
-    phone = '';
+  @attribute()
+  contact!: string;
 
-    @attribute()
-    roles!: Array<UserRole>;
+  @attribute()
+  roles!: Array<UserRole>;
 
-    isRightsHolder(): boolean {
-      return this.status === ApprovalStatus.APPROVED 
-        && this.roles.includes(UserRole.RIGHTSHOLDER);
-    }
+  isRightsHolder(): boolean {
+    return this.status === ApprovalStatus.APPROVED 
+      && this.roles.includes(UserRole.RIGHTSHOLDER);
+  }
 }

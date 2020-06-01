@@ -21,7 +21,7 @@ Graphql powered backend server
     }
     rightsHolder {
       name
-      email
+      contact
       status
     }
     pricing {
@@ -36,7 +36,7 @@ Graphql powered backend server
 ```graphql
 {
   user(accountAddress: "0xaf0939af286A35DBfab7DEd7c777A5F6E8BE26A8") {
-    email
+    contact
     name
     movies {
       IMDB
@@ -55,7 +55,7 @@ mutation {
   addUser(user: {
     accountAddress: "0xaf0939af286A35DBfab7DEd7c777A5F6E8BE26A8",
     name: "Kosta",
-    email: "kosta@leapdao.org",
+    contact: "kosta@leapdao.org",
     roles: [RIGHTSHOLDER]
   }) {
     success

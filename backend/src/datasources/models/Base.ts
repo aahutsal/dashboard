@@ -31,5 +31,5 @@ export class Base {
         pendingItemsIndex: 'HASH',
     }
   })
-  pendingStatus: string = PendingStatus.MOVIE;
+  pendingStatus!: string;
 }

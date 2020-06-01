@@ -12,7 +12,7 @@ import UserMenu from './components/UserMenu';
 import { recheckConnection, refreshAuthToken } from '../../stores/Web3';
 
 interface AppLayoutProps {
-  section: string;
+  section?: string;
   children: ReactNode;
 }
 
@@ -65,7 +65,7 @@ const AppLayout: React.FC<AppLayoutProps> = ({ section, children }: AppLayoutPro
         </Link>
         <TopMenu
           mode="horizontal"
-          selectedKeys={[section]}
+          selectedKeys={section ? [section] : []}
           style={{ marginLeft: '50px' }}
         >
           <Menu.Item key="titles">

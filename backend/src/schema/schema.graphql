@@ -29,8 +29,7 @@ type Pricing {
 type User {
   accountAddress: String!
   name: String
-  email: String
-  phone: String
+  contact: String
   roles: [UserRole]
   movies: [Movie]
   status(option: ApprovalStatus): String 
@@ -84,8 +83,7 @@ type MovieResponse {
 input UserInput {
   accountAddress: String
   name: String
-  email: String
-  phone: String
+  contact: String
   roles: [UserRole]
 }
 

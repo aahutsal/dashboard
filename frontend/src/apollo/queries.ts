@@ -22,7 +22,7 @@ export const GET_USER = gql`
   query GET_USER($accountAddress: String) {
     user(accountAddress: $accountAddress) {
       name
-      email
+      contact
       status
       movies {
         IMDB
