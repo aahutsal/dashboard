@@ -12,12 +12,12 @@ class UserAPI extends DataSource {
     }
 
     // Get record by id
-    async findById(accountAddress: string): Promise<{ item: User }> {
+    async findById(accountAddress: string): Promise<{ item?: User }> {
         const toFind = Object.assign(new User(), { 
             pk: `USER#${accountAddress}`,
             sk: 'PROFILE',
         });
-        return DBConnection.get({ item: toFind });
+        return DBConnection.get({ item: toFind }).catch(() => ({}));
     }   
 }
 

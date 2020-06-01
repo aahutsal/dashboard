@@ -3,13 +3,15 @@ import {
   Form, Input, Button, Alert, Spin,
 } from 'antd';
 import { Store } from 'antd/lib/form/interface';
-import { useMutation, useQuery } from '@apollo/react-hooks';
+import { useMutation } from '@apollo/react-hooks';
 import { ApolloError } from 'apollo-boost';
 import { ClockCircleOutlined } from '@ant-design/icons';
 import { useHistory } from 'react-router-dom';
-import { GET_PROVIDER_INFO, GET_USER } from '../apollo/queries';
+import { useContext } from 'react';
+import { GET_USER } from '../apollo/queries';
 import { ADD_USER } from '../apollo/mutations';
 import AppLayout from './AppLayout';
+import { DashboardContext } from '../components/DashboardContextProvider';
 
 const humanizeError = (error: ApolloError) => {
   if (error.graphQLErrors) {
@@ -19,13 +21,9 @@ const humanizeError = (error: ApolloError) => {
 };
 
 export default () => {
+  const { account, user } = useContext(DashboardContext);
   const history = useHistory();
   const [addUser, { loading, error }] = useMutation(ADD_USER);
-  const { data: providerData } = useQuery(GET_PROVIDER_INFO);
-  const account = providerData && providerData.provider.account;
-
-  const { data: userData } = useQuery(GET_USER, { variables: { accountAddress: account } });
-  const user = userData && userData.user;
 
   const onFinish = (values: Store) => {
     addUser({
@@ -44,14 +42,6 @@ export default () => {
     })
       .catch(() => { });
   };
-
-  if (!account) {
-    return (
-      <AppLayout>
-        Please connect your wallet first
-      </AppLayout>
-    );
-  }
 
   if (user && user.status !== 'APPROVED') {
     return (

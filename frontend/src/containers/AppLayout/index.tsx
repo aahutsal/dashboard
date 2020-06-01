@@ -1,20 +1,26 @@
-import React, { useEffect, ReactNode } from 'react';
+import React, { ReactNode, useContext } from 'react';
 import { Layout, Menu, Button } from 'antd';
 import { Link } from 'react-router-dom';
 import styled from 'styled-components';
 
 import { useQuery } from '@apollo/react-hooks';
 
-import { GET_PROVIDER_INFO, GET_AUTH } from '../../apollo/queries';
+import { GET_AUTH } from '../../apollo/queries';
 import logo from './logo.png';
 import ConnectButton from './components/ConnectButton';
 import UserMenu from './components/UserMenu';
-import { recheckConnection, refreshAuthToken } from '../../stores/Web3';
+import { refreshAuthToken } from '../../stores/Web3';
+import { User } from '../../stores/models';
+import { DashboardContext } from '../../components/DashboardContextProvider';
 
 interface AppLayoutProps {
   section?: string;
   children: ReactNode;
 }
+
+export type DashboardPageProps = {
+  user: User;
+};
 
 const DashboardLayout = styled(Layout)`
   background-color: #FFF;
@@ -49,14 +55,13 @@ const Logo = () => (
   </div>
 );
 
+
 const AppLayout: React.FC<AppLayoutProps> = ({ section, children }: AppLayoutProps) => {
-  useEffect(() => {
-    recheckConnection();
-  }, []);
-  const { data: providerData } = useQuery(GET_PROVIDER_INFO);
-  const isLoggedIn = providerData && providerData.provider.account;
+  const { account } = useContext(DashboardContext);
+
   const { data: authData } = useQuery(GET_AUTH);
   const isAuthTokenValid = authData && authData.auth.valid;
+
   return (
     <DashboardLayout theme="dark">
       <Header>
@@ -73,9 +78,9 @@ const AppLayout: React.FC<AppLayoutProps> = ({ section, children }: AppLayoutPro
           </Menu.Item>
         </TopMenu>
         <div style={{ width: '100%', textAlign: 'right', whiteSpace: 'nowrap' }}>
-          { isLoggedIn && isAuthTokenValid && <UserMenu account={providerData.provider.account} /> }
-          { !isLoggedIn && <ConnectButton /> }
-          { isLoggedIn && !isAuthTokenValid && (
+          { account && isAuthTokenValid && <UserMenu account={account} /> }
+          { !account && <ConnectButton /> }
+          { account && !isAuthTokenValid && (
             <Button type="primary" onClick={refreshAuthToken}>
               Sign in
             </Button>
@@ -83,7 +88,8 @@ const AppLayout: React.FC<AppLayoutProps> = ({ section, children }: AppLayoutPro
         </div>
       </Header>
       <Content>
-        {children}
+        {!account && 'Please connect your wallet first'}
+        {account && children}
       </Content>
     </DashboardLayout>
   );

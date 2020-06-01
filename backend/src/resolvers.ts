@@ -41,7 +41,7 @@ const resolverMap: IResolvers = {
             const existingUser = await dataSources.userAPI
                 .findById(user.accountAddress)
                 .catch(() => {/* happy case, swallow the error */});
-            if (existingUser) {
+            if (existingUser.accountAddress) {
                 throw new UserInputError("User already exists");
             }
             const savedUser = await dataSources.userAPI.add(mapped);
@@ -68,7 +68,7 @@ const resolverMap: IResolvers = {
     },
     User: {
         movies: async (parent, _ , { dataSources }): Promise<Movie[]> =>
-            dataSources.movieAPI.findByUser(parent.pk.split('#')[1]),
+            parent.pk ? dataSources.movieAPI.findByUser(parent.pk.split('#')[1]) : Promise.resolve([]),
     }
 };
 

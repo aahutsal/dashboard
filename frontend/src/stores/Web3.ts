@@ -39,7 +39,13 @@ const resetAuth = () => {
 };
 
 const setAppState = (state: object) => {
-  client.mutate({ mutation: SET_APP_STATE, variables: { stateChange: state } });
+  client.mutate({
+    mutation: SET_APP_STATE,
+    variables: { stateChange: state },
+    refetchQueries: [
+      'GET_USER',
+    ],
+  });
 };
 
 const setProvider = (_provider: Provider, _providerName: string) => {

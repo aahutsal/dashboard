@@ -1,9 +1,8 @@
-import React from 'react';
+import React, { useContext } from 'react';
 import { Table } from 'antd';
-import { useQuery } from '@apollo/react-hooks';
 import { useHistory } from 'react-router-dom';
 import AppLayout from './AppLayout';
-import { GET_PROVIDER_INFO, GET_USER } from '../apollo/queries';
+import { DashboardContext } from '../components/DashboardContextProvider';
 
 const columns = [
   {
@@ -21,15 +20,15 @@ const columns = [
 ];
 
 export default () => {
-  const { data: providerData } = useQuery(GET_PROVIDER_INFO);
-  const account = providerData && providerData.provider.account;
-  const { data: userData } = useQuery(GET_USER, { variables: { accountAddress: account } });
-  const user = userData && userData.user;
-
+  const { user } = useContext(DashboardContext);
+  const history = useHistory();
   const movies = user ? user.movies : [];
 
-  const history = useHistory();
-  if (!user || user.status !== 'APPROVED') {
+  if (user === undefined) {
+    return <AppLayout section="titles">{}</AppLayout>;
+  }
+
+  if (user === null || user.status !== 'APPROVED') {
     history.push('/register');
   }
 
