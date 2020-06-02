@@ -24,11 +24,7 @@ export default () => {
   const history = useHistory();
   const movies = user ? user.movies : [];
 
-  if (user === undefined) {
-    return <AppLayout section="titles">{}</AppLayout>;
-  }
-
-  if (user === null || user.status !== 'APPROVED') {
+  if (!user || user.status !== 'APPROVED') {
     history.push('/register');
   }
 
