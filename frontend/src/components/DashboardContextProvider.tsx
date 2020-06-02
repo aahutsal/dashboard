@@ -33,7 +33,14 @@ export const DashboardContext = React.createContext({
 } as DashboardContextType);
 
 const WithUser = ({ account, children }: { account: string, children: ReactNode }) => {
-  const { data: userData, loading } = useQuery(GET_USER, { variables: { accountAddress: account } });
+  const { data: userData, loading } = useQuery(
+    GET_USER,
+    {
+      variables: {
+        accountAddress: account,
+      },
+    },
+  );
   const user = userData && userData.user.status ? userData.user : null;
 
   if (loading) {
