@@ -3,7 +3,6 @@ import { DataSource } from 'apollo-datasource';
 import { Movie } from './Movie';
 import DBConnection from './DB';
 import { User } from './models/User';
-import { ApprovalStatus } from './models/Base';
 import { toArray } from '../util';
 
 // TODO: rename to MovieAPI
@@ -13,7 +12,6 @@ class Dynamo extends DataSource {
     async add(movie: Movie, user: User): Promise<{item: Movie}> {
         movie.pk = `USER#${user.accountAddress}`;
         movie.sk = `MOVIE#${movie.IMDB}`;
-        movie.status = ApprovalStatus.PENDING;
         return await DBConnection.put({ item: movie });
     }
 

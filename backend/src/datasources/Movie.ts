@@ -1,6 +1,6 @@
 // TODO: move to /models/
 import { attribute, table } from '@aws/dynamodb-data-mapper-annotations';
-import { Base } from './models/Base';
+import { Base, PendingStatus, ApprovalStatus } from './models/Base';
 
 enum PriceType {
   WHITERABBIT = "WHITERABBIT",
@@ -34,6 +34,12 @@ export class MovieRecord {
 
 @table('movies')
 export class Movie extends Base {
+    constructor() {
+      super();
+      this.status = ApprovalStatus.PENDING;
+      this.pendingStatus = PendingStatus.MOVIE;
+    }
+
     @attribute()
     IMDB!: string;
 

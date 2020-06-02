@@ -4,6 +4,16 @@ export type AuthMessageArgs = {
   timestamp: number;
 };
 
+interface MessageTypeProperty {
+  name: string;
+  type: string;
+}
+
+export type AuthMessageTypes = {
+  EIP712Domain: MessageTypeProperty[];
+  AuthMessage: MessageTypeProperty[];
+};
+
 export const createAuthMessage = ({ timestamp }: AuthMessageArgs) => ({
   types: {
     EIP712Domain: [

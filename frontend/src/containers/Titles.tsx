@@ -1,9 +1,8 @@
-import React, { useEffect, useState } from 'react';
+import React, { useContext } from 'react';
 import { Table } from 'antd';
-import { useQuery } from '@apollo/react-hooks';
+import { useHistory } from 'react-router-dom';
 import AppLayout from './AppLayout';
-import { GET_PROVIDER_INFO } from '../apollo/queries';
-import API, { Movie } from '../stores/API';
+import { DashboardContext } from '../components/DashboardContextProvider';
 
 const columns = [
   {
@@ -21,20 +20,24 @@ const columns = [
 ];
 
 export default () => {
-  const { data: providerData } = useQuery(GET_PROVIDER_INFO);
-  const [movies, setMovies] = useState<Movie[]>([]);
-  useEffect(() => {
-    if (!providerData || !providerData.provider.account) {
-      setMovies([]);
-      return;
-    }
-    API.getUser(providerData.provider.account).then((user) => setMovies(user.movies));
-  }, [providerData]);
+  const { user } = useContext(DashboardContext);
+  const history = useHistory();
+  const movies = user ? user.movies : [];
+
+  if (!user || user.status !== 'APPROVED') {
+    history.push('/register');
+  }
+
   return (
     <AppLayout section="titles">
       <h1>Titles</h1>
-      <Table showHeader={false} bordered={false} dataSource={movies} columns={columns} />
-      ;
+      <Table
+        showHeader={false}
+        bordered={false}
+        dataSource={movies}
+        columns={columns}
+        rowKey="IMDB"
+      />
     </AppLayout>
   );
 };

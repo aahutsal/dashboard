@@ -1,7 +1,7 @@
 import { IResolvers } from 'graphql-tools';
 import { Movie, MovieResponse } from './datasources/Movie';
 import { UserResponse, User } from './datasources/models/User';
-import { AuthenticationError, ForbiddenError } from 'apollo-server-express';
+import { AuthenticationError, ForbiddenError, UserInputError } from 'apollo-server-express';
 
 const resolverMap: IResolvers = {
     Query: {
@@ -38,15 +38,13 @@ const resolverMap: IResolvers = {
         },
         addUser: async (_, { user }, { dataSources }): Promise<UserResponse> => {
             const mapped = Object.assign(new User(), user);
-            
-            const savedUser = await dataSources.userAPI.add(mapped)
-                .catch((e: Error) => {
-                    console.error(e);
-                    return {
-                        success: false,
-                        message: `Failed to add User:${e.message}`,
-                    };
-                });
+            const existingUser = await dataSources.userAPI
+                .findById(user.accountAddress)
+                .catch(() => {/* happy case, swallow the error */});
+            if (existingUser.accountAddress) {
+                throw new UserInputError("User already exists");
+            }
+            const savedUser = await dataSources.userAPI.add(mapped);
             return {
                 success: true,
                 message: 'User has been added successfully',
@@ -70,7 +68,7 @@ const resolverMap: IResolvers = {
     },
     User: {
         movies: async (parent, _ , { dataSources }): Promise<Movie[]> =>
-            dataSources.movieAPI.findByUser(parent.pk.split('#')[1]),
+            parent.pk ? dataSources.movieAPI.findByUser(parent.pk.split('#')[1]) : Promise.resolve([]),
     }
 };
 

@@ -9,6 +9,7 @@
     "local-backend": "cd backend && npm run start-local",
     "local-common": "cd common && npm run start-local",
     "local-frontend": "cd frontend && npm run start-local",
-    "start-local": "concurrently \"npm:local-*\""
+    "start-local": "concurrently \"npm:local-*\"",
+    "lint:fix": "concurrently \"cd backend && npm run lint:fix\" \"cd frontend && npm run lint:fix\""
   }
 }
