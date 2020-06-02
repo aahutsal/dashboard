@@ -1,5 +1,6 @@
 type Query {
   user(accountAddress: String): User
+  pendingUsers: [User]!
   movies: [Movie]!
   movie(IMDB: String!): Movie
 }
@@ -96,4 +97,6 @@ type UserResponse {
 type Mutation {
   addUser(user: UserInput): UserResponse
   addMovie(movies: [MovieInput]): MovieResponse!
+  approveUser(userId: String): UserResponse!
+  declineUser(userId: String): UserResponse!
 }

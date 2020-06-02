@@ -1,15 +1,5 @@
 import { attribute, hashKey, table, rangeKey } from '@aws/dynamodb-data-mapper-annotations';
-
-export enum ApprovalStatus {
-  APPROVED = "APPROVED",
-  PENDING = "PENDING",
-  REJECTED = "REJECTED",
-}
-
-export enum PendingStatus {
-  USER = "Pending#USER",
-  MOVIE = "Pending#MOVIE"
-}
+import { ApprovalStatus } from '@whiterabbitjs/dashboard-common';
 
 @table('movies')
 export class Base {

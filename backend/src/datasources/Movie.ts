@@ -1,6 +1,7 @@
 // TODO: move to /models/
 import { attribute, table } from '@aws/dynamodb-data-mapper-annotations';
-import { Base, PendingStatus, ApprovalStatus } from './models/Base';
+import { Base } from './models/Base';
+import { ApprovalStatus, PendingStatus } from '@whiterabbitjs/dashboard-common';
 
 enum PriceType {
   WHITERABBIT = "WHITERABBIT",

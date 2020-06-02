@@ -24,6 +24,7 @@ export const GET_USER = gql`
       name
       contact
       status
+      roles
       movies {
         IMDB
         metadata {
@@ -31,6 +32,16 @@ export const GET_USER = gql`
           posterUrl
         }
       }
+    }
+  }
+`;
+
+export const PENDING_USERS = gql`
+  {
+    pendingUsers {
+      accountAddress
+      name
+      contact
     }
   }
 `;

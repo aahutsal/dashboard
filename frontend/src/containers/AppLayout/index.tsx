@@ -10,17 +10,12 @@ import logo from './logo.png';
 import ConnectButton from './components/ConnectButton';
 import UserMenu from './components/UserMenu';
 import { refreshAuthToken } from '../../stores/Web3';
-import { User } from '../../stores/models';
 import { DashboardContext } from '../../components/DashboardContextProvider';
 
 interface AppLayoutProps {
   section?: string;
   children: ReactNode;
 }
-
-export type DashboardPageProps = {
-  user: User;
-};
 
 const DashboardLayout = styled(Layout)`
   background-color: #FFF;
@@ -36,9 +31,20 @@ const Header = styled(Layout.Header)`
 const TopMenu = styled(Menu)`
   border-bottom: 0;
 
+  & .ant-menu-item {
+    margin-right: 3px;
+  }
+
   & .ant-menu-item:hover,
   & .ant-menu-item-selected {
     border-color: transparent;
+    margin-right: 0;
+
+    a {
+      font-weight: bold;
+      color: #000;
+      margin-left: 
+    }
   }
 `;
 
@@ -57,7 +63,7 @@ const Logo = () => (
 
 
 const AppLayout: React.FC<AppLayoutProps> = ({ section, children }: AppLayoutProps) => {
-  const { account } = useContext(DashboardContext);
+  const { account, user } = useContext(DashboardContext);
 
   const { data: authData } = useQuery(GET_AUTH);
   const isAuthTokenValid = authData && authData.auth.valid;
@@ -76,6 +82,11 @@ const AppLayout: React.FC<AppLayoutProps> = ({ section, children }: AppLayoutPro
           <Menu.Item key="titles">
             <Link to="/">Titles</Link>
           </Menu.Item>
+          {user && user.isAdmin() && (
+          <Menu.Item key="rightsholders">
+            <Link to="/rightsholders">Rightsholders</Link>
+          </Menu.Item>
+          )}
         </TopMenu>
         <div style={{ width: '100%', textAlign: 'right', whiteSpace: 'nowrap' }}>
           { account && isAuthTokenValid && <UserMenu account={account} /> }

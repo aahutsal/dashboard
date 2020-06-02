@@ -17,12 +17,12 @@ const client = new ApolloClient({
       },
     },
   },
-  request: (operation) => {
-    const data = client.query({ query: GET_AUTH }).then((res) => res.data) as any;
+  request: async (operation) => {
+    const { data } = await client.query({ query: GET_AUTH }) as any;
     operation.setContext({
       headers: {
-        'x-wr-signature': data.message,
-        'x-wr-sigdata': JSON.stringify({ timestamp: data.timestamp }),
+        'x-wr-signature': data.auth.message,
+        'x-wr-sigdata': JSON.stringify({ timestamp: data.auth.timestamp }),
       },
     });
   },

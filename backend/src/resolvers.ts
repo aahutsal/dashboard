@@ -11,6 +11,12 @@ const resolverMap: IResolvers = {
         user: (_, { accountAddress }, { dataSources }): Promise<User> => {
             return dataSources.userAPI.findById(accountAddress);
         },
+        pendingUsers: (_, params, { user, dataSources }): Promise<User[]> => {
+            if (!user) throw new AuthenticationError('User is not authenticated');
+            if (!user.isAdmin()) throw new ForbiddenError('User is not authorized for the operation');
+
+            return dataSources.userAPI.getPending();
+        },
     },
     Mutation: {
         addMovie: async (_, { movies }, { user, dataSources }): Promise<MovieResponse> => {
@@ -49,6 +55,28 @@ const resolverMap: IResolvers = {
                 success: true,
                 message: 'User has been added successfully',
                 user: savedUser,
+            };
+        },
+        approveUser: async (_, { userId }, { user, dataSources }): Promise<UserResponse> => {
+            if (!user) throw new AuthenticationError('User is not authenticated');
+            if (!user.isAdmin()) throw new ForbiddenError('User is not authorized for the operation');
+            
+            await dataSources.userAPI.approve(userId);
+
+            return {
+                success: true,
+                message: "Rightsholder is approved",
+            };
+        },
+        declineUser: async (_, { userId }, { user, dataSources }): Promise<UserResponse> => {
+            if (!user) throw new AuthenticationError('User is not authenticated');
+            if (!user.isAdmin()) throw new ForbiddenError('User is not authorized for the operation');
+            
+            await dataSources.userAPI.decline(userId);
+
+            return {
+                success: true,
+                message: "Rightsholder is rejected",
             };
         },
     },

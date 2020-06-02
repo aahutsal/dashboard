@@ -22,11 +22,9 @@ class Dynamo extends DataSource {
 
     // Get record by id
     async findById(imdb: string): Promise<Movie|undefined> {
-        let movie;
-        for await (const item of DBConnection.query(Movie, { sk: `MOVIE#${imdb}`}, { indexName: 'movieByIdIndex' })) {
-            movie = item;
-        }
-        return movie;
+        return toArray(
+            DBConnection.query(Movie, { sk: `MOVIE#${imdb}`}, { indexName: 'movieByIdIndex' })
+        ).then(m => m[0]);
     }
 
     async findByUser(userId: string): Promise<Movie[]> {
@@ -48,11 +46,7 @@ class Dynamo extends DataSource {
                 subject: field,
             }
         };
-        const movies: Movie[] = [];
-        for await (const movie of DBConnection.scan(filterCriteria)) {
-            movies.push(movie);
-        }
-        return movies;
+        return toArray(DBConnection.scan(filterCriteria));
     }
 
     // Update a record

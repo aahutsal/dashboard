@@ -36,7 +36,7 @@ const server = new ApolloServer({
 
         const sigData = JSON.parse(first(rawSigData) || '{}');
         const isValid = Date.now() - sigData.timestamp < 86400000; // younger than 24 hours
-        
+
         if (!isValid) return {};
         const account = await recoverSigner(sigData, first(signature));
         const user = await userAPI.findById(account).catch(() => null);
