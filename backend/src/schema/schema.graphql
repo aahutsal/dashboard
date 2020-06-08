@@ -1,5 +1,6 @@
 type Query {
   user(accountAddress: String): User
+  pendingUsers: [User]!
   movies: [Movie]!
   movie(IMDB: String!): Movie
   prices(IMDB: String!): [Price]!
@@ -133,4 +134,6 @@ type Mutation {
   addMovie(movie: MovieInput): MovieResponse!
   addPrice(pricing: PriceInput): PriceResponse!
   updatePrice(pricing: PriceInput): PriceResponse!
+  approveUser(userId: String): UserResponse!
+  declineUser(userId: String): UserResponse!
 }

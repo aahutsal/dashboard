@@ -1,6 +1,6 @@
+import { User } from '@whiterabbitjs/dashboard-common';
 import { GET_AUTH, GET_USER } from '../apollo/queries';
 import client from '../apollo/client';
-import { User } from './models';
 
 // TODO: add types
 const getAuth = (): Promise<object> => client.query({ query: GET_AUTH }).then((res) => res.data);

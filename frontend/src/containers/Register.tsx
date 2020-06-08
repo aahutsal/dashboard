@@ -35,10 +35,12 @@ export default () => {
           roles: ['RIGHTSHOLDER'],
         },
       },
-      refetchQueries: [{
-        query: GET_USER,
-        variables: { accountAddress: account },
-      }],
+      refetchQueries: [
+        {
+          query: GET_USER,
+          variables: { accountAddress: account },
+        },
+      ],
     })
       .catch(() => { });
   };

@@ -1,6 +1,8 @@
 import { DataSource } from 'apollo-datasource';
 import DBConnection from './DB';
 import { User } from './models/User';
+import { toArray } from '../util';
+import { PendingStatus, ApprovalStatus } from '@whiterabbitjs/dashboard-common';
 
 class UserAPI extends DataSource {
 
@@ -8,6 +10,8 @@ class UserAPI extends DataSource {
     async add(user: User): Promise<{item: User}> {
         user.pk = `USER#${user.accountAddress}`;
         user.sk = 'PROFILE';
+        user.pendingStatus = PendingStatus.USER;
+        user.status = ApprovalStatus.PENDING;
         return DBConnection.put({ item: user });
     }
 
@@ -19,6 +23,31 @@ class UserAPI extends DataSource {
         });
         return DBConnection.get({ item: toFind }).catch(() => ({}));
     }   
+
+    async getPending(): Promise<User[]> {
+        return toArray(
+            DBConnection.query(User, {
+                pendingStatus: `Pending#USER`
+            }, { 
+                indexName: 'pendingItemsIndex'
+            })
+        );
+    }
+
+    async approve(userId: string): Promise<{ item?: User}> {
+        const user = await this.findById(userId) as User;
+        if (!user) throw new Error(`No such user ${userId}`);
+        user.status = ApprovalStatus.APPROVED;
+        user.pendingStatus = 'Approved';
+        return DBConnection.update({ item: user });
+    }
+
+    async decline(userId: string): Promise<void> {
+        const user = await this.findById(userId) as User;
+        if (!user) throw new Error(`No such user ${userId}`);
+        await DBConnection.delete({ item: user });
+    }
+
 }
 
 export default new UserAPI();

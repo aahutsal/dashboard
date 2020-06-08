@@ -22,11 +22,12 @@ const columns = [
 export default () => {
   const { user } = useContext(DashboardContext);
   const history = useHistory();
-  const movies = user ? user.movies : [];
 
   if (!user || user.status !== 'APPROVED') {
     history.push('/register');
   }
+
+  const movies = user ? user.movies : [];
 
   return (
     <AppLayout section="titles">

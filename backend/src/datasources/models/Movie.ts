@@ -1,6 +1,8 @@
 import { attribute, table } from '@aws/dynamodb-data-mapper-annotations';
-import { Base, PendingStatus, ApprovalStatus } from './Base';
+import { Base } from './Base';
+import { ApprovalStatus, PendingStatus } from '@whiterabbitjs/dashboard-common';
 import { Price } from './Price';
+
 
 export class MovieResponse {
   success!: boolean;

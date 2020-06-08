@@ -1,23 +1,34 @@
-import { attribute } from '@aws/dynamodb-data-mapper-annotations';
-import { ApprovalStatus, Base, PendingStatus } from './Base';
-
-enum UserRole {
-  ADMIN = "ADMIN",
-  RIGHTSHOLDER = "RIGHTSHOLDER",
-}
+import { attribute, hashKey, rangeKey, table } from '@aws/dynamodb-data-mapper-annotations';
+import { ApprovalStatus, User as BaseUser, UserRole } from '@whiterabbitjs/dashboard-common';
 
 export class UserResponse {
   success!: boolean;
   message!: string;
-  user!: User;
+  user?: User;
 }
 
-export class User extends Base {
-  constructor() {
-    super();
-    this.status = ApprovalStatus.PENDING;
-    this.pendingStatus = PendingStatus.USER;
-  }
+@table('movies')
+export class User extends BaseUser {
+
+  @hashKey()
+  pk!: string;
+
+  @rangeKey({
+    indexKeyConfigurations: {
+        movieByIdIndex: 'HASH',
+    }
+  })
+  sk!: string;
+
+  @attribute()
+  status = ApprovalStatus.PENDING
+
+  @attribute({
+    indexKeyConfigurations: {
+        pendingItemsIndex: 'HASH',
+    }
+  })
+  pendingStatus!: string;
 
   @attribute()
   accountAddress!: string;
@@ -31,8 +42,7 @@ export class User extends Base {
   @attribute()
   roles!: Array<UserRole>;
 
-  isRightsHolder(): boolean {
-    return this.status === ApprovalStatus.APPROVED 
-      && this.roles.includes(UserRole.RIGHTSHOLDER);
+  constructor(seed?: object) {
+    super(seed);
   }
 }

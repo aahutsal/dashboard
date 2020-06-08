@@ -14,3 +14,21 @@ export const ADD_USER = gql`
     }
   }
 `;
+
+export const APPROVE_USER = gql`
+  mutation approveUser ($userId: String!) {
+    approveUser(userId: $userId) {
+      success
+      message
+    }
+  }
+`;
+
+export const DECLINE_USER = gql`
+  mutation declineUser ($userId: String!) {
+    declineUser(userId: $userId) {
+      success
+      message
+    }
+  }
+`;

@@ -18,6 +18,12 @@ const resolverMap: IResolvers = {
         },
         price: (_, { filter }, { dataSources }): Promise<Price> => {
             return dataSources.priceAPI.findPrice(filter);
+        },    
+        pendingUsers: (_, params, { user, dataSources }): Promise<User[]> => {
+            if (!user) throw new AuthenticationError('User is not authenticated');
+            if (!user.isAdmin()) throw new ForbiddenError('User is not authorized for the operation');
+
+            return dataSources.userAPI.getPending();
         },
     },
     Mutation: { //TODO:: Move to schema folder
@@ -81,6 +87,28 @@ const resolverMap: IResolvers = {
                 success: true,
                 message: 'Pricing updated successfully',
                 pricing: saved,
+            };
+        },
+        approveUser: async (_, { userId }, { user, dataSources }): Promise<UserResponse> => {
+            if (!user) throw new AuthenticationError('User is not authenticated');
+            if (!user.isAdmin()) throw new ForbiddenError('User is not authorized for the operation');
+            
+            await dataSources.userAPI.approve(userId);
+
+            return {
+                success: true,
+                message: "Rightsholder is approved",
+            };
+        },
+        declineUser: async (_, { userId }, { user, dataSources }): Promise<UserResponse> => {
+            if (!user) throw new AuthenticationError('User is not authenticated');
+            if (!user.isAdmin()) throw new ForbiddenError('User is not authorized for the operation');
+            
+            await dataSources.userAPI.decline(userId);
+
+            return {
+                success: true,
+                message: "Rightsholder is rejected",        
             };
         },
     },
