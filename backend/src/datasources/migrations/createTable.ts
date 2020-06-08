@@ -1,4 +1,4 @@
-import { Movie } from '../Movie';
+import { Movie } from '../models/Movie';
 import { User } from '../models/User';
 import DBConnection from '../DB';
 import { GlobalSecondaryIndexOptions } from '@aws/dynamodb-data-mapper';

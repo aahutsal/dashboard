@@ -34,7 +34,10 @@
     "ethereumjs-util": "^7.0.2",
     "express": "^4.17.1",
     "graphql": "^15.0.0",
-    "graphql-import-node": "0.0.4"
+    "graphql-import-node": "0.0.4",
+    "graphql-scalars": "^1.1.5",
+    "uuid": "^8.1.0",
+    "validator": "^13.0.0"
   },
   "devDependencies": {
     "@types/compression": "^1.7.0",
@@ -42,6 +45,8 @@
     "@types/jest": "^25.2.1",
     "@types/node": "^14.0.1",
     "@types/supertest": "^2.0.9",
+    "@types/uuid": "^8.0.0",
+    "@types/validator": "^13.0.0",
     "@typescript-eslint/eslint-plugin": "2.33.0",
     "@typescript-eslint/parser": "2.33.0",
     "cross-env": "^7.0.2",

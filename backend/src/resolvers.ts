@@ -1,6 +1,8 @@
 import { IResolvers } from 'graphql-tools';
-import { Movie, MovieResponse } from './datasources/Movie';
+import { DateTimeResolver as DateTime } from 'graphql-scalars';
+import { MovieResponse, Movie } from './datasources/models/Movie';
 import { UserResponse, User } from './datasources/models/User';
+import { PriceResponse, Price } from './datasources/models/Price';
 import { AuthenticationError, ForbiddenError, UserInputError } from 'apollo-server-express';
 
 const resolverMap: IResolvers = {
@@ -11,29 +13,27 @@ const resolverMap: IResolvers = {
         user: (_, { accountAddress }, { dataSources }): Promise<User> => {
             return dataSources.userAPI.findById(accountAddress);
         },
+        prices: (_, { IMDB }, { dataSources }): Promise<Price[]> => {
+            return dataSources.priceAPI.findByMovie(IMDB);
+        },
+        price: (_, { filter }, { dataSources }): Promise<Price> => {
+            return dataSources.priceAPI.findPrice(filter);
+        },
     },
-    Mutation: {
-        addMovie: async (_, { movies }, { user, dataSources }): Promise<MovieResponse> => {
-            if (!user) throw new AuthenticationError('User is not authenticated');
+    Mutation: { //TODO:: Move to schema folder
+        addMovie: async (_, { movie }, { user, dataSources }): Promise<MovieResponse> => {
+            if (!user.accountAddress) throw new AuthenticationError('User is not authenticated');
             if (!user.isRightsHolder()) throw new ForbiddenError('User is not authorized for the operation');
 
-            const results: Movie[] = [];
-            for (const input of movies) {
-                const mapped = Object.assign(new Movie, input);
-                if (input.record) {
-                    mapped.record.value = JSON.parse(input.record.value || {})
-                }
-                const saved = await dataSources.movieAPI.add(mapped, user);
-                results.push(saved)
+            const mapped = Object.assign(new Movie, movie);
+            if (movie.record) {
+                mapped.record.value = JSON.parse(movie.record.value || {})
             }
-
+            const saved = await dataSources.movieAPI.add(mapped, user);
             return {
-                success: results && results.length === movies.length,
-                message:
-                    results.length === movies.length
-                        ? 'Movies added successfully'
-                        : `Movies failure`,
-                movies: results,
+                success: true,
+                message: 'Movie added successfully',
+                movies: saved,
             };
         },
         addUser: async (_, { user }, { dataSources }): Promise<UserResponse> => {
@@ -51,10 +51,43 @@ const resolverMap: IResolvers = {
                 user: savedUser,
             };
         },
+        addPrice: async (_, { pricing }, { user, dataSources }): Promise<PriceResponse> => {
+            if (!user.accountAddress) throw new AuthenticationError('User is not authenticated');
+            if (!user.isRightsHolder()) throw new ForbiddenError('User is not authorized for the operation');
+
+            const movie = await dataSources.movieAPI.findById(pricing.IMDB);
+            if (!movie) throw new UserInputError(`Movie ${movie.IMDB} does not exist`)
+            if (movie.pk !== user.pk) throw new ForbiddenError(`User is not authorized for the operation`);
+
+            const mapped = Object.assign(new Price, pricing);
+            const saved = await dataSources.priceAPI.add(pricing.IMDB, mapped);
+            return {
+                success: true,
+                message: 'Pricing added successfully',
+                pricing: saved,
+            };
+        },
+        updatePrice: async (_, { pricing }, { user, dataSources }): Promise<PriceResponse> => {
+            if (!user.accountAddress) throw new AuthenticationError('User is not authenticated');
+            if (!user.isRightsHolder()) throw new ForbiddenError('User is not authorized for the operation');
+
+            const movie = await dataSources.movieAPI.findById(pricing.IMDB);
+            if (!movie) throw new UserInputError(`Movie ${movie.IMDB} does not exist`)
+            if (movie.pk !== user.pk) throw new ForbiddenError(`User is not authorized for the operation`);
+
+            const mapped = Object.assign(new Price, pricing);
+            const saved = await dataSources.priceAPI.update(pricing.IMDB, pricing.priceId, mapped);
+            return {
+                success: true,
+                message: 'Pricing updated successfully',
+                pricing: saved,
+            };
+        },
     },
     Movie : {
-        rightsHolder: (parent, _ , { dataSources }): Promise<User> =>
-            dataSources.userAPI.findById(parent.pk.split('#')[1]),
+        rightsHolder: (parent, _ , { dataSources }): Promise<User> => {
+            return dataSources.userAPI.findById(parent.pk.split('#')[1]);
+        },
         metadata: (parent): Promise<{ title?: string; posterUrl?: string }> => {
             if (!parent.record || !parent.record.value) {
                 return Promise.resolve({});
@@ -65,11 +98,16 @@ const resolverMap: IResolvers = {
                 posterUrl: `https://image.tmdb.org/t/p/w500${metadata.poster_path}`,
             });
         },
+        pricing: (parent, _ , { dataSources }): Promise<Price[]> => {
+            return dataSources.priceAPI.findByMovie(parent.IMDB);
+        },
     },
     User: {
-        movies: async (parent, _ , { dataSources }): Promise<Movie[]> =>
-            parent.pk ? dataSources.movieAPI.findByUser(parent.pk.split('#')[1]) : Promise.resolve([]),
-    }
+        movies: async (parent, _ , { dataSources }): Promise<Movie[]> => {
+            return parent.pk ? dataSources.movieAPI.findByUser(parent.pk.split('#')[1]) : Promise.resolve([]);
+        },
+    },
+    DateTime
 };
 
 export default resolverMap;

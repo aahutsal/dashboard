@@ -2,6 +2,17 @@ type Query {
   user(accountAddress: String): User
   movies: [Movie]!
   movie(IMDB: String!): Movie
+  prices(IMDB: String!): [Price]!
+  price(filter: PriceFilter): Price!
+}
+
+enum MovieMedium {
+  THEATER
+  EST
+  DTR
+  PAYTV
+  SVOD
+  FREETV
 }
 
 enum PriceType {
@@ -20,10 +31,22 @@ enum UserRole {
   RIGHTSHOLDER
 }
 
-type Pricing {
+scalar DateTime
+
+type Price {
+  priceId: String
   type(option: PriceType): String
-  amount: Float
+  amount: String
   region: String
+  medium(option: MovieMedium): String
+  fromWindow: DateTime
+  toWindow: DateTime
+}
+
+input PriceFilter {
+  IMDB: String
+  region: String
+  medium: String
 }
 
 type User {
@@ -53,7 +76,7 @@ type Movie {
   metadata: MovieMetadata
   chainTitle: [String]
   rightsHolder: User
-  pricing: [Pricing]
+  pricing: [Price]
   status(option: ApprovalStatus): String
 }
 
@@ -63,21 +86,33 @@ input MovieRecordInput {
 }
 
 # Updates section
+input PriceInput {
+  IMDB: String
+  priceId: String
+  type: String
+  amount: String
+  region: String
+  medium: String
+  fromWindow: DateTime
+  toWindow: DateTime
+}
+
+type PriceResponse {
+  success: Boolean!
+  message: String
+  pricing: Price
+}
+
 input MovieInput {
   IMDB: String
   ISAN: String
   record: MovieRecordInput
 }
 
-input AttachInput {
-  movies: [ ID ]
-  rightsHolder: UserInput
-}
-
 type MovieResponse {
   success: Boolean!
   message: String
-  movies: [ Movie ]
+  movies: Movie
 }
 
 input UserInput {
@@ -95,5 +130,7 @@ type UserResponse {
 
 type Mutation {
   addUser(user: UserInput): UserResponse
-  addMovie(movies: [MovieInput]): MovieResponse!
+  addMovie(movie: MovieInput): MovieResponse!
+  addPrice(pricing: PriceInput): PriceResponse!
+  updatePrice(pricing: PriceInput): PriceResponse!
 }

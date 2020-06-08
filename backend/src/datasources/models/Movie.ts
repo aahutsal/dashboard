@@ -1,27 +1,11 @@
-// TODO: move to /models/
 import { attribute, table } from '@aws/dynamodb-data-mapper-annotations';
-import { Base, PendingStatus, ApprovalStatus } from './models/Base';
-
-enum PriceType {
-  WHITERABBIT = "WHITERABBIT",
-  RIGHTSHOLDER = "RIGHTSHOLDER"
-}
+import { Base, PendingStatus, ApprovalStatus } from './Base';
+import { Price } from './Price';
 
 export class MovieResponse {
   success!: boolean;
   message!: string;
-  movies?: Movie[];
-}
-
-export class Pricing {
-    @attribute()
-    type!: PriceType;
-
-    @attribute()
-    amount!: number;
-
-    @attribute()
-    region!: string;
+  movies?: Movie;
 }
 
 export class MovieRecord {
@@ -50,8 +34,8 @@ export class Movie extends Base {
     record!: MovieRecord;
 
     @attribute()
-    chainTitle!: Array<string>;
+    chainTitle!: string[];
 
     @attribute()
-    pricing!: Array<Pricing>;
+    pricing!: Price[];
 }

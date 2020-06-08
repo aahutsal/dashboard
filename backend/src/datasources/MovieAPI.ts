@@ -1,12 +1,11 @@
 import { equals, beginsWith } from '@aws/dynamodb-expressions';
 import { DataSource } from 'apollo-datasource';
-import { Movie } from './Movie';
+import { Movie } from './models/Movie';
 import DBConnection from './DB';
 import { User } from './models/User';
 import { toArray } from '../util';
 
-// TODO: rename to MovieAPI
-class Dynamo extends DataSource {
+class MovieAPI extends DataSource {
 
     // Add new record
     async add(movie: Movie, user: User): Promise<{item: Movie}> {
@@ -61,4 +60,4 @@ class Dynamo extends DataSource {
     }
 }
 
-export default new Dynamo();
+export default new MovieAPI();
