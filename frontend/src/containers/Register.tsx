@@ -13,6 +13,7 @@ import { ADD_USER } from '../apollo/mutations';
 import AppLayout from './AppLayout';
 import { DashboardContext } from '../components/DashboardContextProvider';
 
+// TODO: duplicates the same from /Register. Move to utils and reuse
 const humanizeError = (error: ApolloError) => {
   if (error.graphQLErrors) {
     return error.graphQLErrors.map((e) => e.message);

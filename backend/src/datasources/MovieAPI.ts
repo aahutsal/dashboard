@@ -1,8 +1,8 @@
 import { equals, beginsWith } from '@aws/dynamodb-expressions';
 import { DataSource } from 'apollo-datasource';
 import { Movie } from './models/Movie';
-import DBConnection from './DB';
 import { User } from './models/User';
+import DBConnection from './DB';
 import { toArray } from '../util';
 
 class MovieAPI extends DataSource {
@@ -11,7 +11,12 @@ class MovieAPI extends DataSource {
     async add(movie: Movie, user: User): Promise<{item: Movie}> {
         movie.pk = `USER#${user.accountAddress}`;
         movie.sk = `MOVIE#${movie.IMDB}`;
-        return await DBConnection.put({ item: movie });
+
+        const dbRecord = await this.findById(movie.IMDB);
+        if (!dbRecord) {
+            return await DBConnection.put({ item: movie });
+        }
+        throw Error("The movie already exists");
     }
 
     // Delete a record

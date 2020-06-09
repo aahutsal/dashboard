@@ -5,6 +5,8 @@ module.exports = {
     project: './tsconfig.json'
   },
   rules: {
-    'react/jsx-fragments': [0]
+    'react/jsx-fragments': [0],
+    'react/jsx-props-no-spreading': 'off',
+    'react/prop-types': 'off'
   }
 };

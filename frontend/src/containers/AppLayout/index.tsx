@@ -82,6 +82,9 @@ const AppLayout: React.FC<AppLayoutProps> = ({ section, children }: AppLayoutPro
           <Menu.Item key="titles">
             <Link to="/">Titles</Link>
           </Menu.Item>
+          <Menu.Item key="addMovie">
+            <Link to="/movie/add">Add Movie</Link>
+          </Menu.Item>
           {user && user.isAdmin() && (
           <Menu.Item key="rightsholders">
             <Link to="/rightsholders">Rightsholders</Link>

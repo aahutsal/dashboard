@@ -57,7 +57,7 @@ class PriceAPI extends DataSource {
             // Temporary for testing purposes used for non existent pricing
             // TODO:: seed to database & have admin update record
             price = Object.assign(new Price, {
-                "sk": "DEFAULT",
+                "priceId": "DEFAULT",
                 "type": "WHITERABBIT",
                 "region": "DEFAULT",
                 "medium": "EST",

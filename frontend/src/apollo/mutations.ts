@@ -15,6 +15,15 @@ export const ADD_USER = gql`
   }
 `;
 
+export const ADD_MOVIE = gql`
+  mutation addMovie ($movie: MovieInput!) {
+    addMovie(movie: $movie) {
+      success
+      message
+    }
+  }
+`;
+
 export const APPROVE_USER = gql`
   mutation approveUser ($userId: String!) {
     approveUser(userId: $userId) {
