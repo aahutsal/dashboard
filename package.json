@@ -5,7 +5,7 @@
     "concurrently": "^5.2.0"
   },
   "scripts": {
-    "postinstall": "cd common && npm i && npm run build && cd ../frontend && npm i && cd ../backend && npm i",
+    "postinstall": "cd common && npm i && cd ../frontend && npm i && cd ../backend && npm i",
     "local-backend": "cd backend && npm run start-local",
     "local-common": "cd common && npm run start-local",
     "local-frontend": "cd frontend && npm run start-local",

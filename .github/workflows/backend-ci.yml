@@ -30,7 +30,7 @@ jobs:
           ${{ runner.os }}-
 
     - name: Install and build deps
-      run: npm ci && cd ../common && npm i && npm run build
+      run: npm ci
 
     - name: Lint Code
       run: npm run lint

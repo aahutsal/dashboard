@@ -28,7 +28,7 @@ jobs:
         key: ${{ runner.os }}-build-${{ env.cache-name }}-${{ hashFiles('package-lock.json') }}
 
     - name: Install and build deps
-      run: npm install && cd ../common && npm i && npm run build
+      run: npm install
 
     - name: Lint
       run: npm run lint
