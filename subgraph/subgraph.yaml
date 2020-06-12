@@ -1,0 +1,30 @@
+specVersion: 0.0.2
+schema:
+  file: ./schema.graphql
+dataSources:
+  - kind: ethereum/contract
+    name: CollectionPool
+    network: xdai
+    source:
+      address: "0xe867660547288666F8c9Cc556334151525EFeB37"
+      abi: CollectionPool
+      startBlock: 9786860
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.4
+      language: wasm/assemblyscript
+      entities:
+        - Deposit
+        - OwnershipTransferred
+        - Transfer
+      abis:
+        - name: CollectionPool
+          file: ./abis/CollectionPool.json
+      eventHandlers:
+        - event: Deposit(uint256,uint16,uint16,address)
+          handler: handleDeposit
+        - event: OwnershipTransferred(indexed address,indexed address)
+          handler: handleOwnershipTransferred
+        - event: Transfer(indexed address,indexed address,uint256)
+          handler: handleTransfer
+      file: ./src/mapping.ts

@@ -1,0 +1,12 @@
+type RevenuePerMovieRegion @entity {
+  id: ID!
+  revenuePerMovie: RevenuePerMovie!
+  region: Int!
+  total: BigInt!
+}
+
+type RevenuePerMovie @entity {
+  id: ID!
+  total: BigInt!
+  revenuePerMovieRegions: [RevenuePerMovieRegion!]! @derivedFrom(field: "revenuePerMovie")
+}
