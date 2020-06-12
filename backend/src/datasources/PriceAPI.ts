@@ -61,7 +61,7 @@ class PriceAPI extends DataSource {
                 "type": "WHITERABBIT",
                 "region": "DEFAULT",
                 "medium": "EST",
-                "amount": "0.02", // 2 cents
+                "amount": "20000000000000000", // 2 cents
                 "fromWindow": date.toUTCString(),
                 "toWindow": date.toUTCString()
             });

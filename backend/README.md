@@ -124,11 +124,11 @@ mutation {
   addPrice( pricing:
     {
     	IMDB: "336223",
-      type: "WHITERABBIT", 
-      region: "MA",
-      amount: "65344", 
-      medium: "FREETV", 
-      fromWindow: "2020-06-01T17:45:23+00:00", 
+      type: "WHITERABBIT",
+      region: "276",
+      amount: "65344",
+      medium: "FREETV",
+      fromWindow: "2020-06-01T17:45:23+00:00",
       toWindow: "2020-06-01T17:45:23+00:00"
     }
   )  {
@@ -149,15 +149,15 @@ mutation {
 ### Update price
 ```graphql
 mutation {
-  updatePrice( pricing: 
+  updatePrice( pricing:
     {
       priceId: "ae9d5cfc-4fbd-41e7-b46e-e5a665b3e271"
     	IMDB: "336222",
-      type: "WHITERABBIT", 
-      region: "MA",
-      amount: "70000", 
-      medium: "SVOD", 
-      fromWindow: "2020-06-01T17:45:23+00:00", 
+      type: "WHITERABBIT",
+      region: "276",
+      amount: "70000",
+      medium: "SVOD",
+      fromWindow: "2020-06-01T17:45:23+00:00",
       toWindow: "2020-06-01T17:45:23+00:00"
   	})  {
     message
