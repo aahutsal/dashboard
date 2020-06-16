@@ -21,7 +21,8 @@ Graphql powered backend server
     }
     rightsHolder {
       name
-      contact
+      imdbId
+      email
       status
     }
     pricing {
@@ -38,7 +39,8 @@ Graphql powered backend server
 ```graphql
 {
   user(accountAddress: "0xaf0939af286A35DBfab7DEd7c777A5F6E8BE26A8") {
-    contact
+    imdbId
+    email
     name
     movies {
       IMDB
@@ -49,6 +51,7 @@ Graphql powered backend server
 ```
 
 ### Get movie prices
+
 ```graphql
 {
   prices(IMDB: "336223"){
@@ -87,7 +90,8 @@ mutation {
   addUser(user: {
     accountAddress: "0xaf0939af286A35DBfab7DEd7c777A5F6E8BE26A8",
     name: "Kosta",
-    contact: "kosta@leapdao.org",
+    imdbId: "nm313374",
+    email: "kosta@leapdao.org",
     roles: [RIGHTSHOLDER]
   }) {
     success

@@ -37,7 +37,10 @@ export class User extends BaseUser {
   name!: string;
 
   @attribute()
-  contact!: string;
+  email!: string;
+
+  @attribute()
+  imdbId!: string;
 
   @attribute()
   roles!: Array<UserRole>;

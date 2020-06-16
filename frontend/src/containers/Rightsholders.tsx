@@ -38,9 +38,14 @@ export default () => {
       key: 'name',
     },
     {
-      title: 'Contact',
-      dataIndex: 'contact',
-      key: 'contact',
+      title: 'IMDB ID',
+      dataIndex: 'imdbId',
+      key: 'imdbId',
+    },
+    {
+      title: 'Email',
+      dataIndex: 'email',
+      key: 'email',
     },
     {
       title: 'Address',

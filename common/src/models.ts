@@ -23,8 +23,10 @@ export class User {
   accountAddress!: string;
 
   name!: string;
+  
+  imdbId!: string;
 
-  contact!: string;
+  email!: string;
 
   status!: ApprovalStatus;
 

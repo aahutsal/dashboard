@@ -1,17 +1,17 @@
-import * as React from 'react';
+import React, { useContext, useState } from 'react';
 import {
   Form, Input, Button, Alert, Spin,
 } from 'antd';
 import { Store } from 'antd/lib/form/interface';
 import { useMutation } from '@apollo/react-hooks';
 import { ApolloError } from 'apollo-boost';
-import { ClockCircleOutlined } from '@ant-design/icons';
 import { useHistory } from 'react-router-dom';
-import { useContext } from 'react';
 import { GET_USER } from '../apollo/queries';
 import { ADD_USER } from '../apollo/mutations';
 import AppLayout from './AppLayout';
 import { DashboardContext } from '../components/DashboardContextProvider';
+import PersonSearch, { PersonSearchValue } from './components/PersonSearch';
+import PendingUserScreen from './components/PendingUserScreen';
 
 // TODO: duplicates the same from /Register. Move to utils and reuse
 const humanizeError = (error: ApolloError) => {
@@ -25,14 +25,16 @@ export default () => {
   const { account, user } = useContext(DashboardContext);
   const history = useHistory();
   const [addUser, { loading, error }] = useMutation(ADD_USER);
+  const [selectedPerson, setSelectedPerson] = useState<{ imdbId: string, name: string }>();
 
   const onFinish = (values: Store) => {
     addUser({
       variables: {
         user: {
           accountAddress: account,
-          name: values.name,
-          contact: values.contact,
+          name: values.name.name,
+          imdbId: values.name.imdbId,
+          email: values.email,
           roles: ['RIGHTSHOLDER'],
         },
       },
@@ -48,16 +50,7 @@ export default () => {
 
   if (user && user.status !== 'APPROVED') {
     return (
-      <AppLayout>
-        <Alert
-          message="Pending identity verification"
-          description="Sit tight, Alan will contact you soon to verify your identity."
-          type="warning"
-          showIcon
-          icon={<ClockCircleOutlined />}
-          style={{ width: 400 }}
-        />
-      </AppLayout>
+      <PendingUserScreen user={user} />
     );
   }
 
@@ -65,8 +58,21 @@ export default () => {
     history.push('/');
   }
 
+  const checkName = (rule: any, value: PersonSearchValue) => {
+    if (value && value.name && value.imdbId) {
+      return Promise.resolve();
+    }
+    return Promise.reject(new Error('Person with IMDB id is needed'));
+  };
+
+  const onFieldsChange = (changedFields: any) => {
+    if (changedFields.length && changedFields[0].name[0] === 'name') {
+      setSelectedPerson(changedFields[0].value);
+    }
+  };
+
   return (
-    <AppLayout>
+    <AppLayout section="register">
       <div style={{ width: 400 }}>
         <h1>Please introduce yourself</h1>
         <p>
@@ -80,20 +86,26 @@ export default () => {
             name="register"
             layout="vertical"
             onFinish={onFinish}
+            onFieldsChange={onFieldsChange}
           >
             <Form.Item
-              label="Legal Name"
+              label="Your name"
               name="name"
-              rules={[{ required: true, message: 'Please enter your legal name' }]}
+              rules={[{ validator: checkName }]}
             >
-              <Input placeholder="What's your legal name?" />
+              <PersonSearch placeholder="Your name as on IMDB" />
             </Form.Item>
+            {selectedPerson && (
+              <Form.Item label="IMDB id:">
+                {selectedPerson.imdbId}
+              </Form.Item>
+            )}
             <Form.Item
-              label="Contact"
-              name="contact"
-              rules={[{ required: true, message: 'Please enter your contact (email/phone/messanger)' }]}
+              label="Email"
+              name="email"
+              rules={[{ required: true, message: 'Please enter your email' }]}
             >
-              <Input placeholder="How can we reach you out?" />
+              <Input placeholder="Email" />
             </Form.Item>
             <Form.Item>
               <Button type="primary" htmlType="submit">Send for Approval</Button>

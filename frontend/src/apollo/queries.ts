@@ -22,7 +22,8 @@ export const GET_USER = gql`
   query GET_USER($accountAddress: String) {
     user(accountAddress: $accountAddress) {
       name
-      contact
+      imdbId
+      email
       status
       roles
       movies {
@@ -41,7 +42,8 @@ export const PENDING_USERS = gql`
     pendingUsers {
       accountAddress
       name
-      contact
+      imdbId
+      email
     }
   }
 `;

@@ -5,6 +5,34 @@ const config = {
   theMovieDbApiKey: 'b1854cc7cd8f2e29da75a04a3c946e44',
 };
 
+interface TMDBEvent {
+  first_air_date?: string;
+  name?: string;
+}
+
+interface TMDBPerson {
+  id: number;
+  name: string;
+  profile_path?: string;
+  known_for_department: string;
+  known_for: [TMDBMovie & TMDBEvent];
+}
+
+// TODO: Merge together with MovieInterface
+export type TMDBMovie = {
+  poster_path: string;
+  id: number;
+  title: string;
+  release_date: string;
+  overview?: string;
+  vote_average: string;
+};
+
+export type TMDBMovieExtended = TMDBMovie & {
+  production_companies: any[];
+};
+
+// TODO: Merge together with TMDBMovie and Movie from `dashboard-common`
 export type MovieInterface = {
   id: string,
   title: string;
@@ -57,6 +85,38 @@ export const getMovieDetails = async (imdbId: string): Promise<MovieInterface> =
     year,
     details: JSON.stringify(details),
   };
+};
+
+
+/**
+ * Search for the person buy given `partOfTheName` in themoviedb.org database.
+ * NOTE: some people don't have IMDB id in themoviedb.org. Use unofficial `searchPersonInIMDB`
+ * in this case
+ * @param partOfTheName String — part of the person name to search for
+ */
+export const searchPerson = async (partOfTheName: string): Promise<{ results: TMDBPerson[] }> => {
+  if (!partOfTheName) return { results: [] };
+  const searchResult = await fetch(
+    `https://api.themoviedb.org/3/search/person?api_key=${config.theMovieDbApiKey}&query=${partOfTheName}&page=1&include_adult=false`,
+  ).then((resp) => resp.json());
+
+  return searchResult;
+};
+
+export const getPersonByTMDB = async (tmdbId: string) => {
+  const searchResult = await fetch(
+    `https://api.themoviedb.org/3/person/${tmdbId}?api_key=${config.theMovieDbApiKey}`,
+  ).then((resp) => resp.json());
+
+  return searchResult.status_code === 34 ? null : searchResult;
+};
+
+export const getPersonByIMDBId = async (imdbId: string): Promise<TMDBPerson> => {
+  const searchResult = await fetch(
+    `https://api.themoviedb.org/3/find/${imdbId}?api_key=${config.theMovieDbApiKey}&external_source=imdb_id`,
+  ).then((resp) => resp.json());
+
+  return searchResult.person_results.length ? searchResult.person_results[0] : null;
 };
 
 export const searchMovies = async (id: string, title: string, year: string)
