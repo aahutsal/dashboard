@@ -3,6 +3,7 @@ type RevenuePerMovieRegion @entity {
   revenuePerMovie: RevenuePerMovie!
   region: Int!
   total: BigInt!
+  unclaimed: BigInt!
 }
 
 type RevenuePerMovie @entity {

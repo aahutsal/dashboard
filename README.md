@@ -12,7 +12,9 @@ npm run start-local
 
 | Package                                   | Description                                                             |
 | ----------------------------------------- | ----------------------------------------------------------------------- |
-| [`Backend`](/packages/backend) | Backend powered by graphql |
 | [`Frontend`](/packages/frontend) | React frontend |
+| [`Backend`](/packages/backend) | Backend powered by graphql |
+| [`Subgraph`](/packages/subgraph) | Subgraph setup to index contract events |
+
 
 

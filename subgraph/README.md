@@ -13,7 +13,7 @@ To generate the needed schemas run `npm run codegen`
 
 To deploy to the hosted service run `npm run deploy`
 # GraphQL based API
-Query URL: `https://api.thegraph.com/subgraphs/name/clearwood/white-rabbit-cp`
+Query URL: `https://api.thegraph.com/subgraphs/name/whiterabbittheworldisyours/collectionpool`
 # Example requests
 ## Get total revenue for all movies
 ```

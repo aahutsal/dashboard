@@ -1,10 +1,11 @@
 import { BigInt } from "@graphprotocol/graph-ts"
 import {
-  Contract,
   Deposit,
   OwnershipTransferred,
-  Transfer
-} from "../generated/Contract/Contract"
+  Transfer,
+  Refund,
+  Distribution
+} from "../generated/CollectionPool/CollectionPool"
 import { RevenuePerMovie, RevenuePerMovieRegion } from "../generated/schema"
 
 export function handleDeposit(event: Deposit): void {
@@ -23,12 +24,14 @@ export function handleDeposit(event: Deposit): void {
   if (region == null) {
     region = new RevenuePerMovieRegion(regionId)
     region.total = BigInt.fromI32(0)
+    region.unclaimed = BigInt.fromI32(0)
     region.region = event.params.region
     region.revenuePerMovie = movieId
   }
   let value = event.transaction.value
   // BigInt and BigDecimal math are supported
   region.total = region.total + value
+  region.unclaimed = region.total + value
   movie.total = movie.total + value
   region.save()
   // Entities can be written to the store with `.save()`
@@ -38,3 +41,31 @@ export function handleDeposit(event: Deposit): void {
 export function handleOwnershipTransferred(event: OwnershipTransferred): void {}
 
 export function handleTransfer(event: Transfer): void {}
+
+export function handleDistribution(event: Distribution): void {
+  // Entities can be loaded from the store using a string ID; this ID
+  // needs to be unique across all entities of the same type
+  let movieId = event.params.movieId.toString()
+  let regionId = movieId + "-" + BigInt.fromI32(event.params.region).toString()
+  let movie = RevenuePerMovie.load(movieId)
+  let region = RevenuePerMovieRegion.load(regionId)
+  // assume that entity exists already,
+  // as distribution would not be possible witouth revenue first
+  let value = event.transaction.value
+  region.unclaimed = region.total - value
+  region.save()
+}
+
+export function handleRefund(event: Refund): void {
+  // Entities can be loaded from the store using a string ID; this ID
+  // needs to be unique across all entities of the same type
+  let movieId = event.params.movieId.toString()
+  let regionId = movieId + "-" + BigInt.fromI32(event.params.region).toString()
+  let movie = RevenuePerMovie.load(movieId)
+  let region = RevenuePerMovieRegion.load(regionId)
+  // assume that entity exists already,
+  // as refund would not be possible witouth revenue first
+  let value = event.transaction.value
+  region.unclaimed = region.total - value
+  region.save()
+}

@@ -1,10 +1,10 @@
 {
   "name": "@whiterabbitjs/dashboard-subgraph",
-  "license": "UNLICENSED",
+  "license": "MPL2",
   "scripts": {
     "codegen": "graph codegen",
     "build": "graph build",
-    "deploy": "graph deploy --node https://api.thegraph.com/deploy/ --ipfs https://api.thegraph.com/ipfs/ clearwood/white-rabbit-cp",
+    "deploy": "graph deploy whiterabbittheworldisyours/collectionpool --node https://api.thegraph.com/deploy/ --ipfs https://api.thegraph.com/ipfs/",
     "create-local": "graph create --node http://localhost:8020/ clearwood/white-rabbit-cp",
     "remove-local": "graph remove --node http://localhost:8020/ clearwood/white-rabbit-cp",
     "deploy-local": "graph deploy --node http://localhost:8020/ --ipfs http://localhost:5001 clearwood/white-rabbit-cp"
