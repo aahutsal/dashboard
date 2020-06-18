@@ -136,6 +136,7 @@ const resolverMap: IResolvers = {
             }
             const metadata = parent.record.value;
             return Promise.resolve({
+                id: metadata.id,
                 title: metadata.title,
                 posterUrl: `https://image.tmdb.org/t/p/w500${metadata.poster_path}`,
             });

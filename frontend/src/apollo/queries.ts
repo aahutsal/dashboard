@@ -30,6 +30,7 @@ export const GET_USER = gql`
       movies {
         IMDB
         metadata {
+          id
           title
           posterUrl
         }

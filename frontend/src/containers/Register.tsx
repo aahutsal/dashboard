@@ -5,6 +5,7 @@ import {
 import { Store } from 'antd/lib/form/interface';
 import { useMutation } from '@apollo/react-hooks';
 import { useHistory } from 'react-router-dom';
+import { TMDBMovie } from '@whiterabbitjs/dashboard-common';
 import { GET_USER } from '../apollo/queries';
 import { ADD_USER } from '../apollo/mutations';
 import AppLayout from './AppLayout';
@@ -13,7 +14,8 @@ import PersonSearch, { PersonSearchValue } from './components/PersonSearch';
 import PendingUserScreen from './components/PendingUserScreen';
 import humanizeError from '../stores/utils/humanizeError';
 import MovieListWithRevenue from './components/MovieListWithRevenue';
-import { TMDBMovie, getPersonCredits } from '../stores/API';
+import { getPersonCredits } from '../stores/API';
+import { toExtended } from '../stores/movieAPI';
 
 
 export default () => {
@@ -29,7 +31,9 @@ export default () => {
       setSelectedPersonMovies([]);
       return;
     }
-    getPersonCredits(selectedPerson.id).then(setSelectedPersonMovies);
+    getPersonCredits(selectedPerson.id)
+      .then((credits) => Promise.all(credits.map(toExtended)))
+      .then(setSelectedPersonMovies);
   }, [selectedPerson]);
 
   const onFinish = (values: Store) => {

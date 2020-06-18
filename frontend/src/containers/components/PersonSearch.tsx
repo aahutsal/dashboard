@@ -1,8 +1,9 @@
 import React, { useState } from 'react';
 import { Select, Avatar, Popconfirm } from 'antd';
 import { QuestionCircleOutlined } from '@ant-design/icons';
+import { TMDBPerson } from '@whiterabbitjs/dashboard-common';
 import { searchPersonInIMDB, IMDBSuggestion } from '../../stores/imdbAPI';
-import { searchPerson, TMDBPerson, getPersonByTMDB } from '../../stores/API';
+import { searchPerson, getPersonByTMDB } from '../../stores/API';
 
 type PersonSearchProps = {
   value?: PersonSearchValue;

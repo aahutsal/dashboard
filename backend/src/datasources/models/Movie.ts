@@ -1,6 +1,6 @@
 import { attribute, table } from '@aws/dynamodb-data-mapper-annotations';
 import { Base } from './Base';
-import { ApprovalStatus, PendingStatus } from '@whiterabbitjs/dashboard-common';
+import { ApprovalStatus, PendingStatus, TMDBMovieExtended } from '@whiterabbitjs/dashboard-common';
 import { Price } from './Price';
 
 
@@ -34,6 +34,8 @@ export class Movie extends Base {
 
     @attribute()
     record!: MovieRecord;
+
+    metadata!: TMDBMovieExtended;
 
     @attribute()
     chainTitle!: string[];

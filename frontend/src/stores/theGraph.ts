@@ -1,4 +1,4 @@
-import { RevenuePerMovie } from './API';
+import { RevenuePerMovie } from '@whiterabbitjs/dashboard-common';
 import { THE_GRAPH_API } from '../config';
 
 type RevenuePerMovieResponse = {

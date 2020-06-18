@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { ClockCircleOutlined } from '@ant-design/icons';
 import { Alert } from 'antd';
-import { User } from '@whiterabbitjs/dashboard-common';
+import { User, TMDBMovie } from '@whiterabbitjs/dashboard-common';
 import AppLayout from '../AppLayout';
-import { TMDBMovie, getPersonCredits } from '../../stores/API';
+import { getPersonCredits } from '../../stores/API';
 import MovieListWithRevenue from './MovieListWithRevenue';
 
 export type PendingUserScreenProps = {

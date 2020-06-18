@@ -2,21 +2,21 @@ import React, { useEffect, useState } from 'react';
 import { Table, Tooltip } from 'antd';
 import Web3 from 'web3';
 import { ColumnType } from 'antd/lib/table';
-import { TMDBMovieExtended, TMDBMovie } from '../../stores/API';
-import { withRevenue } from '../../stores/movieAPI';
+import { TMDBMovie, TMDBMovieExtended } from '@whiterabbitjs/dashboard-common';
+import { toExtended } from '../../stores/movieAPI';
 
 type MovieListWithRevenueProps = {
-  movies: TMDBMovie[];
-  extraColumns?: ColumnType<TMDBMovie>[];
+  movies: TMDBMovieExtended[];
+  extraColumns?: ColumnType<TMDBMovieExtended>[];
 };
 
 const columns = [
   {
     title: '',
-    dataIndex: 'poster_path',
-    key: 'poster_path',
+    dataIndex: 'posterUrl',
+    key: 'posterUrl',
     width: 50,
-    render: (url: string, movie: TMDBMovie) => <img src={`https://image.tmdb.org/t/p/w500${url}`} height={50} alt={movie.title} />,
+    render: (url: string, movie: TMDBMovie) => <img src={url} height={50} alt={movie.title} />,
   },
   {
     title: '',
@@ -54,12 +54,16 @@ export default ({ movies, extraColumns }: MovieListWithRevenueProps) => {
   const [extMovies, setExtMovies] = useState<TMDBMovieExtended[]>();
 
   useEffect(() => {
-    if (!movies) {
+    if (!movies || !movies.length) {
       setExtMovies([]);
       return;
     }
+    if (movies[0].revenue) { // already extended
+      setExtMovies(movies);
+      return;
+    }
 
-    Promise.all(movies.map(withRevenue)).then(setExtMovies);
+    Promise.all(movies.map(toExtended)).then(setExtMovies);
   }, [movies]);
 
   return (

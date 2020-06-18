@@ -62,6 +62,7 @@ type User {
 }
 
 type MovieMetadata {
+  id: Int
   title: String
   posterUrl: String 
 }

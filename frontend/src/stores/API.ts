@@ -1,54 +1,9 @@
 // TODO: rename to tmdbApi
 import { notification } from 'antd';
+import { TMDBPerson, TMDBMovieCredit } from '@whiterabbitjs/dashboard-common';
 
 const config = {
   theMovieDbApiKey: 'b1854cc7cd8f2e29da75a04a3c946e44',
-};
-
-export type RevenuePerMovieRegion = {
-  region: number;
-  total: BigInt;
-};
-
-export type RevenuePerMovie = {
-  id: string;
-  total: BigInt;
-  revenuePerMovieRegions: [RevenuePerMovieRegion]
-};
-
-interface TMDBEvent {
-  first_air_date?: string;
-  name?: string;
-}
-
-export interface TMDBPerson {
-  id: number;
-  name: string;
-  imdb_id?: string;
-  profile_path?: string;
-  known_for_department: string;
-  known_for: [TMDBMovie & TMDBEvent];
-}
-
-// TODO: Merge together with MovieInterface
-export type TMDBMovie = {
-  poster_path: string;
-  id: number;
-  imdb_id?: string;
-  title: string;
-  release_date: string;
-  overview?: string;
-  vote_average: string;
-};
-
-export type TMDBMovieExtended = TMDBMovie & {
-  production_companies?: any[];
-  revenue?: RevenuePerMovie;
-};
-
-export type TMDBMovieCredit = TMDBMovie & {
-  department: string;
-  credit_id: string;
 };
 
 // TODO: Merge together with TMDBMovie and Movie from `dashboard-common`
