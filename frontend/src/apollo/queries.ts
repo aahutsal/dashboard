@@ -57,6 +57,7 @@ export const GET_MOVIE = gql`
     movie(IMDB: $IMDB) {
       IMDB
       metadata {
+        id
         title
         posterUrl
       }

@@ -1,4 +1,4 @@
-import React, { useState, useContext } from 'react';
+import React, { useState, useContext, useEffect } from 'react';
 import moment from 'moment';
 import Web3 from 'web3';
 import {
@@ -6,19 +6,29 @@ import {
 } from 'antd';
 import { useParams, useHistory } from 'react-router-dom';
 import { useQuery } from '@apollo/react-hooks';
+import { TMDBMovieExtended } from '@whiterabbitjs/dashboard-common';
 import { DashboardContext } from '../components/DashboardContextProvider';
 import { GET_MOVIE } from '../apollo/queries';
 import AppLayout from './AppLayout';
 import PriceForm from './components/PriceForm';
 import { PriceInterface } from './components/PriceType';
 import humanizeM49 from '../stores/humanizeM49';
+import MovieRevenueList from './components/MovieRevenueList';
+import { toExtended } from '../stores/movieAPI';
+import Section from './components/Section';
 
 export default () => {
   const { IMDB } = useParams();
   const [currentPrice, setCurrentPrice] = useState<PriceInterface>();
+  const [extendedMovie, setExtendedMovie] = useState<TMDBMovieExtended>();
   const { data, loading } = useQuery(GET_MOVIE, { variables: { IMDB } });
   const { user, applyFactor } = useContext(DashboardContext);
   const history = useHistory();
+
+  useEffect(() => {
+    if (!data || !data.movie) return;
+    toExtended(data.movie.metadata).then(setExtendedMovie);
+  }, [data]);
 
   if (!user || !user.isApproved() || !user.ownsMovie(IMDB)) { // TODO:: move to route middleware
     history.push('/');
@@ -85,24 +95,32 @@ export default () => {
           <h2>{(data && data.movie.metadata.title)}</h2>
         </Col>
         <Col className="gutter-row" xs={{ span: 24 }} lg={{ span: 18 }}>
-          { currentPrice && <PriceForm price={currentPrice} onClear={onClearForm} /> }
-          {!currentPrice && (
-          <React.Fragment>
-            <div style={{ display: 'flex', marginBottom: '14px' }}>
-              <Button type="primary" htmlType="button" style={{ marginLeft: 'auto' }} onClick={() => openPriceForm({ IMDB })}>New Price</Button>
-            </div>
-            <Spin spinning={loading}>
-              <Table
-                showHeader
-                bordered={false}
-                dataSource={(data && data.movie.pricing) || []}
-                columns={columns}
-                pagination={{ pageSize: 40 }}
-                rowKey="priceId"
-              />
-            </Spin>
-          </React.Fragment>
-          )}
+          <Section>
+            <h2>Revenue</h2>
+            {extendedMovie && <MovieRevenueList movie={extendedMovie} />}
+          </Section>
+
+          <Section>
+            <h2>Prices</h2>
+            { currentPrice && <PriceForm price={currentPrice} onClear={onClearForm} /> }
+            {!currentPrice && (
+            <>
+              <div style={{ display: 'flex', marginBottom: '14px' }}>
+                <Button type="primary" htmlType="button" style={{ marginLeft: 'auto' }} onClick={() => openPriceForm({ IMDB })}>New Price</Button>
+              </div>
+              <Spin spinning={loading}>
+                <Table
+                  showHeader
+                  bordered={false}
+                  dataSource={(data && data.movie.pricing) || []}
+                  columns={columns}
+                  pagination={{ pageSize: 40 }}
+                  rowKey="priceId"
+                />
+              </Spin>
+            </>
+            )}
+          </Section>
         </Col>
       </Row>
     </AppLayout>

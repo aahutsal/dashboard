@@ -14,7 +14,11 @@ To generate the needed schemas run `npm run codegen`
 To deploy to the hosted service run `npm run deploy`
 
 # GraphQL based API
+
 Query URL: `https://api.thegraph.com/subgraphs/name/whiterabbittheworldisyours/collectionpool`
+
+Playground URL: https://thegraph.com/explorer/subgraph/whiterabbittheworldisyours/collectionpool/
+
 # Example requests
 ## Get total revenue for all movies
 ```
@@ -45,22 +49,26 @@ Example response:
   }
 }
 ```
+
 ## Get Revenue per Movie and Movie region specified by id
 
-```
-  {
-  	revenuePerMovie(id: 1343237633) {
+```graphql
+{
+  revenuePerMovie(id: 1343237633) {
     id
     total
-   	revenuePerMovieRegions {
+    revenuePerMovieRegions {
       region
       total
+      unclaimed
     }
   }
 }
 ```
+
 Example response:
-```
+
+```graphql
 {
   "data": {
     "revenuePerMovie": {
@@ -68,18 +76,16 @@ Example response:
       "revenuePerMovieRegions": [
         {
           "region": 1,
-          "total": "10000000000000000"
+          "total": "20000000000000000",
+          "unclaimed": "40000000000000000"
         },
         {
           "region": 276,
-          "total": "190000000000000000"
-        },
-        {
-          "region": 643,
-          "total": "10000000000000000"
+          "total": "120000000000000000",
+          "unclaimed": "140000000000000000"
         }
       ],
-      "total": "210000000000000000"
+      "total": "140000000000000000"
     }
   }
 }
