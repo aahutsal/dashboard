@@ -48,3 +48,23 @@ export const PENDING_USERS = gql`
     }
   }
 `;
+
+export const GET_MOVIE = gql`
+  query GET_MOVIE($IMDB: String) {
+    movie(IMDB: $IMDB) {
+      IMDB
+      metadata {
+        title
+        posterUrl
+      }
+      pricing {
+        priceId
+        medium
+        region
+        amount
+        fromWindow
+        toWindow
+      }
+    }
+  }
+`;

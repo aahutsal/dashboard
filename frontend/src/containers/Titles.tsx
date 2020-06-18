@@ -1,6 +1,6 @@
 import React, { useContext } from 'react';
 import { Table } from 'antd';
-import { useHistory } from 'react-router-dom';
+import { useHistory, Link } from 'react-router-dom';
 import AppLayout from './AppLayout';
 import { DashboardContext } from '../components/DashboardContextProvider';
 
@@ -16,6 +16,13 @@ const columns = [
     title: 'Name',
     dataIndex: ['metadata', 'title'],
     key: 'name',
+  },
+  {
+    title: 'Action',
+    key: 'action',
+    render: (text: string, record: any) => (
+      <Link to={`/movie/prices/${record.IMDB}`}>Prices</Link>
+    ),
   },
 ];
 

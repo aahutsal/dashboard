@@ -15,8 +15,11 @@ export enum PendingStatus {
 }
 
 export type Movie = {
-  title: string;
-  posterUrl: string;
+  IMDB?: string;
+  metadata: {
+    title: string;
+    posterUrl: string;
+  }
 };
 
 export class User {
@@ -54,5 +57,9 @@ export class User {
 
   isApproved(): boolean {
     return this.status === ApprovalStatus.APPROVED 
+  }
+
+  ownsMovie(imdbId: string) {
+    return !!this.movies.find(m => m.IMDB === imdbId);
   }
 };

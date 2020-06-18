@@ -24,6 +24,33 @@ export const ADD_MOVIE = gql`
   }
 `;
 
+export const ADD_PRICE = gql`
+  mutation addPrice ($pricing: PriceInput!) {
+    addPrice(pricing: $pricing) {
+      success
+      message
+    }
+  }
+`;
+
+export const UPDATE_PRICE = gql`
+  mutation updatePrice ($pricing: PriceInput!) {
+    updatePrice(pricing: $pricing) {
+      success
+      message
+    }
+  }
+`;
+
+export const DELETE_PRICE = gql`
+  mutation deletePrice ($pricing: PriceInput!) {
+    deletePrice(pricing: $pricing) {
+      success
+      message
+    }
+  }
+`;
+
 export const APPROVE_USER = gql`
   mutation approveUser ($userId: String!) {
     approveUser(userId: $userId) {

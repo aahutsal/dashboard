@@ -4,7 +4,6 @@ import {
 } from 'antd';
 import { Store } from 'antd/lib/form/interface';
 import { useMutation } from '@apollo/react-hooks';
-import { ApolloError } from 'apollo-boost';
 import { useHistory } from 'react-router-dom';
 import { GET_USER } from '../apollo/queries';
 import { ADD_USER } from '../apollo/mutations';
@@ -12,16 +11,10 @@ import AppLayout from './AppLayout';
 import { DashboardContext } from '../components/DashboardContextProvider';
 import PersonSearch, { PersonSearchValue } from './components/PersonSearch';
 import PendingUserScreen from './components/PendingUserScreen';
+import humanizeError from '../stores/utils/humanizeError';
 import MovieListWithRevenue from './components/MovieListWithRevenue';
 import { TMDBMovie, getPersonCredits } from '../stores/API';
 
-// TODO: duplicates the same from /Register. Move to utils and reuse
-const humanizeError = (error: ApolloError) => {
-  if (error.graphQLErrors) {
-    return error.graphQLErrors.map((e) => e.message);
-  }
-  return error.message;
-};
 
 export default () => {
   const { account, user } = useContext(DashboardContext);

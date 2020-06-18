@@ -89,6 +89,20 @@ const resolverMap: IResolvers = {
                 pricing: saved,
             };
         },
+        deletePrice: async (_, { pricing }, { user, dataSources }): Promise<PriceResponse> => {
+            if (!user.accountAddress) throw new AuthenticationError('User is not authenticated');
+            if (!user.isRightsHolder()) throw new ForbiddenError('User is not authorized for the operation');
+
+            const movie = await dataSources.movieAPI.findById(pricing.IMDB);
+            if (!movie) throw new UserInputError(`Movie ${movie.IMDB} does not exist`)
+            if (movie.pk !== user.pk) throw new ForbiddenError(`User is not authorized for the operation`);
+
+            await dataSources.priceAPI.delete(pricing.IMDB, pricing.priceId);
+            return {
+                success: true,
+                message: 'Pricing deleted successfully'
+            };
+        },
         approveUser: async (_, { userId }, { user, dataSources }): Promise<UserResponse> => {
             if (!user) throw new AuthenticationError('User is not authenticated');
             if (!user.isAdmin()) throw new ForbiddenError('User is not authorized for the operation');

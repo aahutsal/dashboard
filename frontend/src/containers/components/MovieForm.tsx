@@ -4,24 +4,18 @@ import {
 } from 'antd';
 import { Store } from 'antd/lib/form/interface';
 import { useMutation } from '@apollo/react-hooks';
-import { ApolloError } from 'apollo-boost';
 import { useHistory } from 'react-router-dom';
 import DynamicFieldSet from './DynamicField';
 import { GET_USER } from '../../apollo/queries';
 import { ADD_MOVIE } from '../../apollo/mutations';
 import { DashboardContext } from '../../components/DashboardContextProvider';
 import { MovieInterface } from '../../stores/API';
+import humanizeError from '../../stores/utils/humanizeError';
 
 interface ComponentProps {
   movie: MovieInterface
 }
 
-const humanizeError = (error: ApolloError) => {
-  if (error.graphQLErrors) {
-    return error.graphQLErrors.map((e) => e.message);
-  }
-  return error.message;
-};
 
 const MovieForm: FC<ComponentProps> = ({ movie }) => {
   const history = useHistory();
