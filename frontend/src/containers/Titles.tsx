@@ -1,5 +1,5 @@
 import React, { useContext } from 'react';
-import { useHistory } from 'react-router-dom';
+import { useHistory, Link } from 'react-router-dom';
 import AppLayout from './AppLayout';
 import { DashboardContext } from '../components/DashboardContextProvider';
 import MovieListWithRevenue from './components/MovieListWithRevenue';
@@ -17,7 +17,18 @@ export default () => {
   return (
     <AppLayout section="titles">
       <h1>Titles</h1>
-      <MovieListWithRevenue movies={movies} />
+      <MovieListWithRevenue
+        movies={movies}
+        extraColumns={[
+          {
+            title: 'Action',
+            key: 'action',
+            render: (text: string, record: any) => (
+              <Link to={`/movie/prices/${record.id}`}>Prices</Link>
+            ),
+          },
+        ]}
+      />
     </AppLayout>
   );
 };
