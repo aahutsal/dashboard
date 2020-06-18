@@ -22,6 +22,7 @@ export const GET_USER = gql`
   query GET_USER($accountAddress: String) {
     user(accountAddress: $accountAddress) {
       name
+      id
       imdbId
       email
       status

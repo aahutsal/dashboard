@@ -1,4 +1,4 @@
-import React, { useContext, useState } from 'react';
+import React, { useContext, useState, useEffect } from 'react';
 import {
   Form, Input, Button, Alert, Spin,
 } from 'antd';
@@ -12,6 +12,8 @@ import AppLayout from './AppLayout';
 import { DashboardContext } from '../components/DashboardContextProvider';
 import PersonSearch, { PersonSearchValue } from './components/PersonSearch';
 import PendingUserScreen from './components/PendingUserScreen';
+import MovieListWithRevenue from './components/MovieListWithRevenue';
+import { TMDBMovie, getPersonCredits } from '../stores/API';
 
 // TODO: duplicates the same from /Register. Move to utils and reuse
 const humanizeError = (error: ApolloError) => {
@@ -25,15 +27,26 @@ export default () => {
   const { account, user } = useContext(DashboardContext);
   const history = useHistory();
   const [addUser, { loading, error }] = useMutation(ADD_USER);
-  const [selectedPerson, setSelectedPerson] = useState<{ imdbId: string, name: string }>();
+  const [selectedPerson, setSelectedPerson] = useState<PersonSearchValue>();
+
+  const [selectedPersonMovies, setSelectedPersonMovies] = useState<TMDBMovie[]>();
+
+  useEffect(() => {
+    if (!selectedPerson || !selectedPerson.id) {
+      setSelectedPersonMovies([]);
+      return;
+    }
+    getPersonCredits(selectedPerson.id).then(setSelectedPersonMovies);
+  }, [selectedPerson]);
 
   const onFinish = (values: Store) => {
     addUser({
       variables: {
         user: {
           accountAddress: account,
-          name: values.name.name,
-          imdbId: values.name.imdbId,
+          name: values.person.name,
+          id: values.person.id,
+          imdbId: values.person.imdbId,
           email: values.email,
           roles: ['RIGHTSHOLDER'],
         },
@@ -58,15 +71,15 @@ export default () => {
     history.push('/');
   }
 
-  const checkName = (rule: any, value: PersonSearchValue) => {
-    if (value && value.name && value.imdbId) {
+  const checkPerson = (rule: any, value: PersonSearchValue) => {
+    if (value && value.id && value.name && value.imdbId) {
       return Promise.resolve();
     }
     return Promise.reject(new Error('Person with IMDB id is needed'));
   };
 
   const onFieldsChange = (changedFields: any) => {
-    if (changedFields.length && changedFields[0].name[0] === 'name') {
+    if (changedFields.length && changedFields[0].name[0] === 'person') {
       setSelectedPerson(changedFields[0].value);
     }
   };
@@ -90,8 +103,8 @@ export default () => {
           >
             <Form.Item
               label="Your name"
-              name="name"
-              rules={[{ validator: checkName }]}
+              name="person"
+              rules={[{ validator: checkPerson }]}
             >
               <PersonSearch placeholder="Your name as on IMDB" />
             </Form.Item>
@@ -112,6 +125,13 @@ export default () => {
             </Form.Item>
           </Form>
         </Spin>
+
+        {selectedPersonMovies && selectedPersonMovies.length > 0 && (
+          <div style={{ marginTop: '2rem', maxWidth: '600px' }}>
+            <h2>Pending revenue on WhiteRabbit</h2>
+            <MovieListWithRevenue movies={selectedPersonMovies} />
+          </div>
+        )}
       </div>
     </AppLayout>
   );

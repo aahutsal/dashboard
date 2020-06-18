@@ -29,6 +29,7 @@ export default () => {
 
   const movies = user ? user.movies : [];
 
+  // TODO: use MovieListWithRevenue here
   return (
     <AppLayout section="titles">
       <h1>Titles</h1>

@@ -7,3 +7,12 @@ export const toArray = async <T>(iterable: QueryIterator<T> | Iterable<T>): Prom
   }
   return result;
 }
+
+export const first = (list: string | string[]): string => {
+  if (list.length === 0) return '';
+
+  if (typeof list === 'string') {
+      return list;
+  }
+  return list[0];
+};

@@ -90,6 +90,7 @@ mutation {
   addUser(user: {
     accountAddress: "0xaf0939af286A35DBfab7DEd7c777A5F6E8BE26A8",
     name: "Kosta",
+    id: 111,
     imdbId: "nm313374",
     email: "kosta@leapdao.org",
     roles: [RIGHTSHOLDER]

@@ -40,6 +40,9 @@ export class User extends BaseUser {
   email!: string;
 
   @attribute()
+  id!: number;
+
+  @attribute()
   imdbId!: string;
 
   @attribute()

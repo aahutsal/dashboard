@@ -53,6 +53,7 @@ input PriceFilter {
 type User {
   accountAddress: String!
   name: String
+  id: Int
   imdbId: String
   email: String
   roles: [UserRole]
@@ -120,6 +121,7 @@ type MovieResponse {
 input UserInput {
   accountAddress: String
   name: String
+  id: Int
   imdbId: String
   email: String
   roles: [UserRole]

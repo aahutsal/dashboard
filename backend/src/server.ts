@@ -8,19 +8,12 @@ import movieAPI from './datasources/MovieAPI';
 import userAPI from './datasources/UserAPI';
 import priceAPI from './datasources/PriceAPI';
 import { recoverSigner } from './auth';
+import { first } from './util';
 
 const app = express();
 app.use('*', cors());
 app.use(compression());
 
-const first = (list: string | string[]): string => {
-    if (list.length === 0) return '';
-
-    if (typeof list === 'string') {
-        return list;
-    }
-    return list[0];
-};
 
 const server = new ApolloServer({
     schema,

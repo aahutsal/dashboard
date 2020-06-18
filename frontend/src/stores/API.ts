@@ -1,8 +1,19 @@
-// TODO: reuse this API from @whiterabbitjs/client
+// TODO: rename to tmdbApi
 import { notification } from 'antd';
 
 const config = {
   theMovieDbApiKey: 'b1854cc7cd8f2e29da75a04a3c946e44',
+};
+
+export type RevenuePerMovieRegion = {
+  region: number;
+  total: BigInt;
+};
+
+export type RevenuePerMovie = {
+  id: string;
+  total: BigInt;
+  revenuePerMovieRegions: [RevenuePerMovieRegion]
 };
 
 interface TMDBEvent {
@@ -10,9 +21,10 @@ interface TMDBEvent {
   name?: string;
 }
 
-interface TMDBPerson {
+export interface TMDBPerson {
   id: number;
   name: string;
+  imdb_id?: string;
   profile_path?: string;
   known_for_department: string;
   known_for: [TMDBMovie & TMDBEvent];
@@ -22,6 +34,7 @@ interface TMDBPerson {
 export type TMDBMovie = {
   poster_path: string;
   id: number;
+  imdb_id?: string;
   title: string;
   release_date: string;
   overview?: string;
@@ -29,7 +42,13 @@ export type TMDBMovie = {
 };
 
 export type TMDBMovieExtended = TMDBMovie & {
-  production_companies: any[];
+  production_companies?: any[];
+  revenue?: RevenuePerMovie;
+};
+
+export type TMDBMovieCredit = TMDBMovie & {
+  department: string;
+  credit_id: string;
 };
 
 // TODO: Merge together with TMDBMovie and Movie from `dashboard-common`
@@ -47,6 +66,7 @@ export type MovieInterface = {
   details?: string;
 };
 
+// TODO: reuse this API from @whiterabbitjs/client
 export const getMovieDetails = async (imdbId: string): Promise<MovieInterface> => {
   const [details, credits] = await Promise.all([
     fetch(
@@ -94,21 +114,31 @@ export const getMovieDetails = async (imdbId: string): Promise<MovieInterface> =
  * in this case
  * @param partOfTheName String — part of the person name to search for
  */
-export const searchPerson = async (partOfTheName: string): Promise<{ results: TMDBPerson[] }> => {
-  if (!partOfTheName) return { results: [] };
+export const searchPerson = async (partOfTheName: string): Promise<TMDBPerson[]> => {
+  if (!partOfTheName) return [];
   const searchResult = await fetch(
     `https://api.themoviedb.org/3/search/person?api_key=${config.theMovieDbApiKey}&query=${partOfTheName}&page=1&include_adult=false`,
   ).then((resp) => resp.json());
 
-  return searchResult;
+  return searchResult.results;
 };
 
-export const getPersonByTMDB = async (tmdbId: string) => {
+export const getPersonByTMDB = async (tmdbId: number): Promise<TMDBPerson> => {
   const searchResult = await fetch(
     `https://api.themoviedb.org/3/person/${tmdbId}?api_key=${config.theMovieDbApiKey}`,
   ).then((resp) => resp.json());
 
   return searchResult.status_code === 34 ? null : searchResult;
+};
+
+export const getPersonCredits = async (tmdbId: number): Promise<TMDBMovieCredit[]> => {
+  const searchResult = await fetch(
+    `https://api.themoviedb.org/3/person/${tmdbId}/movie_credits?api_key=${config.theMovieDbApiKey}`,
+  ).then((resp) => resp.json());
+
+  const { cast, crew } = searchResult;
+
+  return [...cast, ...crew];
 };
 
 export const getPersonByIMDBId = async (imdbId: string): Promise<TMDBPerson> => {
@@ -117,6 +147,14 @@ export const getPersonByIMDBId = async (imdbId: string): Promise<TMDBPerson> => 
   ).then((resp) => resp.json());
 
   return searchResult.person_results.length ? searchResult.person_results[0] : null;
+};
+
+export const getMovieByTMDB = async (tmdbId: number) => {
+  const searchResult = await fetch(
+    `https://api.themoviedb.org/3/movie/${tmdbId}?api_key=${config.theMovieDbApiKey}`,
+  ).then((resp) => resp.json());
+
+  return searchResult.status_code === 34 ? null : searchResult;
 };
 
 export const searchMovies = async (id: string, title: string, year: string)

@@ -23,6 +23,8 @@ export class User {
   accountAddress!: string;
 
   name!: string;
+
+  id!: number;
   
   imdbId!: string;
 
