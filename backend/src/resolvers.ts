@@ -3,8 +3,9 @@ import { DateTimeResolver as DateTime } from 'graphql-scalars';
 import { MovieResponse, Movie } from './datasources/models/Movie';
 import { UserResponse, User } from './datasources/models/User';
 import { PriceResponse, Price } from './datasources/models/Price';
-import config, { Config } from './config';
+import config from './config';
 import { AuthenticationError, ForbiddenError, UserInputError } from 'apollo-server-express';
+import { Config } from '@whiterabbitjs/dashboard-common';
 
 const resolverMap: IResolvers = {
     Query: {
