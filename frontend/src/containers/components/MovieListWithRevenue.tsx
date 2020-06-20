@@ -84,12 +84,8 @@ export default ({ movies, hideExactNumbers = false, extraColumns }: MovieListWit
       setExtMovies([]);
       return;
     }
-    if (movies[0].revenue) { // already extended
-      setExtMovies(movies);
-      return;
-    }
 
-    Promise.all(movies.map(toExtended)).then(setExtMovies);
+    Promise.all(movies.map((m) => (m.revenue ? m : toExtended(m)))).then(setExtMovies);
   }, [movies]);
 
   return (
