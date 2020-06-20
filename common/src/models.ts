@@ -1,4 +1,8 @@
 
+export type Config = {
+  factor: number;
+};
+
 export enum UserRole {
   ADMIN = "ADMIN",
   RIGHTSHOLDER = "RIGHTSHOLDER",

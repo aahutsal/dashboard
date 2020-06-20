@@ -5,6 +5,11 @@ type Query {
   movie(IMDB: String): Movie
   prices(IMDB: String!): [Price]!
   price(filter: PriceFilter): Price!
+  config: Config!
+}
+
+type Config {
+  factor: Int
 }
 
 enum MovieMedium {

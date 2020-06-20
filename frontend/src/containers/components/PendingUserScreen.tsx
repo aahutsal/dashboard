@@ -21,7 +21,7 @@ export default ({ user }: PendingUserScreenProps) => {
     <AppLayout section="register">
       <Alert
         message="Pending identity verification"
-        description="Sit tight, Alan will contact you soon to verify your identity."
+        description="Sit tight, a third party verification process has started. We will get back to you soon."
         type="warning"
         showIcon
         icon={<ClockCircleOutlined />}
@@ -30,7 +30,7 @@ export default ({ user }: PendingUserScreenProps) => {
       {movies && (
         <div style={{ marginTop: '2rem', maxWidth: '600px' }}>
           <h2>Pending revenue on WhiteRabbit</h2>
-          <MovieListWithRevenue movies={movies} />
+          <MovieListWithRevenue movies={movies} hideExactNumbers />
         </div>
       )}
 

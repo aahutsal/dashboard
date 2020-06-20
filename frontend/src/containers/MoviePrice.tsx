@@ -17,7 +17,7 @@ export default () => {
   const { IMDB } = useParams();
   const [currentPrice, setCurrentPrice] = useState<PriceInterface>();
   const { data, loading } = useQuery(GET_MOVIE, { variables: { IMDB } });
-  const { user } = useContext(DashboardContext);
+  const { user, applyFactor } = useContext(DashboardContext);
   const history = useHistory();
 
   if (!user || !user.isApproved() || !user.ownsMovie(IMDB)) { // TODO:: move to route middleware
@@ -64,7 +64,7 @@ export default () => {
       render: (text: string) => (
         <span>
           $
-          {Web3.utils.fromWei(text)}
+          {Web3.utils.fromWei(applyFactor(text).toString())}
         </span>
       ),
     },

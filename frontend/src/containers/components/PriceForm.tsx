@@ -32,7 +32,7 @@ countries.forEach((m49) => {
 });
 
 const PriceForm: FC<ComponentProps> = ({ price, onClear }) => {
-  const { user } = useContext(DashboardContext);
+  const { user, config, applyFactor } = useContext(DashboardContext);
   const [form] = Form.useForm();
   const [addPrice, { error }] = useMutation(ADD_PRICE);
   const [putPrice, { error: putError }] = useMutation(UPDATE_PRICE);
@@ -50,10 +50,10 @@ const PriceForm: FC<ComponentProps> = ({ price, onClear }) => {
 
     if (price.amount) {
       form.setFieldsValue({
-        amount: Web3.utils.fromWei(price.amount),
+        amount: Web3.utils.fromWei(applyFactor(price.amount).toString()),
       });
     }
-  }, [price, form]);
+  }, [price, form, applyFactor]);
 
 
   const createPrice = (pricing: PriceInterface) => {
@@ -105,11 +105,12 @@ const PriceForm: FC<ComponentProps> = ({ price, onClear }) => {
   };
 
   const onFinish = async (values: Store) => {
+    const factorAdjustedPrice = BigInt(Web3.utils.toWei(values.amount)) / BigInt(config?.factor);
     const pricing = {
       IMDB: price.IMDB,
       type: priceType,
       region: values.region,
-      amount: Web3.utils.toWei(values.amount).toString(),
+      amount: factorAdjustedPrice.toString(),
       medium: values.medium,
       fromWindow: values.window && values.window[0].format('YYYY-MM-DD'),
       toWindow: values.window && values.window[1].format('YYYY-MM-DD'),

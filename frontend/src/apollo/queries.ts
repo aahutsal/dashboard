@@ -69,3 +69,12 @@ export const GET_MOVIE = gql`
     }
   }
 `;
+
+
+export const GET_CONFIG = gql`
+  {
+    config {
+      factor
+    }
+  }
+`;

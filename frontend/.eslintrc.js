@@ -7,6 +7,7 @@ module.exports = {
   rules: {
     'react/jsx-fragments': [0],
     'react/jsx-props-no-spreading': 'off',
-    'react/prop-types': 'off'
+    'react/prop-types': 'off',
+    'no-else-return': 'off',
   }
 };

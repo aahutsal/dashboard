@@ -8,6 +8,16 @@ Graphql powered backend server
 
 ## Available requests
 
+### Get app config
+
+```graphql
+{
+  config {
+    factor
+  }
+}
+```
+
 ### Get movie by IMDB id
 
 ```graphql
