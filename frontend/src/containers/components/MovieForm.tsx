@@ -1,6 +1,6 @@
 import React, { FC, useContext, useEffect } from 'react';
 import {
-  Alert, Button, Form, Input, Row, Col,
+  Alert, Button, Form, Input, Row, Col, notification,
 } from 'antd';
 import { Store } from 'antd/lib/form/interface';
 import { useMutation } from '@apollo/react-hooks';
@@ -16,7 +16,6 @@ interface ComponentProps {
   movie: MovieInterface
 }
 
-
 const MovieForm: FC<ComponentProps> = ({ movie }) => {
   const history = useHistory();
   const { account } = useContext(DashboardContext);
@@ -29,23 +28,31 @@ const MovieForm: FC<ComponentProps> = ({ movie }) => {
   }, [movie, form]);
 
   const onFinish = async (values: Store) => {
-    addMovie({
-      variables: {
-        movie: {
-          IMDB: values.id.toString(),
-          record: {
-            source: 'themoviedb',
-            value: movie.details, // TODO:: switch to values once edit is enabled
+    if (values.imdbId && values.imdbId.startsWith('tt')) { // only add if imdb exists
+      addMovie({
+        variables: {
+          movie: {
+            id: movie.id, // TMDB ID
+            IMDB: values.imdbId,
+            record: {
+              source: 'themoviedb',
+              value: movie.details, // TODO:: switch to values once edit is enabled
+            },
           },
         },
-      },
-      refetchQueries: [{
-        query: GET_USER,
-        variables: { accountAddress: account },
-      }],
-    })
-      .then(() => history.push('/'))
-      .catch(() => {});
+        refetchQueries: [{
+          query: GET_USER,
+          variables: { accountAddress: account },
+        }],
+      })
+        .then(() => history.push('/'))
+        .catch(() => {});
+    } else {
+      notification.open({
+        message: 'Notification',
+        description: 'Please ensure movie exists on IMDB. Kindly Search Again',
+      });
+    }
   };
 
   return (
@@ -65,7 +72,7 @@ const MovieForm: FC<ComponentProps> = ({ movie }) => {
           <Col className="gutter-row" xs={{ span: 24 }} lg={{ span: 12 }}>
             <Form.Item
               label="IMDB ID"
-              name="id"
+              name="imdbId"
             >
               <Input placeholder="IMDB ID" disabled />
             </Form.Item>

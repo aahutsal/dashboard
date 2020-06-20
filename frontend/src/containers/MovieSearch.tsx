@@ -18,32 +18,28 @@ const columns = [
     render: (url: string) => <img src={`https://image.tmdb.org/t/p/w500${url}`} height={150} alt="Movie Poster" />,
   },
   {
-    title: 'IMDB ID',
-    dataIndex: 'id',
-    key: 'id',
-  },
-  {
     title: 'Name',
     dataIndex: 'title',
     key: 'title',
     render: (title: string, record: any) => (
       <div>
-        <h1>{title}</h1>
+        <h1>
+          {title}
+          {' '}
+          (
+          {record.year}
+          )
+        </h1>
         <br />
         <p>{record.overview}</p>
       </div>
     ),
   },
   {
-    title: 'Year',
-    dataIndex: 'year',
-    key: 'year',
-  },
-  {
     title: 'Action',
     key: 'action',
     render: () => (
-      <span>Click to Select</span>
+      <Button htmlType="button" style={{ marginLeft: 'auto' }}>Select</Button>
     ),
   },
 ];

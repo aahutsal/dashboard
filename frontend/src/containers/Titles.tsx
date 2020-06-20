@@ -24,7 +24,7 @@ export default () => {
             title: 'Action',
             key: 'action',
             render: (text: string, record: any) => (
-              <Link to={`/movie/prices/${record.id}`}>Prices</Link>
+              <Link to={`/movie/prices/${record.imdb_id}`}>Prices</Link>
             ),
           },
         ]}

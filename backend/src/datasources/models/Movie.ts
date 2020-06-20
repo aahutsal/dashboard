@@ -27,6 +27,9 @@ export class Movie extends Base {
     }
 
     @attribute()
+    id!: number;
+
+    @attribute()
     IMDB!: string;
 
     @attribute()

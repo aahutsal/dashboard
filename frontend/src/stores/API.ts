@@ -9,6 +9,7 @@ const config = {
 // TODO: Merge together with TMDBMovie and Movie from `dashboard-common`
 export type MovieInterface = {
   id: string,
+  imdbId?: string,
   title: string;
   posterPath: string;
   overview?: string;
@@ -45,10 +46,11 @@ export const getMovieDetails = async (imdbId: string): Promise<MovieInterface> =
   const actors = (cast || []).slice(0, 5).map((a: any) => a.name);
   const producer = crew.find((c: any) => c.job === 'Producer');
   const director = crew.find((c: any) => c.job === 'Director');
-  const year = details.release_date.slice(0, 4);
+  const year = details.release_date ? details.release_date.slice(0, 4) : '';
 
   return {
-    id: imdbId,
+    id: details.id,
+    imdbId: details.imdb_id,
     title: details.title,
     posterPath: details.poster_path,
     producer: producer ? producer.name : '',
@@ -140,7 +142,7 @@ export const searchMovies = async (id: string, title: string, year: string)
         title: current.original_title,
         overview: current.overview,
         posterPath: current.poster_path,
-        year: current.release_date.slice(0, 4),
+        year: current.release_date ? current.release_date.slice(0, 4) : '',
         rating: current.vote_average,
       });
     }
