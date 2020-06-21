@@ -126,7 +126,7 @@ export default () => {
         {selectedPersonMovies && selectedPersonMovies.length > 0 && (
           <div style={{ marginTop: '2rem', maxWidth: '600px' }}>
             <h2>Pending revenue on WhiteRabbit</h2>
-            <MovieListWithRevenue movies={selectedPersonMovies} />
+            <MovieListWithRevenue movies={selectedPersonMovies} hideExactNumbers />
           </div>
         )}
       </div>
