@@ -12,6 +12,7 @@ import { DashboardContext } from '../../components/DashboardContextProvider';
 import Regions from '../../stores/humanizeM49';
 import { PriceInterface } from './PriceType';
 import humanizeError from '../../stores/utils/humanizeError';
+import removeNullAttributes from '../../stores/utils/removeNullAttributes';
 
 
 const { RangePicker } = DatePicker;
@@ -59,7 +60,7 @@ const PriceForm: FC<ComponentProps> = ({ price, onClear }) => {
   const createPrice = (pricing: PriceInterface) => {
     addPrice({
       variables: {
-        pricing,
+        pricing: removeNullAttributes(pricing),
       },
       refetchQueries: [
         {
@@ -75,7 +76,7 @@ const PriceForm: FC<ComponentProps> = ({ price, onClear }) => {
   const updatePrice = (pricing: PriceInterface) => {
     putPrice({
       variables: {
-        pricing: { ...pricing, priceId: price.priceId },
+        pricing: { ...removeNullAttributes(pricing), priceId: price.priceId },
       },
       refetchQueries: [
         {
