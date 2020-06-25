@@ -8,7 +8,7 @@ import Titles from './containers/Titles';
 import Rightsholders from './containers/Rightsholders';
 import Register from './containers/Register';
 import MovieSearch from './containers/MovieSearch';
-import MoviePrice from './containers/MoviePrice';
+import MoviePage from './containers/MoviePage';
 
 import './App.css';
 import { recheckConnection } from './stores/Web3';
@@ -30,7 +30,7 @@ function App() {
           <Route path="/rightsholders" exact component={Rightsholders} />
           <Route path="/register" exact component={Register} />
           <Route path="/movie/add" exact component={MovieSearch} />
-          <Route path="/movie/prices/:IMDB" exact component={MoviePrice} />
+          <Route path="/movie/:IMDB" exact component={MoviePage} />
         </DashboardContextProvider>
       </BrowserRouter>
     </ApolloProvider>
