@@ -61,9 +61,8 @@ export type TMDBMovieExtended = TMDBMovie & {
   revenue?: RevenuePerMovie;
 };
 
-export type TMDBMovieCredit = TMDBMovie & {
-  department: string;
-  credit_id: string;
+export type TMDBMovieWithCredits = TMDBMovieExtended & {
+  jobs: { job: string, department?: string }[];
 };
 
 export type Movie = {

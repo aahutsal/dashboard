@@ -14,7 +14,9 @@ export default ({ user }: PendingUserScreenProps) => {
   const [movies, setMovies] = useState<TMDBMovie[]>();
 
   useEffect(() => {
-    getPersonCredits(user.id).then(setMovies);
+    getPersonCredits(user.id)
+      .then((credits) => credits.filter((m) => m.jobs.length > 1 || m.jobs[0].job !== 'Actor'))
+      .then(setMovies);
   }, [user]);
 
   return (

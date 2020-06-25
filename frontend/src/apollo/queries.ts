@@ -25,6 +25,7 @@ export const GET_USER = gql`
       id
       imdbId
       email
+      kind
       status
       roles
       movies {
@@ -46,6 +47,7 @@ export const PENDING_USERS = gql`
       name
       imdbId
       email
+      kind
     }
   }
 `;

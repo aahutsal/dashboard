@@ -1,6 +1,6 @@
 // TODO: rename to tmdbApi
 import { notification } from 'antd';
-import { TMDBPerson, TMDBMovieCredit } from '@whiterabbitjs/dashboard-common';
+import { TMDBPerson, TMDBMovieWithCredits } from '@whiterabbitjs/dashboard-common';
 
 const config = {
   theMovieDbApiKey: 'b1854cc7cd8f2e29da75a04a3c946e44',
@@ -88,14 +88,23 @@ export const getPersonByTMDB = async (tmdbId: number): Promise<TMDBPerson> => {
   return searchResult.status_code === 34 ? null : searchResult;
 };
 
-export const getPersonCredits = async (tmdbId: number): Promise<TMDBMovieCredit[]> => {
+export const getPersonCredits = async (tmdbId: number): Promise<TMDBMovieWithCredits[]> => {
   const searchResult = await fetch(
     `https://api.themoviedb.org/3/person/${tmdbId}/movie_credits?api_key=${config.theMovieDbApiKey}`,
   ).then((resp) => resp.json());
 
   const { cast, crew } = searchResult;
 
-  return [...cast, ...crew];
+  const jobsByMovie = [...cast, ...crew].reduce((res, credit) => {
+    const movie = res[credit.id] || credit;
+    const { job, department } = credit;
+    movie.jobs = movie.jobs || [];
+    movie.jobs.push({ job: job || 'Actor', department });
+    res[credit.id] = movie;
+    return res;
+  }, {});
+
+  return Object.values(jobsByMovie);
 };
 
 export const getPersonByIMDBId = async (imdbId: string): Promise<TMDBPerson> => {

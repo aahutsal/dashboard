@@ -4,14 +4,16 @@ import React, {
 import { Table, Tooltip } from 'antd';
 import Web3 from 'web3';
 import { ColumnType } from 'antd/lib/table';
-import { TMDBMovie, TMDBMovieExtended } from '@whiterabbitjs/dashboard-common';
+import { TMDBMovie, TMDBMovieExtended, TMDBMovieWithCredits } from '@whiterabbitjs/dashboard-common';
 import { toExtended } from '../../stores/movieAPI';
 import { DashboardContext } from '../../components/DashboardContextProvider';
 
+type MovieOrCredit = TMDBMovieExtended | TMDBMovieWithCredits;
+
 type MovieListWithRevenueProps = {
-  movies: TMDBMovieExtended[];
+  movies: MovieOrCredit[];
   hideExactNumbers?: boolean;
-  extraColumns?: ColumnType<TMDBMovieExtended>[];
+  extraColumns?: ColumnType<MovieOrCredit>[];
 };
 
 const vaguelyRangeify = (value: number | string) => {
@@ -29,9 +31,20 @@ const vaguelyRangeify = (value: number | string) => {
   return '$50,000+';
 };
 
+const renderJob = (movieOrCredit: MovieOrCredit) => {
+  const movie = movieOrCredit as TMDBMovieWithCredits;
+  return movie.jobs && (
+  <div style={{ fontSize: '0.9em', opacity: 0.8 }}>
+    Roles:
+    {' '}
+    {movie.jobs.map((j: any) => j.job).join(', ')}
+  </div>
+  );
+};
+
 export default ({ movies, hideExactNumbers = false, extraColumns }: MovieListWithRevenueProps) => {
   const { applyFactor } = useContext(DashboardContext);
-  const [extMovies, setExtMovies] = useState<TMDBMovieExtended[]>();
+  const [extMovies, setExtMovies] = useState<MovieOrCredit[]>();
 
   const columns = useMemo(() => [
     {
@@ -45,17 +58,20 @@ export default ({ movies, hideExactNumbers = false, extraColumns }: MovieListWit
       title: '',
       dataIndex: 'title',
       key: 'title',
-      render: (title: string, movie: TMDBMovie) => (
+      render: (title: string, movie: MovieOrCredit) => (
         <div>
-          {title}
-          {movie.release_date && (
-          <React.Fragment>
-            {' '}
-            (
-            {movie.release_date.split('-')[0]}
-            )
-          </React.Fragment>
-          )}
+          <div>
+            {title}
+            {movie.release_date && (
+            <React.Fragment>
+              {' '}
+              (
+              {movie.release_date.split('-')[0]}
+              )
+            </React.Fragment>
+            )}
+          </div>
+          {renderJob(movie)}
         </div>
       ),
     },

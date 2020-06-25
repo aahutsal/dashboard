@@ -46,6 +46,9 @@ export class User extends BaseUser {
   imdbId!: string;
 
   @attribute()
+  kind!: string;
+
+  @attribute()
   roles!: Array<UserRole>;
 
   constructor(seed?: object) {

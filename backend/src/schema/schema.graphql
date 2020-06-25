@@ -61,6 +61,7 @@ type User {
   id: Int
   imdbId: String
   email: String
+  kind: String
   roles: [UserRole]
   movies: [Movie]
   status(option: ApprovalStatus): String 
@@ -131,6 +132,7 @@ input UserInput {
   id: Int
   imdbId: String
   email: String
+  kind: String
   roles: [UserRole]
 }
 

@@ -1,6 +1,6 @@
 import React, { useContext, useState, useEffect } from 'react';
 import {
-  Form, Input, Button, Alert, Spin,
+  Form, Input, Button, Alert, Spin, Select,
 } from 'antd';
 import { Store } from 'antd/lib/form/interface';
 import { useMutation } from '@apollo/react-hooks';
@@ -15,7 +15,8 @@ import PendingUserScreen from './components/PendingUserScreen';
 import humanizeError from '../stores/utils/humanizeError';
 import MovieListWithRevenue from './components/MovieListWithRevenue';
 import { getPersonCredits } from '../stores/API';
-import { toExtended } from '../stores/movieAPI';
+
+const { Option } = Select;
 
 
 export default () => {
@@ -32,7 +33,7 @@ export default () => {
       return;
     }
     getPersonCredits(selectedPerson.id)
-      .then((credits) => Promise.all(credits.map(toExtended)))
+      .then((movies) => movies.filter((m) => m.jobs.length > 1 || m.jobs[0].job !== 'Actor'))
       .then(setSelectedPersonMovies);
   }, [selectedPerson]);
 
@@ -45,6 +46,7 @@ export default () => {
           id: values.person.id,
           imdbId: values.person.imdbId,
           email: values.email,
+          kind: values.kind,
           roles: ['RIGHTSHOLDER'],
         },
       },
@@ -86,8 +88,9 @@ export default () => {
       <div style={{ width: 400 }}>
         <h1>Please introduce yourself</h1>
         <p>
-          We want to verify your identity first. This way we ensure only
-          the rights holders can enter information into the system
+          Verifying you and your role in individual films is key.
+          This registry helps the film industry ensure only the true rights holders
+          make claims and make new films available for global distribution.
         </p>
         { loading && 'Loading...' }
         { error && <Alert type="error" message={humanizeError(error)} />}
@@ -99,11 +102,11 @@ export default () => {
             onFieldsChange={onFieldsChange}
           >
             <Form.Item
-              label="Your name"
+              label="Legal Name of Person"
               name="person"
               rules={[{ validator: checkPerson }]}
             >
-              <PersonSearch placeholder="Your name as on IMDB" />
+              <PersonSearch placeholder="Legal Name of Person as on IMDB" />
             </Form.Item>
             {selectedPerson && (
               <Form.Item label="IMDB id:">
@@ -111,7 +114,21 @@ export default () => {
               </Form.Item>
             )}
             <Form.Item
-              label="Email"
+              label="Type of Role"
+              name="kind"
+              rules={[{ required: true, message: 'Please enter your email' }]}
+            >
+              <Select>
+                <Option value="Production">Production</Option>
+                <Option value="Sales">Sales</Option>
+                <Option value="Distribution">Distribution</Option>
+                <Option value="Financing">Financing</Option>
+                <Option value="Public Institution">Public Institution</Option>
+                <Option value="Other">Other</Option>
+              </Select>
+            </Form.Item>
+            <Form.Item
+              label="Contact email"
               name="email"
               rules={[{ required: true, message: 'Please enter your email' }]}
             >

@@ -48,6 +48,11 @@ export default () => {
       key: 'email',
     },
     {
+      title: 'Kind',
+      dataIndex: 'kind',
+      key: 'kind',
+    },
+    {
       title: 'Address',
       dataIndex: 'accountAddress',
       key: 'address',
@@ -67,7 +72,7 @@ export default () => {
 
   return (
     <AppLayout section="rightsholders">
-      <h1>Rightsholders</h1>
+      <h1>Rightsholders to approve</h1>
       <Table
         bordered={false}
         loading={loading}
