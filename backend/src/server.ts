@@ -4,9 +4,10 @@ import { ApolloServer } from 'apollo-server-express';
 import compression from 'compression';
 import cors from 'cors';
 import schema from './schema';
+import DB from './datasources/DB';
 import movieAPI from './datasources/MovieAPI';
 import userAPI from './datasources/UserAPI';
-import priceAPI from './datasources/PriceAPI';
+import PriceAPI from './datasources/PriceAPI';
 import { recoverSigner } from './auth';
 import { first } from './util';
 
@@ -21,7 +22,7 @@ const server = new ApolloServer({
     dataSources: (): any => ({ 
         userAPI,
         movieAPI,
-        priceAPI,
+        priceAPI: new PriceAPI(DB),
     }),
     context: async ({ req }): Promise<object> => {     
         // Get the signed message from the headers.
