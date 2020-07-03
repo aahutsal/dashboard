@@ -4,8 +4,8 @@ on:
   push:
     branches:
       - master
-      - fix/cd
     paths:
+      - 'common/**'
       - 'frontend/**'
       - '.github/workflows/frontend-cd.yml'
 

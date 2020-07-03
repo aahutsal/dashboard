@@ -5,7 +5,10 @@
     "concurrently": "^5.2.0"
   },
   "scripts": {
-    "postinstall": "cd common && npm i && cd ../frontend && npm i && cd ../backend && npm i",
+    "deps:common": "cd common && npm i && npm run build && npm link && cd ..",
+    "deps:frontend": "cd frontend && npm i && npm link @whiterabbitjs/dashboard-common && cd ..",
+    "deps:backend": "cd backend && npm i && npm link @whiterabbitjs/dashboard-common && cd ..",
+    "postinstall": "npm run deps:common && npm run deps:frontend && npm run deps:backend",
     "local-backend": "cd backend && npm run start-local",
     "local-common": "cd common && npm run start-local",
     "local-frontend": "cd frontend && npm run start-local",

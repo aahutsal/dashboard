@@ -3,6 +3,7 @@ name: Frontend CI
 on:
   push:
     paths:
+      - 'common/**'
       - 'frontend/**'
       - '.github/workflows/frontend-ci.yml'
 
@@ -35,3 +36,6 @@ jobs:
 
     - name: Test Code
       run: npm run test
+
+    - name: Test build
+      run: npm run build

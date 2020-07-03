@@ -3,6 +3,7 @@ name: Backend CI
 on:
   push:
     paths:
+      - 'common/**'
       - 'backend/**'
       - '.github/workflows/backend-ci.yml'
 
@@ -37,3 +38,6 @@ jobs:
 
     - name: Test Code
       run: npm run test
+
+    - name: Test build
+      run: ./node_modules/.bin/tsc
