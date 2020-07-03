@@ -3,8 +3,8 @@ https://thegraph.com/docs/quick-start#local-development
 
 The code for the CollectionPool smart contract is available in the mad-hatter repository.
 
-Importantly install the Graph CLI `npm install -g @graphprotocol/graph-cli
-`
+Importantly install the Graph CLI `npm install -g @graphprotocol/graph-cli`
+
 # Deploy instructions
 Before being able to deploy, you need to set yourself up with the authentication token.
 `graph auth https://api.thegraph.com/deploy/ <ACCESS_TOKEN>`
@@ -12,6 +12,7 @@ Before being able to deploy, you need to set yourself up with the authentication
 To generate the needed schemas run `npm run codegen`
 
 To deploy to the hosted service run `npm run deploy`
+
 # GraphQL based API
 Query URL: `https://api.thegraph.com/subgraphs/name/whiterabbittheworldisyours/collectionpool`
 # Example requests

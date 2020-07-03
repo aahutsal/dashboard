@@ -31,7 +31,7 @@ export function handleDeposit(event: Deposit): void {
   let value = event.transaction.value
   // BigInt and BigDecimal math are supported
   region.total = region.total + value
-  region.unclaimed = region.total + value
+  region.unclaimed = region.unclaimed + value
   movie.total = movie.total + value
   region.save()
   // Entities can be written to the store with `.save()`
@@ -52,7 +52,7 @@ export function handleDistribution(event: Distribution): void {
   // assume that entity exists already,
   // as distribution would not be possible witouth revenue first
   let value = event.transaction.value
-  region.unclaimed = region.total - value
+  region.unclaimed = region.unclaimed - value
   region.save()
 }
 
@@ -66,6 +66,6 @@ export function handleRefund(event: Refund): void {
   // assume that entity exists already,
   // as refund would not be possible witouth revenue first
   let value = event.transaction.value
-  region.unclaimed = region.total - value
+  region.unclaimed = region.unclaimed - value
   region.save()
 }
