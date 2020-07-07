@@ -29,7 +29,7 @@ function App() {
           <Route path="/" exact component={Titles} />
           <Route path="/rightsholders" exact component={Rightsholders} />
           <Route path="/register" exact component={Register} />
-          <Route path="/movie/add" exact component={MovieSearch} />
+          <Route path="/add_movie" exact component={MovieSearch} />
           <Route path="/movie/:IMDB" exact component={MoviePage} />
         </DashboardContextProvider>
       </BrowserRouter>
