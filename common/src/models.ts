@@ -1,22 +1,21 @@
-
 export type Config = {
   factor: number;
 };
 
 export enum UserRole {
-  ADMIN = "ADMIN",
-  RIGHTSHOLDER = "RIGHTSHOLDER",
+  ADMIN = 'ADMIN',
+  RIGHTSHOLDER = 'RIGHTSHOLDER',
 }
 
 export enum ApprovalStatus {
-  APPROVED = "APPROVED",
-  PENDING = "PENDING",
-  REJECTED = "REJECTED",
+  APPROVED = 'APPROVED',
+  PENDING = 'PENDING',
+  REJECTED = 'REJECTED',
 }
 
 export enum PendingStatus {
-  USER = "Pending#USER",
-  MOVIE = "Pending#MOVIE"
+  USER = 'Pending#USER',
+  MOVIE = 'Pending#MOVIE'
 }
 
 export type RevenuePerMovieRegion = {
@@ -76,7 +75,7 @@ export class User {
   name!: string;
 
   id!: number;
-  
+
   imdbId!: string;
 
   email!: string;
@@ -84,11 +83,11 @@ export class User {
   status!: ApprovalStatus;
 
   pendingStatus!: string;
-  
+
   roles: UserRole[] = [];
 
   movies: Movie[] = [];
-  
+
   constructor(seed?: object) {
     if (seed) {
       Object.assign(this, seed);
@@ -104,10 +103,10 @@ export class User {
   }
 
   isApproved(): boolean {
-    return this.status === ApprovalStatus.APPROVED 
+    return this.status === ApprovalStatus.APPROVED;
   }
 
   ownsMovie(imdbId: string) {
-    return !!this.movies.find(m => m.IMDB === imdbId);
+    return !!this.movies.find((m) => m.IMDB === imdbId);
   }
-};
+}

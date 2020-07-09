@@ -8,8 +8,8 @@ import DB from './datasources/DB';
 import movieAPI from './datasources/MovieAPI';
 import userAPI from './datasources/UserAPI';
 import PriceAPI from './datasources/PriceAPI';
-import { recoverSigner } from './auth';
 import { first } from './util';
+import { verifyAuthToken } from '@whiterabbitjs/dashboard-common';
 
 const app = express();
 app.use('*', cors());
@@ -26,16 +26,16 @@ const server = new ApolloServer({
     }),
     context: async ({ req }): Promise<object> => {     
         // Get the signed message from the headers.
-        const signature = req.headers['x-wr-signature'];
+        const rawSignature = req.headers['x-wr-signature'];
         const rawSigData = req.headers['x-wr-sigdata'];
-        if (!signature || !rawSigData) return { user: {} };
+        if (!rawSignature || !rawSigData) return { user: {} };
 
         const sigData = JSON.parse(first(rawSigData) || '{}');
-        const isValid = Date.now() - sigData.timestamp < 86400000; // younger than 24 hours
+        const signature = first(rawSignature);
+        const { isValid, signer } = verifyAuthToken(sigData, signature);
         
         if (!isValid) return { user: {} };
-        const account = await recoverSigner(sigData, first(signature));
-        const user = await userAPI.findById(account).catch(() => ({}));
+        const user = await userAPI.findById(signer).catch(() => ({}));
         // add the user to the context
         return { user };
       },

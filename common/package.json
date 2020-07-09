@@ -1,14 +1,37 @@
 {
   "name": "@whiterabbitjs/dashboard-common",
-  "version": "1.2.0",
+  "version": "1.2.2",
   "description": "",
   "main": "dist/index.js",
   "license": "MPL-2.0",
   "scripts": {
     "start-local": "tsc -w",
-    "build": "tsc"
+    "build": "tsc",
+    "lint": "eslint \"src/**/*.ts\"",
+    "lint:fix": "eslint --fix \"src/**/*.ts\"",
+    "test": "jest src/"
   },
   "devDependencies": {
+    "@types/eth-sig-util": "^2.1.0",
+    "@types/ethereumjs-util": "^6.1.0",
+    "@types/jest": "^26.0.4",
+    "@typescript-eslint/eslint-plugin": "^2.24.0",
+    "eslint": "^6.6.0",
+    "eslint-config-airbnb-typescript": "^7.2.1",
+    "eslint-plugin-import": "^2.20.1",
+    "jest": "^26.1.0",
+    "ts-jest": "^26.1.1",
     "typescript": "^3.7.5"
+  },
+  "dependencies": {
+    "eth-sig-util": "^2.5.3",
+    "ethereumjs-util": "^7.0.2"
+  },
+  "jest": {
+    "preset": "ts-jest",
+    "testEnvironment": "node",
+    "coveragePathIgnorePatterns": [
+      "/node_modules/"
+    ]
   }
 }

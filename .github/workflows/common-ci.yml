@@ -1,15 +1,14 @@
-name: Backend CI
+name: Common CI
 
 on:
   push:
     paths:
       - 'common/**'
-      - 'backend/**'
-      - '.github/workflows/backend-ci.yml'
+      - '.github/workflows/common-ci.yml'
 
 defaults:
   run:
-    working-directory: backend
+    working-directory: common
 
 jobs:
   CI:
@@ -24,7 +23,7 @@ jobs:
         cache-name: cache-node-modules
       with:
         path: ~/.npm # npm cache files are stored in `~/.npm` on Linux/macOS
-        key: ${{ runner.os }}-build-${{ env.cache-name }}-${{ hashFiles('backend/package-lock.json') }}
+        key: ${{ runner.os }}-build-${{ env.cache-name }}-${{ hashFiles('common/package-lock.json') }}
         restore-keys: |
           ${{ runner.os }}-build-${{ env.cache-name }}-
           ${{ runner.os }}-build-
