@@ -95,17 +95,17 @@ export default () => {
           <h2>{(data && data.movie.metadata.title)}</h2>
         </Col>
         <Col className="gutter-row" xs={{ span: 24 }} lg={{ span: 18 }}>
-          <Section>
+          <Section style={{ maxWidth: '600px' }}>
             <h2>Revenue</h2>
             {extendedMovie && <MovieRevenueList movie={extendedMovie} />}
           </Section>
 
-          <Section>
-            <h2>Prices</h2>
+          <Section style={{ maxWidth: '600px' }}>
             { currentPrice && <PriceForm price={currentPrice} onClear={onClearForm} /> }
             {!currentPrice && (
             <>
               <div style={{ display: 'flex', marginBottom: '14px' }}>
+                <h2>Prices</h2>
                 <Button type="primary" htmlType="button" style={{ marginLeft: 'auto' }} onClick={() => openPriceForm({ IMDB })}>New Price</Button>
               </div>
               <Spin spinning={loading}>

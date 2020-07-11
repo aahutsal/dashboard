@@ -30,7 +30,7 @@ export default ({ movie }: MovieRevenueListProps) => {
       render: (code: number) => humanizeM49[code] || 'N/A',
     },
     {
-      title: 'Total Revenue',
+      title: 'Total',
       dataIndex: 'total',
       width: '25%',
       align: 'right' as any,
@@ -38,7 +38,7 @@ export default ({ movie }: MovieRevenueListProps) => {
       render: (total: string) => toUsdString(total),
     },
     {
-      title: 'Unclaimed Revenue',
+      title: 'Unclaimed',
       dataIndex: 'unclaimed',
       width: '25%',
       align: 'right' as any,
@@ -80,7 +80,7 @@ export default ({ movie }: MovieRevenueListProps) => {
   };
 
   return (
-    <div style={{ maxWidth: '600px' }}>
+    <div>
       <Table
         rowSelection={rowSelection}
         dataSource={movie.revenue?.revenuePerMovieRegions || []}
@@ -100,7 +100,7 @@ export default ({ movie }: MovieRevenueListProps) => {
           return (
             <Table.Summary.Row style={{ backgroundColor: '#fcfcfc', borderBottom: 0 }}>
               <Table.Summary.Cell colSpan={2} index={1}>
-                <div style={{ textAlign: 'right', opacity: 0.8 }}>Total</div>
+                <div style={{ textAlign: 'right', opacity: 0.8 }}>Grand Total</div>
               </Table.Summary.Cell>
               <Table.Summary.Cell index={2}>
                 <div style={{ textAlign: 'right' }}>
