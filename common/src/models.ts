@@ -21,6 +21,7 @@ export enum PendingStatus {
 export type RevenuePerMovieRegion = {
   region: number;
   total: BigInt;
+  unclaimed: BigInt;
 };
 
 export type RevenuePerMovie = {
