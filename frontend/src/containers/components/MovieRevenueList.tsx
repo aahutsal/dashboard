@@ -1,6 +1,6 @@
-import React, { useState, useContext, useMemo } from 'react';
+import React, { useState, useContext, useMemo, useEffect, useRef } from 'react';
 import {
-  Table, Tooltip, Button, Space,
+  Table, Tooltip, Button, Space, 
 } from 'antd';
 import Web3 from 'web3';
 import { TMDBMovieExtended, RevenuePerMovieRegion } from '@whiterabbitjs/dashboard-common';
@@ -8,16 +8,34 @@ import { Key, ColumnsType } from 'antd/lib/table/interface';
 import humanizeM49 from '../../stores/humanizeM49';
 import { claimRevenue } from '../../stores/claimAPI';
 import { DashboardContext } from '../../components/DashboardContextProvider';
+import MovieRevenueClaimProgress from './MovieRevenueClaimProgress';
+import { Channel } from 'pusher-js';
 
 type MovieRevenueListProps = {
   movie: TMDBMovieExtended;
+  pusherChannel: Channel;
 };
 
+export enum ClaimStatus {
+  FAILED,
+  SUCCESS,
+  PENDING,  
+};
 
-export default ({ movie }: MovieRevenueListProps) => {
+export type ClaimResult = {
+  status: ClaimStatus;
+  txHash?: string;
+};
+
+export type Claims = {
+  [region: string]: ClaimResult;
+};
+
+export default ({ movie, pusherChannel }: MovieRevenueListProps) => {
   const { applyFactor } = useContext(DashboardContext);
   const [selectedRowKeys, setSelectedRowKeys] = useState<Key[]>([]);
-  const [claiming, setClaiming] = useState<boolean>(false);
+  const [claims, setClaims] = useState<Claims>({});
+  const cl = useRef<Claims>({});
 
   const toUsdString = (value : BigInt | string) => `$${Web3.utils.fromWei(applyFactor(value).toString())}`;
 
@@ -43,41 +61,65 @@ export default ({ movie }: MovieRevenueListProps) => {
       width: '25%',
       align: 'right' as any,
       key: 'unclaimed',
-      render: (unclaimed: string) => (
-        <>
-          {unclaimed !== '0' && (
+      render: (unclaimed: string, record: RevenuePerMovieRegion) => {
+        const claimed = unclaimed === '0' || (claims[record.region] && claims[record.region].status === ClaimStatus.SUCCESS);
+        if (!claimed) {
+          return (
             <Tooltip title="Current revenue on WhiteRabbit pending to be collected by you">
               <span>
                 {toUsdString(unclaimed)}
               </span>
             </Tooltip>
-          )}
-          {unclaimed === '0' && '—'}
-        </>
-      ),
+          );
+        }
+        return '—';
+      },
     },
-  ] as ColumnsType<RevenuePerMovieRegion>, []);
+  ] as ColumnsType<RevenuePerMovieRegion>, [claims]);
 
   const rowSelection = {
     selectedRowKeys,
     onChange: (selectedKeys: Key[]) => setSelectedRowKeys(selectedKeys),
   };
 
+  useEffect(() => {
+    if (!pusherChannel) return;
+    pusherChannel.bind('revenue-claim', ({ regionId, result, txHash }: any) => {
+      const status = result === 1 ? ClaimStatus.SUCCESS : ClaimStatus.FAILED;
+      cl.current = {
+        ...cl.current,
+        [regionId]: { status, txHash }
+      };
+      setClaims(cl.current);
+    });
+    return () => {
+      pusherChannel.unbind('revenue-claim');
+    }
+  }, [pusherChannel]);
+
   const claim = async () => {
     if (!movie.revenue) return;
-    setClaiming(true);
     const withRevenue = movie.revenue.revenuePerMovieRegions
       .filter((r) => BigInt(r.unclaimed) > 0)
       .map((r) => r.region);
+
+    cl.current = selectedRowKeys.reduce((claims, region) => {
+      if (withRevenue.indexOf(Number(region)) < 0) return claims;
+      claims[region] = { status: ClaimStatus.PENDING };
+      return claims;
+    }, {} as Claims);
+    setClaims(cl.current);
 
     await Promise.all(selectedRowKeys.map((region) => {
       if (withRevenue.indexOf(Number(region)) < 0) return null;
       return claimRevenue(movie.imdb_id || '', String(region));
     }));
-
+    
     setSelectedRowKeys([]);
-    setClaiming(false);
   };
+
+  const claiming = !!Object.keys(claims).length;
+  const hasPendingClaims = !!Object.values(claims).find(({ status }) => status === ClaimStatus.PENDING);
 
   return (
     <div>
@@ -89,7 +131,6 @@ export default ({ movie }: MovieRevenueListProps) => {
         rowKey="region"
         pagination={false}
         size="small"
-        loading={claiming}
         summary={(pageData) => {
           const summary = pageData.reduce((s, r) => {
             s.total += BigInt(r.total); // eslint-disable-line no-param-reassign
@@ -116,11 +157,12 @@ export default ({ movie }: MovieRevenueListProps) => {
           );
         }}
       />
+      {claiming && <MovieRevenueClaimProgress claims={claims} />}
       <div style={{ textAlign: 'right', marginTop: '14px' }}>
         <Space>
           {selectedRowKeys.length > 0 && `${selectedRowKeys.length} region${selectedRowKeys.length > 1 ? 's' : ''}`}
           {!selectedRowKeys.length && 'All regions'}
-          <Button type="primary" disabled={claiming} onClick={claim}>Claim revenue</Button>
+          <Button type="primary" disabled={!selectedRowKeys.length || hasPendingClaims} onClick={claim}>Claim revenue</Button>
         </Space>
       </div>
     </div>

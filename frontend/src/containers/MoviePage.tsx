@@ -16,6 +16,8 @@ import humanizeM49 from '../stores/humanizeM49';
 import MovieRevenueList from './components/MovieRevenueList';
 import { toExtended } from '../stores/movieAPI';
 import Section from './components/Section';
+import Pusher, { Channel } from 'pusher-js';
+import { PUSHER_KEY } from '../config';
 
 export default () => {
   const { IMDB } = useParams();
@@ -24,11 +26,22 @@ export default () => {
   const { data, loading } = useQuery(GET_MOVIE, { variables: { IMDB } });
   const { user, applyFactor } = useContext(DashboardContext);
   const history = useHistory();
+  const [pusherChannel, setPusherChannel] = useState<Channel>();
 
   useEffect(() => {
     if (!data || !data.movie) return;
     toExtended(data.movie.metadata).then(setExtendedMovie);
   }, [data]);
+
+  useEffect(() => {
+    if (!extendedMovie || !extendedMovie.imdb_id) return;
+    const pusher = new Pusher(PUSHER_KEY, { cluster: 'eu' });
+    setPusherChannel(pusher.subscribe(extendedMovie.imdb_id));
+    return () => {
+      pusherChannel?.unsubscribe();
+      pusher.disconnect();
+    };
+  }, [extendedMovie]);
 
   if (!user || !user.isApproved() || !user.ownsMovie(IMDB)) { // TODO:: move to route middleware
     history.push('/');
@@ -97,7 +110,7 @@ export default () => {
         <Col className="gutter-row" xs={{ span: 24 }} lg={{ span: 18 }}>
           <Section style={{ maxWidth: '600px' }}>
             <h2>Revenue</h2>
-            {extendedMovie && <MovieRevenueList movie={extendedMovie} />}
+            {extendedMovie && pusherChannel && <MovieRevenueList movie={extendedMovie} pusherChannel={pusherChannel} />}
           </Section>
 
           <Section style={{ maxWidth: '600px' }}>
