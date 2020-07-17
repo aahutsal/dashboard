@@ -1,15 +1,16 @@
 import React from 'react';
-import styled from "styled-components";
-import { Collapse, Spin, Progress } from "antd";
-import { WarningFilled, CloseCircleFilled, ExceptionOutlined } from "@ant-design/icons";
-import humanizeM49 from "../../stores/humanizeM49";
-import { ClaimStatus, Claims } from './MovieRevenueList';
+import styled from 'styled-components';
+import { Collapse, Spin, Progress } from 'antd';
+import { WarningFilled, CloseCircleFilled, ExceptionOutlined } from '@ant-design/icons';
+import humanizeM49 from '../../../stores/humanizeM49';
+import { ClaimStatus, Claims } from './types';
 
 type MovieRevenueClaimProgressProps = {
   claims: Claims;
 };
 
 type ClaimStats = {
+  total: number;
   [status: number]: number;
 };
 
@@ -23,15 +24,27 @@ const TightCollapse = styled(Collapse)`
   }
 `;
 
-const ClaimStatusIndicator = ({ claimStats, style }: { 
+const ClaimStatusIndicator = ({ claimStats, style }: {
   claimStats: ClaimStats,
   style?: any
- }) => {
+}) => {
   if (claimStats[ClaimStatus.PENDING] > 0) {
-    return <Spin size="small" style={{ ...style, marginLeft: '7px', marginTop: '4px', lineHeight: 0 }} />; 
+    return (
+      <Spin
+        size="small"
+        style={{
+          ...style, marginLeft: '7px', marginTop: '4px', lineHeight: 0,
+        }}
+      />
+    );
   }
   if (claimStats[ClaimStatus.FAILED] > 0) {
-    return <WarningFilled style={{ ...style, marginLeft: '14px', marginTop: '4px', color: "#faad14" }}/>;
+    return (
+      <WarningFilled style={{
+        ...style, marginLeft: '14px', marginTop: '4px', color: '#faad14',
+      }}
+      />
+    );
   }
   return <></>;
 };
@@ -39,26 +52,28 @@ const ClaimStatusIndicator = ({ claimStats, style }: {
 const FailedClaimsList = ({ claims }: { claims: Claims }) => (
   <TightCollapse
     ghost
-    expandIcon={() =><CloseCircleFilled style={{ color: "#ff4d4f" }}/>}
+    expandIcon={() => <CloseCircleFilled style={{ color: '#ff4d4f' }} />}
   >
     <TightCollapse.Panel
       key="1"
-      header={<span style={{ color: "#ff4d4f" }}>Failed to claim revenue for some of the regions. Click here for more details</span>}
+      header={<span style={{ color: '#ff4d4f' }}>Failed to claim revenue for some of the regions. Click here for more details</span>}
     >
       Revenue claim failed for the following countries:
       <ul>
         {Object.entries(claims).map(([region, claim]) => {
-          if (claim.status !== ClaimStatus.FAILED) return;
+          if (claim.status !== ClaimStatus.FAILED) return <></>;
           return (
             <li key={`claim-failure-${region}`}>
-              
+
               {' '}
               {humanizeM49[region]}
               {' '}
               <a
                 target="_blank"
+                rel="noreferrer"
                 href={`https://blockscout.com/poa/xdai/tx/${claim.txHash}`}
-                title="See transaction on block explorer">
+                title="See transaction on block explorer"
+              >
                 <ExceptionOutlined style={{ opacity: 0.6, color: 'gray' }} />
               </a>
             </li>
@@ -70,22 +85,22 @@ const FailedClaimsList = ({ claims }: { claims: Claims }) => (
 );
 
 export default ({ claims }: MovieRevenueClaimProgressProps) => {
-  const totalClaims = Object.keys(claims).length;
-
   const claimStats = Object.values(claims).reduce((stats, claim) => {
-    stats[claim.status] = stats[claim.status] + 1;
+    stats[claim.status] += 1; // eslint-disable-line no-param-reassign
+    stats.total += 1; // eslint-disable-line no-param-reassign
     return stats;
   }, {
+    total: 0,
     [ClaimStatus.FAILED]: 0,
     [ClaimStatus.SUCCESS]: 0,
     [ClaimStatus.PENDING]: 0,
   } as ClaimStats);
 
   const processedPercent = Math.round(
-    (claimStats[ClaimStatus.SUCCESS] + claimStats[ClaimStatus.FAILED]) / totalClaims * 100
+    ((claimStats[ClaimStatus.SUCCESS] + claimStats[ClaimStatus.FAILED]) / claimStats.total) * 100,
   );
 
-  const successPercent = Math.round(claimStats[ClaimStatus.SUCCESS] / totalClaims * 100);
+  const successPercent = Math.round((claimStats[ClaimStatus.SUCCESS] / claimStats.total) * 100);
 
   return (
     <div>
@@ -94,12 +109,15 @@ export default ({ claims }: MovieRevenueClaimProgressProps) => {
           percent={processedPercent}
           success={{
             percent: successPercent,
-            strokeColor: "#52c41a",
+            strokeColor: '#52c41a',
           }}
           strokeColor="#ff4d4f"
         />
         <ClaimStatusIndicator claimStats={claimStats} />
       </div>
+      {claimStats[ClaimStatus.PENDING] > 0 && (
+        `Claiming revenue for ${claimStats.total} region${claimStats.total > 1 ? 's' : ''}`
+      )}
       {claimStats[ClaimStatus.FAILED] > 0 && <FailedClaimsList claims={claims} />}
     </div>
   );

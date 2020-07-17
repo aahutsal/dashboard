@@ -7,16 +7,16 @@ import {
 import { useParams, useHistory } from 'react-router-dom';
 import { useQuery } from '@apollo/react-hooks';
 import { TMDBMovieExtended } from '@whiterabbitjs/dashboard-common';
+import Pusher, { Channel } from 'pusher-js';
 import { DashboardContext } from '../components/DashboardContextProvider';
 import { GET_MOVIE } from '../apollo/queries';
 import AppLayout from './AppLayout';
 import PriceForm from './components/PriceForm';
 import { PriceInterface } from './components/PriceType';
 import humanizeM49 from '../stores/humanizeM49';
-import MovieRevenueList from './components/MovieRevenueList';
+import MovieRevenueList from './components/MovieRevenueList/index';
 import { toExtended } from '../stores/movieAPI';
 import Section from './components/Section';
-import Pusher, { Channel } from 'pusher-js';
 import { PUSHER_KEY } from '../config';
 
 export default () => {
@@ -34,11 +34,12 @@ export default () => {
   }, [data]);
 
   useEffect(() => {
-    if (!extendedMovie || !extendedMovie.imdb_id) return;
+    if (!extendedMovie || !extendedMovie.imdb_id) return () => {};
     const pusher = new Pusher(PUSHER_KEY, { cluster: 'eu' });
-    setPusherChannel(pusher.subscribe(extendedMovie.imdb_id));
+    const channel = pusher.subscribe(extendedMovie.imdb_id);
+    setPusherChannel(channel);
     return () => {
-      pusherChannel?.unsubscribe();
+      channel?.unsubscribe();
       pusher.disconnect();
     };
   }, [extendedMovie]);
@@ -110,7 +111,8 @@ export default () => {
         <Col className="gutter-row" xs={{ span: 24 }} lg={{ span: 18 }}>
           <Section style={{ maxWidth: '600px' }}>
             <h2>Revenue</h2>
-            {extendedMovie && pusherChannel && <MovieRevenueList movie={extendedMovie} pusherChannel={pusherChannel} />}
+            {extendedMovie && pusherChannel
+              && <MovieRevenueList movie={extendedMovie} pusherChannel={pusherChannel} />}
           </Section>
 
           <Section style={{ maxWidth: '600px' }}>

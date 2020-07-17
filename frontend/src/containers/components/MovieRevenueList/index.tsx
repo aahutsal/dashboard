@@ -1,34 +1,22 @@
-import React, { useState, useContext, useMemo, useEffect, useRef } from 'react';
+import React, {
+  useState, useContext, useMemo, useEffect, useRef,
+} from 'react';
 import {
-  Table, Tooltip, Button, Space, 
+  Table, Tooltip, Button, Space,
 } from 'antd';
 import Web3 from 'web3';
 import { TMDBMovieExtended, RevenuePerMovieRegion } from '@whiterabbitjs/dashboard-common';
 import { Key, ColumnsType } from 'antd/lib/table/interface';
-import humanizeM49 from '../../stores/humanizeM49';
-import { claimRevenue } from '../../stores/claimAPI';
-import { DashboardContext } from '../../components/DashboardContextProvider';
-import MovieRevenueClaimProgress from './MovieRevenueClaimProgress';
 import { Channel } from 'pusher-js';
+import humanizeM49 from '../../../stores/humanizeM49';
+import { claimRevenue } from '../../../stores/claimAPI';
+import { DashboardContext } from '../../../components/DashboardContextProvider';
+import MovieRevenueClaimProgress from './MovieRevenueClaimProgress';
+import { Claims, ClaimStatus } from './types';
 
 type MovieRevenueListProps = {
   movie: TMDBMovieExtended;
   pusherChannel: Channel;
-};
-
-export enum ClaimStatus {
-  FAILED,
-  SUCCESS,
-  PENDING,  
-};
-
-export type ClaimResult = {
-  status: ClaimStatus;
-  txHash?: string;
-};
-
-export type Claims = {
-  [region: string]: ClaimResult;
 };
 
 export default ({ movie, pusherChannel }: MovieRevenueListProps) => {
@@ -83,18 +71,18 @@ export default ({ movie, pusherChannel }: MovieRevenueListProps) => {
   };
 
   useEffect(() => {
-    if (!pusherChannel) return;
+    if (!pusherChannel) return () => {};
     pusherChannel.bind('revenue-claim', ({ regionId, result, txHash }: any) => {
       const status = result === 1 ? ClaimStatus.SUCCESS : ClaimStatus.FAILED;
       cl.current = {
         ...cl.current,
-        [regionId]: { status, txHash }
+        [regionId]: { status, txHash },
       };
       setClaims(cl.current);
     });
     return () => {
       pusherChannel.unbind('revenue-claim');
-    }
+    };
   }, [pusherChannel]);
 
   const claim = async () => {
@@ -103,10 +91,10 @@ export default ({ movie, pusherChannel }: MovieRevenueListProps) => {
       .filter((r) => BigInt(r.unclaimed) > 0)
       .map((r) => r.region);
 
-    cl.current = selectedRowKeys.reduce((claims, region) => {
-      if (withRevenue.indexOf(Number(region)) < 0) return claims;
-      claims[region] = { status: ClaimStatus.PENDING };
-      return claims;
+    cl.current = selectedRowKeys.reduce((_claims, region) => {
+      if (withRevenue.indexOf(Number(region)) < 0) return _claims;
+      _claims[region] = { status: ClaimStatus.PENDING }; // eslint-disable-line no-param-reassign
+      return _claims;
     }, {} as Claims);
     setClaims(cl.current);
 
@@ -114,12 +102,13 @@ export default ({ movie, pusherChannel }: MovieRevenueListProps) => {
       if (withRevenue.indexOf(Number(region)) < 0) return null;
       return claimRevenue(movie.imdb_id || '', String(region));
     }));
-    
+
     setSelectedRowKeys([]);
   };
 
   const claiming = !!Object.keys(claims).length;
-  const hasPendingClaims = !!Object.values(claims).find(({ status }) => status === ClaimStatus.PENDING);
+  const hasPendingClaims = !!Object.values(claims)
+    .find(({ status }) => status === ClaimStatus.PENDING);
 
   return (
     <div>
