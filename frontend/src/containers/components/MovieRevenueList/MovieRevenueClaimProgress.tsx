@@ -70,7 +70,7 @@ const FailedClaimsList = ({ claims }: { claims: Claims }) => (
               {' '}
               <a
                 target="_blank"
-                rel="noreferrer"
+                rel="noopener noreferrer"
                 href={`https://blockscout.com/poa/xdai/tx/${claim.txHash}`}
                 title="See transaction on block explorer"
               >

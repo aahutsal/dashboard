@@ -63,7 +63,7 @@ export default ({ movie, pusherChannel }: MovieRevenueListProps) => {
         return '—';
       },
     },
-  ] as ColumnsType<RevenuePerMovieRegion>, [claims]);
+  ] as ColumnsType<RevenuePerMovieRegion>, [toUsdString, claims]);
 
   const rowSelection = {
     selectedRowKeys,
