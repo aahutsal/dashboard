@@ -25,10 +25,8 @@ export default ({ movie, pusherChannel }: MovieRevenueListProps) => {
   const [claims, setClaims] = useState<Claims>({});
   const cl = useRef<Claims>({});
 
-  const toUsdString = useMemo(() =>
-    ((value : BigInt | string) => `$${Web3.utils.fromWei(applyFactor(value).toString())}`),
-    [applyFactor],
-  );
+  const toUsdString = useMemo(() => ((value : BigInt | string) => `$${Web3.utils.fromWei(applyFactor(value).toString())}`),
+    [applyFactor]);
 
   const columns = useMemo(() => [
     {
