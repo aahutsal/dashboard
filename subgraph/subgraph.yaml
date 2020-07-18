@@ -6,9 +6,9 @@ dataSources:
     name: CollectionPool
     network: xdai
     source:
-      address: "0x4C836394875487eC3C184C3E3848cEeB814C7487"
+      address: "0x8a55f373dC25B6d638Aa406757eE5Bb5fBb3B9A5"
       abi: CollectionPool
-      startBlock: 10485393
+      startBlock: 10883073
     mapping:
       kind: ethereum/events
       apiVersion: 0.0.4
@@ -29,7 +29,7 @@ dataSources:
           handler: handleOwnershipTransferred
         - event: Transfer(indexed address,indexed address,uint256)
           handler: handleTransfer
-        - event: Distribution(indexed uint256,indexed uint16)
+        - event: Distribution(indexed uint256,indexed uint16,uint256,indexed address)
           handler: handleDistribution
         - event: Refund(indexed uint256,indexed uint16)
           handler: handleRefund

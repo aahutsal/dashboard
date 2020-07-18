@@ -47,12 +47,10 @@ export function handleDistribution(event: Distribution): void {
   // needs to be unique across all entities of the same type
   let movieId = event.params.movieId.toString()
   let regionId = movieId + "-" + BigInt.fromI32(event.params.region).toString()
-  let movie = RevenuePerMovie.load(movieId)
   let region = RevenuePerMovieRegion.load(regionId)
   // assume that entity exists already,
   // as distribution would not be possible witouth revenue first
-  let value = event.transaction.value
-  region.unclaimed = region.unclaimed - value
+  region.unclaimed = region.unclaimed - event.params.amount
   region.save()
 }
 
