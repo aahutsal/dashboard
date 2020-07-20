@@ -9,7 +9,7 @@ import { useMutation } from '@apollo/react-hooks';
 import { GET_MOVIE } from '../../apollo/queries';
 import { ADD_PRICE, UPDATE_PRICE, DELETE_PRICE } from '../../apollo/mutations';
 import { DashboardContext } from '../../components/DashboardContextProvider';
-import Regions from '../../stores/humanizeM49';
+import { codeToName as Regions } from '../../stores/humanizeM49';
 import { PriceInterface } from './PriceType';
 import humanizeError from '../../stores/utils/humanizeError';
 import removeNullAttributes from '../../stores/utils/removeNullAttributes';

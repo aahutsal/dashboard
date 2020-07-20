@@ -37,7 +37,7 @@ export default () => {
       title: 'Region',
       dataIndex: 'region',
       key: 'region',
-      render: (code: number) => humanizeM49[code] || 'Any',
+      render: (code: number) => humanizeM49(code) || 'Any',
     },
     {
       title: 'Medium',
