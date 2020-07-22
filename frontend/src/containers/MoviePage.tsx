@@ -1,4 +1,4 @@
-import React, { useState, useContext } from 'react';
+import React, { useState, useContext, useEffect } from 'react';
 import moment from 'moment';
 import Web3 from 'web3';
 import {
@@ -6,19 +6,43 @@ import {
 } from 'antd';
 import { useParams, useHistory } from 'react-router-dom';
 import { useQuery } from '@apollo/react-hooks';
+import { TMDBMovieExtended } from '@whiterabbitjs/dashboard-common';
+import Pusher, { Channel } from 'pusher-js';
 import { DashboardContext } from '../components/DashboardContextProvider';
 import { GET_MOVIE } from '../apollo/queries';
 import AppLayout from './AppLayout';
 import PriceForm from './components/PriceForm';
 import { PriceInterface } from './components/PriceType';
 import humanizeM49 from '../stores/humanizeM49';
+import MovieRevenueList from './components/MovieRevenueList/index';
+import { toExtended } from '../stores/movieAPI';
+import Section from './components/Section';
+import { PUSHER_KEY } from '../config';
 
 export default () => {
   const { IMDB } = useParams();
   const [currentPrice, setCurrentPrice] = useState<PriceInterface>();
+  const [extendedMovie, setExtendedMovie] = useState<TMDBMovieExtended>();
   const { data, loading } = useQuery(GET_MOVIE, { variables: { IMDB } });
   const { user, applyFactor } = useContext(DashboardContext);
   const history = useHistory();
+  const [pusherChannel, setPusherChannel] = useState<Channel>();
+
+  useEffect(() => {
+    if (!data || !data.movie) return;
+    toExtended(data.movie.metadata).then(setExtendedMovie);
+  }, [data]);
+
+  useEffect(() => {
+    if (!extendedMovie || !extendedMovie.imdb_id) return () => {};
+    const pusher = new Pusher(PUSHER_KEY, { cluster: 'eu' });
+    const channel = pusher.subscribe(extendedMovie.imdb_id);
+    setPusherChannel(channel);
+    return () => {
+      channel?.unsubscribe();
+      pusher.disconnect();
+    };
+  }, [extendedMovie]);
 
   if (!user || !user.isApproved() || !user.ownsMovie(IMDB)) { // TODO:: move to route middleware
     history.push('/');
@@ -85,24 +109,33 @@ export default () => {
           <h2>{(data && data.movie.metadata.title)}</h2>
         </Col>
         <Col className="gutter-row" xs={{ span: 24 }} lg={{ span: 18 }}>
-          { currentPrice && <PriceForm price={currentPrice} onClear={onClearForm} /> }
-          {!currentPrice && (
-          <React.Fragment>
-            <div style={{ display: 'flex', marginBottom: '14px' }}>
-              <Button type="primary" htmlType="button" style={{ marginLeft: 'auto' }} onClick={() => openPriceForm({ IMDB })}>New Price</Button>
-            </div>
-            <Spin spinning={loading}>
-              <Table
-                showHeader
-                bordered={false}
-                dataSource={(data && data.movie.pricing) || []}
-                columns={columns}
-                pagination={{ pageSize: 40 }}
-                rowKey="priceId"
-              />
-            </Spin>
-          </React.Fragment>
-          )}
+          <Section style={{ maxWidth: '600px' }}>
+            <h2>Revenue</h2>
+            {extendedMovie && pusherChannel
+              && <MovieRevenueList movie={extendedMovie} pusherChannel={pusherChannel} />}
+          </Section>
+
+          <Section style={{ maxWidth: '600px' }}>
+            { currentPrice && <PriceForm price={currentPrice} onClear={onClearForm} /> }
+            {!currentPrice && (
+            <>
+              <div style={{ display: 'flex', marginBottom: '14px' }}>
+                <h2>Prices</h2>
+                <Button type="primary" htmlType="button" style={{ marginLeft: 'auto' }} onClick={() => openPriceForm({ IMDB })}>New Price</Button>
+              </div>
+              <Spin spinning={loading}>
+                <Table
+                  showHeader
+                  bordered={false}
+                  dataSource={(data && data.movie.pricing) || []}
+                  columns={columns}
+                  pagination={{ pageSize: 40 }}
+                  rowKey="priceId"
+                />
+              </Spin>
+            </>
+            )}
+          </Section>
         </Col>
       </Row>
     </AppLayout>

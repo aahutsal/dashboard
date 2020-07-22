@@ -17,6 +17,7 @@ export const getRevenuePerMovie = async (movieId: string): Promise<RevenuePerMov
       revenuePerMovieRegions {
         region
         total
+        unclaimed
       }
     }
   }`;
