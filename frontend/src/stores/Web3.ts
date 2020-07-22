@@ -137,13 +137,6 @@ const onboard = Onboard({
   walletCheck: [
     { checkName: 'derivationPath' },
     { checkName: 'connect' },
-    {
-      checkName: 'network',
-      heading: 'Please switch to XDAI sidechain',
-      description: 'WhiteRabbit runs on XDAI sidechain network.',
-      icon: `<img src=${logo} alt="logo" width="32"/>`,
-      html: '<a target="_blank" href="https://www.xdaichain.com/for-users/wallets/metamask/metamask-setup">Instructions for Metamask</a>',
-    },
     { checkName: 'accounts' },
   ],
 });

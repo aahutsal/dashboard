@@ -45,7 +45,7 @@ export const createAuthMessage = (
   domain: {
     name: 'WhiteRabbit Dashboard',
     version: '1',
-    chainId: NETWORK_ID,
+    chainId: 1,
   },
   primaryType: 'AuthMessage',
   message: {
