@@ -40,7 +40,7 @@ export default ({ movie, pusherChannel }: MovieRevenueListProps) => {
       dataIndex: 'region',
       width: '45%',
       key: 'region',
-      render: (code: number) => humanizeM49[code] || 'N/A',
+      render: (code: number) => humanizeM49(code) || 'N/A',
     },
     {
       title: 'Total',

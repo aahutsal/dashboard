@@ -66,7 +66,7 @@ const FailedClaimsList = ({ claims }: { claims: Claims }) => (
             <li key={`claim-failure-${region}`}>
 
               {' '}
-              {humanizeM49[region]}
+              {humanizeM49(region)}
               {' '}
               <a
                 target="_blank"
