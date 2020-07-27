@@ -10,7 +10,7 @@ import { APPROVE_USER, DECLINE_USER } from '../apollo/mutations';
 
 
 export default () => {
-  const { user } = useContext(DashboardContext);
+  const { user, account } = useContext(DashboardContext);
   const history = useHistory();
 
   if (!user || !user.isAdmin()) {
@@ -23,7 +23,12 @@ export default () => {
 
   const refetchQueries = [
     { query: PENDING_USERS },
-    { query: GET_USER },
+    {
+      query: GET_USER,
+      variables: {
+        accountAddress: account,
+      },
+    },
   ];
   const approve = (userId: string) => approveUser({ variables: { userId }, refetchQueries })
     .catch(() => { });
@@ -71,7 +76,7 @@ export default () => {
   ];
 
   return (
-    <AppLayout section="rightsholders">
+    <AppLayout section="admin">
       <h1>Rightsholders to approve</h1>
       <Table
         bordered={false}

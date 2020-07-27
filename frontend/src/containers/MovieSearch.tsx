@@ -1,13 +1,11 @@
-import React, { useState, useContext } from 'react';
+import React, { useState } from 'react';
 import {
   Form, Input, Button, Table, Spin, Row, Col, DatePicker,
 } from 'antd';
 import { Store } from 'antd/lib/form/interface';
-import { useHistory } from 'react-router-dom';
 import AppLayout from './AppLayout';
 import MovieForm from './components/MovieForm';
 import { getMovieDetails, MovieInterface, searchMovies } from '../stores/API';
-import { DashboardContext } from '../components/DashboardContextProvider';
 
 const columns = [
   {
@@ -48,12 +46,6 @@ export default () => {
   let loading = false;
   const [movie, setMovie] = useState<MovieInterface>();
   const [display, setDisplay] = useState<MovieInterface[]>();
-  const { user } = useContext(DashboardContext);
-  const history = useHistory();
-
-  if (!user || user.status !== 'APPROVED') { // TODO:: move to route middleware
-    history.push('/register');
-  }
 
   const onRow = (record: MovieInterface) => ({
     onClick: async () => {

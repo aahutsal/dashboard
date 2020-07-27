@@ -25,7 +25,7 @@ export default ({ movie, pusherChannel }: MovieRevenueListProps) => {
   const [claims, setClaims] = useState<Claims>({});
   const cl = useRef<Claims>({});
 
-  if (!movie.revenue) return <></>;
+  if (!movie.revenue) return <>No revenue yet</>;
 
   const withRevenue = movie.revenue.revenuePerMovieRegions
     .filter((r) => BigInt(r.unclaimed) > 0)

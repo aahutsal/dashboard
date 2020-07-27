@@ -1,5 +1,6 @@
 @import '~antd/dist/antd.css';
 
+
 .App {
   text-align: center;
 }
@@ -7,6 +8,10 @@
 .App-logo {
   height: 40vmin;
   pointer-events: none;
+}
+
+#root {
+  height: 100%;
 }
 
 @media (prefers-reduced-motion: no-preference) {

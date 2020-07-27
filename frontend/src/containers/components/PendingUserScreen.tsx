@@ -2,7 +2,6 @@ import React, { useState, useEffect } from 'react';
 import { ClockCircleOutlined } from '@ant-design/icons';
 import { Alert } from 'antd';
 import { User, TMDBMovie } from '@whiterabbitjs/dashboard-common';
-import AppLayout from '../AppLayout';
 import { getPersonCredits } from '../../stores/API';
 import MovieListWithRevenue from './MovieListWithRevenue';
 
@@ -20,7 +19,7 @@ export default ({ user }: PendingUserScreenProps) => {
   }, [user]);
 
   return (
-    <AppLayout section="register">
+    <>
       <Alert
         message="Pending identity verification"
         description="Sit tight, a third party verification process has started. We will get back to you soon."
@@ -35,7 +34,6 @@ export default ({ user }: PendingUserScreenProps) => {
           <MovieListWithRevenue movies={movies} hideExactNumbers />
         </div>
       )}
-
-    </AppLayout>
+    </>
   );
 };

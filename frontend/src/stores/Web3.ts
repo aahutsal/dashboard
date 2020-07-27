@@ -2,7 +2,6 @@ import Web3 from 'web3';
 import { provider as Provider } from 'web3-core';
 import Onboard from 'bnc-onboard';
 
-import logo from '../images/logo.png';
 import { BLOCKNATIVE_API_KEY, NETWORK_ID } from '../config';
 import client from '../apollo/client';
 import { SET_APP_STATE } from '../apollo/mutations';
@@ -121,7 +120,7 @@ const onboard = Onboard({
     address: async (address) => {
       if (address) {
         await setWeb3ProviderInfo();
-        await refreshAuthToken();
+        await recheckAuthToken();
       }
     },
   },
@@ -137,13 +136,7 @@ const onboard = Onboard({
   walletCheck: [
     { checkName: 'derivationPath' },
     { checkName: 'connect' },
-    {
-      checkName: 'network',
-      heading: 'Please switch to XDAI sidechain',
-      description: 'WhiteRabbit runs on XDAI sidechain network.',
-      icon: `<img src=${logo} alt="logo" width="32"/>`,
-      html: '<a target="_blank" href="https://www.xdaichain.com/for-users/wallets/metamask/metamask-setup">Instructions for Metamask</a>',
-    },
+    { checkName: 'network' },
     { checkName: 'accounts' },
   ],
 });
@@ -161,7 +154,10 @@ export const recheckConnection = async () => {
   }
 };
 
-export const connect = () => recheckWallet(provider.name);
+export const connect = async () => {
+  await recheckWallet(provider.name);
+  await refreshAuthToken();
+};
 
 export const disconnect = async () => {
   onboard.walletReset();

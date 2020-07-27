@@ -4,11 +4,9 @@ import {
 } from 'antd';
 import { Store } from 'antd/lib/form/interface';
 import { useMutation } from '@apollo/react-hooks';
-import { useHistory } from 'react-router-dom';
 import { TMDBMovie } from '@whiterabbitjs/dashboard-common';
 import { GET_USER } from '../apollo/queries';
 import { ADD_USER } from '../apollo/mutations';
-import AppLayout from './AppLayout';
 import { DashboardContext } from '../components/DashboardContextProvider';
 import PersonSearch, { PersonSearchValue } from './components/PersonSearch';
 import PendingUserScreen from './components/PendingUserScreen';
@@ -21,7 +19,6 @@ const { Option } = Select;
 
 export default () => {
   const { account, user } = useContext(DashboardContext);
-  const history = useHistory();
   const [addUser, { loading, error }] = useMutation(ADD_USER);
   const [selectedPerson, setSelectedPerson] = useState<PersonSearchValue>();
 
@@ -66,10 +63,6 @@ export default () => {
     );
   }
 
-  if (user && user.status === 'APPROVED') {
-    history.push('/');
-  }
-
   const checkPerson = (rule: any, value: PersonSearchValue) => {
     if (value && value.id && value.name && value.imdbId) {
       return Promise.resolve();
@@ -84,69 +77,67 @@ export default () => {
   };
 
   return (
-    <AppLayout section="register">
-      <div style={{ width: 400 }}>
-        <h1>Please introduce yourself</h1>
-        <p>
-          Verifying you and your role in individual films is key.
-          This registry helps the film industry ensure only the true rights holders
-          make claims and make new films available for global distribution.
-        </p>
-        { loading && 'Loading...' }
-        { error && <Alert type="error" message={humanizeError(error)} />}
-        <Spin spinning={loading}>
-          <Form
-            name="register"
-            layout="vertical"
-            onFinish={onFinish}
-            onFieldsChange={onFieldsChange}
+    <div style={{ width: 400 }}>
+      <h1>Please introduce yourself</h1>
+      <p>
+        Verifying you and your role in individual films is key.
+        This registry helps the film industry ensure only the true rights holders
+        make claims and make new films available for global distribution.
+      </p>
+      { loading && 'Loading...' }
+      { error && <Alert type="error" message={humanizeError(error)} />}
+      <Spin spinning={loading}>
+        <Form
+          name="register"
+          layout="vertical"
+          onFinish={onFinish}
+          onFieldsChange={onFieldsChange}
+        >
+          <Form.Item
+            label="Legal Name of Person"
+            name="person"
+            rules={[{ validator: checkPerson }]}
           >
-            <Form.Item
-              label="Legal Name of Person"
-              name="person"
-              rules={[{ validator: checkPerson }]}
-            >
-              <PersonSearch placeholder="Legal Name of Person as on IMDB" />
+            <PersonSearch placeholder="Legal Name of Person as on IMDB" />
+          </Form.Item>
+          {selectedPerson && (
+            <Form.Item label="IMDB id:">
+              {selectedPerson.imdbId}
             </Form.Item>
-            {selectedPerson && (
-              <Form.Item label="IMDB id:">
-                {selectedPerson.imdbId}
-              </Form.Item>
-            )}
-            <Form.Item
-              label="Type of Role"
-              name="kind"
-              rules={[{ required: true, message: 'Please enter your email' }]}
-            >
-              <Select>
-                <Option value="Production">Production</Option>
-                <Option value="Sales">Sales</Option>
-                <Option value="Distribution">Distribution</Option>
-                <Option value="Financing">Financing</Option>
-                <Option value="Public Institution">Public Institution</Option>
-                <Option value="Other">Other</Option>
-              </Select>
-            </Form.Item>
-            <Form.Item
-              label="Contact email"
-              name="email"
-              rules={[{ required: true, message: 'Please enter your email' }]}
-            >
-              <Input placeholder="Email" />
-            </Form.Item>
-            <Form.Item>
-              <Button type="primary" htmlType="submit">Send for Approval</Button>
-            </Form.Item>
-          </Form>
-        </Spin>
+          )}
+          <Form.Item
+            label="Type of Role"
+            name="kind"
+            rules={[{ required: true, message: 'Please enter your email' }]}
+          >
+            <Select>
+              <Option value="Production">Production</Option>
+              <Option value="Sales">Sales</Option>
+              <Option value="Distribution">Distribution</Option>
+              <Option value="Financing">Financing</Option>
+              <Option value="Public Institution">Public Institution</Option>
+              <Option value="Other">Other</Option>
+            </Select>
+          </Form.Item>
+          <Form.Item
+            label="Contact email"
+            name="email"
+            rules={[{ required: true, message: 'Please enter your email' }]}
+          >
+            <Input placeholder="Email" />
+          </Form.Item>
+          <Form.Item>
+            <Button type="primary" htmlType="submit">Send for Approval</Button>
+          </Form.Item>
+        </Form>
+      </Spin>
 
-        {selectedPersonMovies && selectedPersonMovies.length > 0 && (
-          <div style={{ marginTop: '2rem', maxWidth: '600px' }}>
-            <h2>Pending revenue on WhiteRabbit</h2>
-            <MovieListWithRevenue movies={selectedPersonMovies} hideExactNumbers />
-          </div>
-        )}
-      </div>
-    </AppLayout>
+      {selectedPersonMovies && selectedPersonMovies.length > 0 && (
+        <div style={{ marginTop: '2rem', maxWidth: '600px' }}>
+          <h2>Pending revenue on WhiteRabbit</h2>
+          <MovieListWithRevenue movies={selectedPersonMovies} hideExactNumbers />
+        </div>
+      )}
+    </div>
   );
 };

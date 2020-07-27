@@ -1,22 +1,23 @@
 import React, { useContext } from 'react';
-import { useHistory, Link } from 'react-router-dom';
+import { Link } from 'react-router-dom';
+import { Button } from 'antd';
 import AppLayout from './AppLayout';
 import { DashboardContext } from '../components/DashboardContextProvider';
 import MovieListWithRevenue from './components/MovieListWithRevenue';
 
 export default () => {
   const { user } = useContext(DashboardContext);
-  const history = useHistory();
-
-  if (!user || user.status !== 'APPROVED') {
-    history.push('/register');
-  }
 
   const movies = user ? user.movies.map((m) => m.metadata) : [];
 
   return (
-    <AppLayout section="titles">
-      <h1>Titles</h1>
+    <AppLayout section="movies">
+      <div style={{ display: 'flex', marginBottom: '14px' }}>
+        <h1>My Movies</h1>
+        <Button type="primary" style={{ marginLeft: 'auto' }}>
+          <Link to="/add_movie">Add Movie</Link>
+        </Button>
+      </div>
       <MovieListWithRevenue
         movies={movies}
         extraColumns={[

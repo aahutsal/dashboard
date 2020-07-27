@@ -5,8 +5,7 @@ import { BrowserRouter } from 'react-router-dom';
 import { ApolloProvider } from '@apollo/react-hooks';
 import apolloClient from './apollo/client';
 import Titles from './containers/Titles';
-import Rightsholders from './containers/Rightsholders';
-import Register from './containers/Register';
+import Admin from './containers/Admin';
 import MovieSearch from './containers/MovieSearch';
 import MoviePage from './containers/MoviePage';
 
@@ -27,8 +26,7 @@ function App() {
       <BrowserRouter>
         <DashboardContextProvider>
           <Route path="/" exact component={Titles} />
-          <Route path="/rightsholders" exact component={Rightsholders} />
-          <Route path="/register" exact component={Register} />
+          <Route path="/admin" exact component={Admin} />
           <Route path="/add_movie" exact component={MovieSearch} />
           <Route path="/movie/:IMDB" exact component={MoviePage} />
         </DashboardContextProvider>
