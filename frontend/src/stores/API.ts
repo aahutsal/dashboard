@@ -14,12 +14,15 @@ export type MovieInterface = {
   posterPath: string;
   overview?: string;
   director?: string;
-  producer?: string;
-  actors?: Array<string>;
-  productionCompanies?: Array<string>;
+  producer?: Array<any>;
+  author?: string;
+  writing?: Array<any>;
+  sound?: Array<any>;
+  actors?: Array<any>;
+  productionCompanies?: Array<any>;
   rating: string;
   year: string;
-  details?: string;
+  apiResponse?: string;
 };
 
 // TODO: reuse this API from @whiterabbitjs/client
@@ -39,13 +42,10 @@ export const getMovieDetails = async (imdbId: string): Promise<MovieInterface> =
 
   const { cast, crew } = credits;
 
-  const productionCompanies = (details.production_companies || [])
-    .slice(0, 3)
-    .map((c: any) => c.name);
-
-  const actors = (cast || []).slice(0, 5).map((a: any) => a.name);
-  const producer = crew.find((c: any) => c.job === 'Producer');
+  const producer = crew.filter((c: any) => c.job === 'Producer');
   const director = crew.find((c: any) => c.job === 'Director');
+  const writing = crew.filter((c: any) => c.department === 'Writing');
+  const sound = crew.filter((c: any) => c.department === 'Sound');
   const year = details.release_date ? details.release_date.slice(0, 4) : '';
 
   return {
@@ -53,14 +53,16 @@ export const getMovieDetails = async (imdbId: string): Promise<MovieInterface> =
     imdbId: details.imdb_id,
     title: details.title,
     posterPath: details.poster_path,
-    producer: producer ? producer.name : '',
+    producer,
     director: director ? director.name : '',
-    actors,
-    productionCompanies,
+    actors: cast,
+    writing,
+    sound,
+    productionCompanies: details.production_companies,
     overview: details.overview,
     rating: details.vote_average,
     year,
-    details: JSON.stringify(details),
+    apiResponse: JSON.stringify({ ...details, crew, cast }),
   };
 };
 

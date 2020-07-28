@@ -142,6 +142,7 @@ const resolverMap: IResolvers = {
                 id: metadata.id,
                 title: metadata.title,
                 posterUrl: `https://image.tmdb.org/t/p/w500${metadata.poster_path}`,
+                year: metadata.release_date ? metadata.release_date.slice(0, 4) : '',
             });
         },
         pricing: (parent, _ , { dataSources }): Promise<Price[]> => {

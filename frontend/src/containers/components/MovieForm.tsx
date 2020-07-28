@@ -36,7 +36,7 @@ const MovieForm: FC<ComponentProps> = ({ movie }) => {
             IMDB: values.imdbId,
             record: {
               source: 'themoviedb',
-              value: movie.details, // TODO:: switch to values once edit is enabled
+              value: movie.apiResponse, // TODO:: switch to values once edit is enabled
             },
           },
         },

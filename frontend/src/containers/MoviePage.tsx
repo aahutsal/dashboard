@@ -106,16 +106,23 @@ export default () => {
       <Row gutter={16}>
         <Col className="gutter-row" xs={{ span: 24 }} lg={{ span: 6 }}>
           <img src={(data && data.movie.metadata.posterUrl)} height={300} alt="Movie Poster" />
-          <h2>{(data && data.movie.metadata.title)}</h2>
+          {data && (
+          <h2>
+            {data.movie.metadata.title}
+            {' ('}
+            {data.movie.metadata.year}
+            )
+          </h2>
+          )}
         </Col>
         <Col className="gutter-row" xs={{ span: 24 }} lg={{ span: 18 }}>
-          <Section style={{ maxWidth: '600px' }}>
+          <Section>
             <h2>Revenue</h2>
             {extendedMovie && pusherChannel
               && <MovieRevenueList movie={extendedMovie} pusherChannel={pusherChannel} />}
           </Section>
 
-          <Section style={{ maxWidth: '600px' }}>
+          <Section>
             { currentPrice && <PriceForm price={currentPrice} onClear={onClearForm} /> }
             {!currentPrice && (
             <>

@@ -34,6 +34,7 @@ export const GET_USER = gql`
           id
           title
           posterUrl
+          year
         }
       }
     }
@@ -60,6 +61,7 @@ export const GET_MOVIE = gql`
         id
         title
         posterUrl
+        year
       }
       pricing {
         priceId

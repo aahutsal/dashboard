@@ -71,6 +71,7 @@ type MovieMetadata {
   id: Int
   title: String
   posterUrl: String 
+  year: String
 }
 
 type MovieRecord {

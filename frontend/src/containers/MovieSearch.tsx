@@ -4,7 +4,7 @@ import {
 } from 'antd';
 import { Store } from 'antd/lib/form/interface';
 import AppLayout from './AppLayout';
-import MovieForm from './components/MovieForm';
+import MovieDetails from './components/MovieDetails';
 import { getMovieDetails, MovieInterface, searchMovies } from '../stores/API';
 
 const columns = [
@@ -103,7 +103,7 @@ export default () => {
           <Spin spinning={loading}>
             {
               movie
-                ? <MovieForm movie={movie} />
+                ? <MovieDetails movie={movie} />
                 : (
                   <Table
                     onRow={onRow}
