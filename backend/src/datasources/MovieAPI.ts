@@ -20,8 +20,17 @@ class MovieAPI extends DataSource {
     }
 
     // Delete a record
-    async delete(movie: Movie): Promise<{ item: Movie } | undefined> {
+    async delete(imdbId: string): Promise<{ item: Movie } | undefined> {
+        const movie = await this.findById(imdbId);
+        if (!movie) throw new Error(`No such movie ${imdbId}`);
         return await DBConnection.delete({ item: movie });
+    }
+
+    async deleteAll(): Promise<void> {
+        const allMovies = await this.getAll();
+        for await (const found of DBConnection.batchDelete(allMovies)) {
+            // nothing
+        }
     }
 
     // Get record by id
@@ -44,18 +53,27 @@ class MovieAPI extends DataSource {
     // This function uses scan and should be avoided
     async filter(field: string, value: string): Promise<Movie[]> { 
         const filterCriteria = { // TODO allow more filter criteria
-            valueConstructor: Movie,
             filter: {
                 ...equals(value),
                 subject: field,
             }
         };
-        return toArray(DBConnection.scan(filterCriteria));
+        return toArray(DBConnection.scan(Movie, filterCriteria));
     }
 
     // Update a record
     async update(movie: Movie): Promise<{ item: Movie }>  {
         return await DBConnection.update({ item: movie });
+    }
+
+    async getAll(): Promise<Movie[]> {
+        const onlyMovieCriteria = {
+            filter: {
+                ...beginsWith('MOVIE#'),
+                subject: 'sk',
+            }
+        };
+        return toArray(DBConnection.scan(Movie, onlyMovieCriteria));
     }
 }
 

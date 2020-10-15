@@ -6,6 +6,7 @@ type Query {
   prices(IMDB: String!): [Price]!
   price(filter: PriceFilter): Price!
   config: Config!
+  allMovies: [Movie]!
 }
 
 type Config {
@@ -151,4 +152,6 @@ type Mutation {
   deletePrice(pricing: PriceInput): PriceResponse!
   approveUser(userId: String): UserResponse!
   declineUser(userId: String): UserResponse!
+  deleteMovie(imdbId: String): MovieResponse!
+  deleteAllMovies: MovieResponse!
 }

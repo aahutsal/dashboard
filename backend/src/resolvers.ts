@@ -12,6 +12,11 @@ const resolverMap: IResolvers = {
         movie: (_, { IMDB }, { dataSources }): Promise<Movie> => {
             return dataSources.movieAPI.findById(IMDB);
         },
+        allMovies: (_, params, { user, dataSources }): Promise<Movie[]> => {
+            if (!user) throw new AuthenticationError('User is not authenticated');
+            if (!user.isAdmin()) throw new ForbiddenError('User is not authorized for the operation');
+            return dataSources.movieAPI.getAll();
+        },
         user: (_, { accountAddress }, { dataSources }): Promise<User> => {
             return dataSources.userAPI.findById(accountAddress);
         },
@@ -128,6 +133,33 @@ const resolverMap: IResolvers = {
                 message: "Rightsholder is rejected",        
             };
         },
+
+        deleteMovie: async (_, { imdbId }, { user, dataSources }): Promise<MovieResponse> => {
+            if (!user) throw new AuthenticationError('User is not authenticated');
+            if (!user.isAdmin()) throw new ForbiddenError('User is not authorized for the operation');
+            
+            await dataSources.movieAPI.delete(imdbId);
+
+            return {
+                success: true,
+                message: "Movie was unregistered",        
+            };
+        },
+
+        deleteAllMovies: async (_, params, { user, dataSources }): Promise<MovieResponse> => {
+            if (!user) throw new AuthenticationError('User is not authenticated');
+            if (!user.isAdmin()) throw new ForbiddenError('User is not authorized for the operation');
+            
+            await dataSources.movieAPI.deleteAll();
+
+            return {
+                success: true,
+                message: "Movies were unregistered",        
+            };
+        }
+
+
+
     },
     Movie : {
         rightsHolder: (parent, _ , { dataSources }): Promise<User> => {

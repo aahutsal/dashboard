@@ -3,10 +3,12 @@ import { useHistory } from 'react-router';
 import { useQuery, useMutation } from '@apollo/react-hooks';
 import { Table, Button, Space } from 'antd';
 import { User } from '@whiterabbitjs/dashboard-common';
-import AppLayout from './AppLayout';
-import { DashboardContext } from '../components/DashboardContextProvider';
-import { PENDING_USERS, GET_USER } from '../apollo/queries';
-import { APPROVE_USER, DECLINE_USER } from '../apollo/mutations';
+import AppLayout from '../AppLayout';
+import { DashboardContext } from '../../components/DashboardContextProvider';
+import { PENDING_USERS, GET_USER } from '../../apollo/queries';
+import { APPROVE_USER, DECLINE_USER } from '../../apollo/mutations';
+import RegisteredMovies from './RegisteredMovies';
+import Section from '../components/Section';
 
 
 export default () => {
@@ -77,15 +79,20 @@ export default () => {
 
   return (
     <AppLayout section="admin">
-      <h1>Rightsholders to approve</h1>
-      <Table
-        bordered={false}
-        loading={loading}
-        dataSource={(data && data.pendingUsers) || []}
-        columns={columns}
-        rowKey="accountAddress"
-        pagination={false}
-      />
+      <Section>
+        <h1>Rightsholders to approve</h1>
+        <Table
+          bordered={false}
+          loading={loading}
+          dataSource={(data && data.pendingUsers) || []}
+          columns={columns}
+          rowKey="accountAddress"
+          pagination={false}
+        />
+      </Section>
+      <Section>
+        <RegisteredMovies />
+      </Section>
     </AppLayout>
   );
 };
