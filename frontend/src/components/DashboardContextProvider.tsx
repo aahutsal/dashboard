@@ -53,7 +53,7 @@ const WithUser = ({ account, children }: { account: string, children: ReactNode 
 
   const user = userData && userData.user.status ? new User(userData.user) : null;
 
-  if (userLoading || configLoading) {
+  if (user === undefined || userLoading || configLoading) {
     return (
       <BigSpin />
     );
