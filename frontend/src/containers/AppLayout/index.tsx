@@ -48,7 +48,7 @@ const AppLayout: React.FC<AppLayoutProps> = ({ section, children }: AppLayoutPro
   const { data: authData } = useQuery(GET_AUTH);
   const isAuthTokenValid = authData && authData.auth.valid;
 
-  if (!account || (!isAuthTokenValid && user?.isApproved())) {
+  if (!isAuthTokenValid && user?.isApproved()) {
     return (
       <DashboardLayoutCentered theme="dark">
         {account && <SignInPrompt />}
