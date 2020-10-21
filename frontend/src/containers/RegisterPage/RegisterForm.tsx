@@ -5,22 +5,24 @@ import {
 import { Store } from 'antd/lib/form/interface';
 import { useMutation } from '@apollo/react-hooks';
 import { TMDBMovie } from '@whiterabbitjs/dashboard-common';
-import { GET_USER } from '../apollo/queries';
-import { ADD_USER } from '../apollo/mutations';
-import { DashboardContext } from '../components/DashboardContextProvider';
-import PersonSearch, { PersonSearchValue } from './components/PersonSearch';
-import PendingUserScreen from './components/PendingUserScreen';
-import humanizeError from '../stores/utils/humanizeError';
-import MovieListWithRevenue from './components/MovieListWithRevenue';
-import { getPersonCredits } from '../stores/API';
+import { GET_USER } from '../../apollo/queries';
+import { ADD_USER } from '../../apollo/mutations';
+import { DashboardContext } from '../../components/DashboardContextProvider';
+import PersonSearch, { PersonSearchValue } from '../components/PersonSearch';
+import PendingUserScreen from '../components/PendingUserScreen';
+import humanizeError from '../../stores/utils/humanizeError';
+import MovieListWithRevenue from '../components/MovieListWithRevenue';
+import { getPersonCredits } from '../../stores/API';
+import { recheckWallet } from '../../stores/Web3';
 
 const { Option } = Select;
 
 
 export default () => {
-  const { account, user } = useContext(DashboardContext);
+  const { user } = useContext(DashboardContext);
   const [addUser, { loading, error }] = useMutation(ADD_USER);
   const [selectedPerson, setSelectedPerson] = useState<PersonSearchValue>();
+  const [formValues, setFormValues] = useState<Store>();
 
   const [selectedPersonMovies, setSelectedPersonMovies] = useState<TMDBMovie[]>();
 
@@ -35,26 +37,29 @@ export default () => {
   }, [selectedPerson]);
 
   const onFinish = (values: Store) => {
-    addUser({
-      variables: {
-        user: {
-          accountAddress: account,
-          name: values.person.name,
-          id: values.person.id,
-          imdbId: values.person.imdbId,
-          email: values.email,
-          kind: values.kind,
-          roles: ['RIGHTSHOLDER'],
+    setFormValues(values);
+    recheckWallet(null).then((account: string | undefined) => {
+      if (!account || user) return;
+      addUser({
+        variables: {
+          user: {
+            accountAddress: account,
+            name: values.person.name,
+            id: values.person.id,
+            imdbId: values.person.imdbId,
+            email: values.email,
+            kind: values.kind,
+            roles: ['RIGHTSHOLDER'],
+          },
         },
-      },
-      refetchQueries: [
-        {
-          query: GET_USER,
-          variables: { accountAddress: account },
-        },
-      ],
-    })
-      .catch(() => { });
+        refetchQueries: [
+          {
+            query: GET_USER,
+            variables: { accountAddress: account },
+          },
+        ],
+      }).catch(() => { });
+    });
   };
 
   if (user && user.status !== 'APPROVED') {
@@ -92,6 +97,7 @@ export default () => {
           layout="vertical"
           onFinish={onFinish}
           onFieldsChange={onFieldsChange}
+          initialValues={formValues}
         >
           <Form.Item
             label="Legal Name of Person"
@@ -127,7 +133,14 @@ export default () => {
             <Input placeholder="Email" />
           </Form.Item>
           <Form.Item>
-            <Button type="primary" htmlType="submit">Send for Approval</Button>
+            <Button type="primary" htmlType="submit">Register</Button>
+            <div>
+              You will need
+              {' '}
+              <a href="https://metamask.io/">MetaMask wallet</a>
+              {' '}
+              for this.
+            </div>
           </Form.Item>
         </Form>
       </Spin>

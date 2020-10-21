@@ -41,9 +41,6 @@ const setAppState = (state: object) => {
   client.mutate({
     mutation: SET_APP_STATE,
     variables: { stateChange: state },
-    refetchQueries: [
-      'GET_USER',
-    ],
   });
 };
 
@@ -127,10 +124,7 @@ const onboard = Onboard({
   walletSelect: {
     description: 'Please select a wallet to connect to WhiteRabbit Dashboard',
     wallets: [
-      { walletName: 'coinbase', preferred: true },
       { walletName: 'metamask', preferred: true },
-      { walletName: 'status' },
-      { walletName: 'unilogin' },
     ],
   },
   walletCheck: [
@@ -141,9 +135,11 @@ const onboard = Onboard({
   ],
 });
 
-const recheckWallet = async (_providerName: string | null) => {
+export const recheckWallet = async (_providerName: string | null): Promise<string | undefined> => {
   const walletSelected = await onboard.walletSelect(_providerName || undefined);
-  return walletSelected && onboard.walletCheck();
+  if (!walletSelected) return '';
+  await onboard.walletCheck();
+  return provider.account;
 };
 
 export const recheckConnection = async () => {
@@ -163,8 +159,6 @@ export const disconnect = async () => {
   onboard.walletReset();
   web3 = web3ReadOnly;
   provider.name = '';
-  resetAuth();
-  setAppState({ provider, auth });
   window.localStorage.removeItem(authKey());
   window.localStorage.removeItem(WALLET_NAME_KEY);
   await setWeb3ProviderInfo();

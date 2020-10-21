@@ -1,6 +1,6 @@
 import React, { ReactNode, useContext } from 'react';
 import {
-  Layout, Menu, Button, Result,
+  Menu,
 } from 'antd';
 import { Link } from 'react-router-dom';
 import styled from 'styled-components';
@@ -8,32 +8,20 @@ import styled from 'styled-components';
 import { useQuery } from '@apollo/react-hooks';
 
 import { GET_AUTH } from '../../apollo/queries';
-import logo from './logo.png';
 import UserMenu from './components/UserMenu';
-import { refreshAuthToken, connect } from '../../stores/Web3';
 import { DashboardContext } from '../../components/DashboardContextProvider';
-import Register from '../Register';
+import RegisterForm from '../RegisterPage/RegisterForm';
+import RegisterPrompt from './components/RegisterPrompt';
+import SignInPrompt from './components/SignInPrompt';
+import {
+  DashboardLayoutCentered, DashboardLayout, Content, Header,
+} from './components/Layout';
+import Logo from './components/Logo';
 
 interface AppLayoutProps {
   section?: string;
   children: ReactNode;
 }
-
-const DashboardLayout = styled(Layout)`
-  background-color: #FFF;
-  height: 100%;
-`;
-
-const DashboardLayoutCentered = styled(DashboardLayout)`
-  justify-content: center;
-`;
-
-const Header = styled(Layout.Header)`
-  background-color: #FFF;
-  display: flex;
-  align-items: left;
-  margin-bottom: 25px;
-`;
 
 const TopMenu = styled(Menu)`
   border-bottom: 0;
@@ -55,51 +43,16 @@ const TopMenu = styled(Menu)`
   }
 `;
 
-const Content = styled(Layout.Content)`
-  padding: 0 50px;
-`;
-
-const Logo = () => (
-  <div style={{ whiteSpace: 'nowrap' }}>
-    <img src={logo} alt="logo" height="30" />
-    <span style={{ marginLeft: '12px', color: '#000' }}>
-      WhiteRabbit
-    </span>
-  </div>
-);
-
-
 const AppLayout: React.FC<AppLayoutProps> = ({ section, children }: AppLayoutProps) => {
   const { account, user } = useContext(DashboardContext);
   const { data: authData } = useQuery(GET_AUTH);
   const isAuthTokenValid = authData && authData.auth.valid;
 
-  if (!account || !isAuthTokenValid) {
+  if (!account || (!isAuthTokenValid && user?.isApproved())) {
     return (
       <DashboardLayoutCentered theme="dark">
-        <Result
-          icon={<img src={logo} alt="logo" height="200" />}
-          title="Please sign in to use the app"
-          subTitle={(
-            <>
-              {!account && (
-              <>
-                You will need
-                {' '}
-                <a href="https://metamask.io/">MetaMask wallet</a>
-                {' '}
-                for this.
-              </>
-              )}
-              {account && 'Please sign a message with your MetaMask'}
-            </>
-        )}
-          extra={(
-            <Button type="primary" onClick={account ? refreshAuthToken : connect}>
-              Sign in
-            </Button>
-        )}
-        />
+        {account && <SignInPrompt />}
+        {!account && <RegisterPrompt />}
       </DashboardLayoutCentered>
     );
   }
@@ -122,20 +75,20 @@ const AppLayout: React.FC<AppLayoutProps> = ({ section, children }: AppLayoutPro
               <Link to="/">My Movies</Link>
             </Menu.Item>
             {user && user.isAdmin() && (
-            <Menu.Item key="admin">
-              <Link to="/admin">Admin</Link>
-            </Menu.Item>
+              <Menu.Item key="admin">
+                <Link to="/admin">Admin</Link>
+              </Menu.Item>
             )}
           </TopMenu>
         )}
-        {user && (
-        <div style={{ width: '100%', textAlign: 'right', whiteSpace: 'nowrap' }}>
-          <UserMenu user={user} account={account} />
-        </div>
+        {user && account && (
+          <div style={{ width: '100%', textAlign: 'right', whiteSpace: 'nowrap' }}>
+            <UserMenu user={user} account={account} />
+          </div>
         )}
       </Header>
       <Content>
-        {!userOnboarded && <Register />}
+        {!userOnboarded && <RegisterForm />}
         {userOnboarded && children}
       </Content>
     </DashboardLayout>
