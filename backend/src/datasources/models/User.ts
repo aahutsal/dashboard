@@ -49,6 +49,9 @@ export class User extends BaseUser {
   kind!: string;
 
   @attribute()
+  companyId!: string;
+
+  @attribute()
   roles!: Array<UserRole>;
 
   constructor(seed?: object) {

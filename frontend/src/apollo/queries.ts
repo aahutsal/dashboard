@@ -28,6 +28,10 @@ export const GET_USER = gql`
       kind
       status
       roles
+      company { 
+        id
+        name
+      }
       movies {
         IMDB
         metadata {
@@ -44,6 +48,9 @@ export const GET_USER = gql`
 export const PENDING_USERS = gql`
   {
     pendingUsers {
+      company {
+        name
+      }
       accountAddress
       name
       imdbId

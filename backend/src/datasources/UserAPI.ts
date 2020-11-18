@@ -7,11 +7,12 @@ import { PendingStatus, ApprovalStatus } from '@whiterabbitjs/dashboard-common';
 class UserAPI extends DataSource {
 
     // Add new record
-    async add(user: User): Promise<{item: User}> {
+    async add(user: User, companyId: string): Promise<{item: User}> {
         user.pk = `USER#${user.accountAddress}`;
         user.sk = 'PROFILE';
         user.pendingStatus = PendingStatus.USER;
         user.status = ApprovalStatus.PENDING;
+        user.companyId = companyId;
         return DBConnection.put({ item: user });
     }
 

@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { ClockCircleOutlined } from '@ant-design/icons';
 import { Alert } from 'antd';
 import { User, TMDBMovie } from '@whiterabbitjs/dashboard-common';
-import { getPersonCredits } from '../../stores/API';
+import { getCompanyMovies } from '../../stores/API';
 import MovieListWithRevenue from './MovieListWithRevenue';
 
 export type PendingUserScreenProps = {
@@ -13,9 +13,7 @@ export default ({ user }: PendingUserScreenProps) => {
   const [movies, setMovies] = useState<TMDBMovie[]>();
 
   useEffect(() => {
-    getPersonCredits(user.id)
-      .then((credits) => credits.filter((m) => m.jobs.length > 1 || m.jobs[0].job !== 'Actor'))
-      .then(setMovies);
+    getCompanyMovies(user.company.id).then(setMovies);
   }, [user]);
 
   return (

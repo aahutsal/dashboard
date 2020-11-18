@@ -6,6 +6,7 @@ import { PriceResponse, Price } from './datasources/models/Price';
 import config from './config';
 import { AuthenticationError, ForbiddenError, UserInputError } from 'apollo-server-express';
 import { Config } from '@whiterabbitjs/dashboard-common';
+import { Company } from './datasources/models/Company';
 
 const resolverMap: IResolvers = {
     Query: {
@@ -51,6 +52,9 @@ const resolverMap: IResolvers = {
             };
         },
         addUser: async (_, { user }, { dataSources }): Promise<UserResponse> => {
+            if (!user.company || !user.company.id) {
+                throw new UserInputError("No company specified");
+            }
             const mapped = Object.assign(new User(), user);
             const existingUser = await dataSources.userAPI
                 .findById(user.accountAddress)
@@ -58,7 +62,12 @@ const resolverMap: IResolvers = {
             if (existingUser.accountAddress) {
                 throw new UserInputError("User already exists");
             }
-            const savedUser = await dataSources.userAPI.add(mapped);
+
+            let company = await dataSources.companyAPI.findById(user.company.id);
+            if (!company) {
+                company = await dataSources.companyAPI.add(user.company.id, user.company.name || `Company ${user.company.id}`);
+            }
+            const savedUser = await dataSources.userAPI.add(mapped, company.id);
             return {
                 success: true,
                 message: 'User has been added successfully',
@@ -163,7 +172,7 @@ const resolverMap: IResolvers = {
     },
     Movie : {
         rightsHolder: (parent, _ , { dataSources }): Promise<User> => {
-            return dataSources.userAPI.findById(parent.pk.split('#')[1]);
+            return dataSources.companyAPI.findById(parent.pk.split('#')[1]);
         },
         metadata: (parent): Promise<{ title?: string; posterUrl?: string }> => {
             if (!parent.record || !parent.record.value) {
@@ -183,8 +192,11 @@ const resolverMap: IResolvers = {
     },
     User: {
         movies: async (parent, _ , { dataSources }): Promise<Movie[]> => {
-            return parent.pk ? dataSources.movieAPI.findByUser(parent.pk.split('#')[1]) : Promise.resolve([]);
+            return parent.companyId ? dataSources.movieAPI.findByCompany(parent.companyId) : Promise.resolve([]);
         },
+        company: async (parent, _, { dataSources }): Promise<Company> => {
+            return dataSources.companyAPI.findById(parent.companyId);
+        }
     },
     DateTime
 };

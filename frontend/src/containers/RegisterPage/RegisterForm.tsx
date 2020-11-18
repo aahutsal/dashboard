@@ -12,8 +12,9 @@ import PersonSearch, { PersonSearchValue } from '../components/PersonSearch';
 import PendingUserScreen from '../components/PendingUserScreen';
 import humanizeError from '../../stores/utils/humanizeError';
 import MovieListWithRevenue from '../components/MovieListWithRevenue';
-import { getPersonCredits } from '../../stores/API';
+import { getCompanyMovies } from '../../stores/API';
 import { recheckWallet } from '../../stores/Web3';
+import CompanySearch, { CompanySearchValue } from '../components/CompanySearch';
 
 const { Option } = Select;
 
@@ -22,19 +23,18 @@ export default () => {
   const { user } = useContext(DashboardContext);
   const [addUser, { loading, error }] = useMutation(ADD_USER);
   const [selectedPerson, setSelectedPerson] = useState<PersonSearchValue>();
+  const [company, setCompany] = useState<CompanySearchValue>();
   const [formValues, setFormValues] = useState<Store>();
 
-  const [selectedPersonMovies, setSelectedPersonMovies] = useState<TMDBMovie[]>();
+  const [selectedCompanyMovies, setSelectedCompanyMovies] = useState<TMDBMovie[]>();
 
   useEffect(() => {
-    if (!selectedPerson || !selectedPerson.id) {
-      setSelectedPersonMovies([]);
+    if (!company || !company.id) {
+      setSelectedCompanyMovies([]);
       return;
     }
-    getPersonCredits(selectedPerson.id)
-      .then((movies) => movies.filter((m) => m.jobs.length > 1 || m.jobs[0].job !== 'Actor'))
-      .then(setSelectedPersonMovies);
-  }, [selectedPerson]);
+    getCompanyMovies(company.id).then(setSelectedCompanyMovies);
+  }, [company]);
 
   const onFinish = (values: Store) => {
     setFormValues(values);
@@ -49,6 +49,10 @@ export default () => {
             imdbId: values.person.imdbId,
             email: values.email,
             kind: values.kind,
+            company: {
+              id: values.company.id,
+              name: values.company.name,
+            },
             roles: ['RIGHTSHOLDER'],
           },
         },
@@ -83,11 +87,13 @@ export default () => {
 
   return (
     <div style={{ width: 400 }}>
-      <h1>Please introduce yourself</h1>
+      <h1>Welcome to White Rabbit!</h1>
       <p>
-        Verifying you and your role in individual films is key.
-        This registry helps the film industry ensure only the true rights holders
-        make claims and make new films available for global distribution.
+        We’d like to verify you as the owner of your film so you may immediately
+        receive funds available to it. Verifying ownership helps us ensure rights
+        holders receive revenue and allows your films to truly be accessible to a global
+        audience. White Rabbit is a FilmTech company owned by film producers and financiers.
+        We are proud to be creating a sustainable business model for our film industry.
       </p>
       { loading && 'Loading...' }
       { error && <Alert type="error" message={humanizeError(error)} />}
@@ -100,11 +106,20 @@ export default () => {
           initialValues={formValues}
         >
           <Form.Item
-            label="Legal Name of Person"
+            label="Company Name"
+            name="company"
+          >
+            <CompanySearch
+              placeholder="Name of the Company as used on IMDB"
+              onChange={setCompany}
+            />
+          </Form.Item>
+          <Form.Item
+            label="Your Name"
             name="person"
             rules={[{ validator: checkPerson }]}
           >
-            <PersonSearch placeholder="Legal Name of Person as on IMDB" />
+            <PersonSearch placeholder="Your name" />
           </Form.Item>
           {selectedPerson && (
             <Form.Item label="IMDB id:">
@@ -145,10 +160,10 @@ export default () => {
         </Form>
       </Spin>
 
-      {selectedPersonMovies && selectedPersonMovies.length > 0 && (
+      {selectedCompanyMovies && selectedCompanyMovies.length > 0 && (
         <div style={{ marginTop: '2rem', maxWidth: '600px' }}>
           <h2>Pending revenue on WhiteRabbit</h2>
-          <MovieListWithRevenue movies={selectedPersonMovies} hideExactNumbers />
+          <MovieListWithRevenue movies={selectedCompanyMovies} hideExactNumbers />
         </div>
       )}
     </div>

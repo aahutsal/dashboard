@@ -1,6 +1,8 @@
 // TODO: rename to tmdbApi
 import { notification } from 'antd';
-import { TMDBPerson, TMDBMovieWithCredits } from '@whiterabbitjs/dashboard-common';
+import {
+  TMDBPerson, TMDBMovieWithCredits, TMDBCompany, TMDBMovie,
+} from '@whiterabbitjs/dashboard-common';
 
 const config = {
   theMovieDbApiKey: 'b1854cc7cd8f2e29da75a04a3c946e44',
@@ -123,6 +125,35 @@ export const getMovieByTMDB = async (tmdbId: number) => {
   ).then((resp) => resp.json());
 
   return searchResult.status_code === 34 ? null : searchResult;
+};
+
+export const searchCompanies = async (name: string): Promise<TMDBCompany[]> => {
+  const searchResult = await fetch(
+    `https://api.themoviedb.org/3/search/company?api_key=${config.theMovieDbApiKey}&query=${name}`,
+  ).then((resp) => resp.json());
+
+  if (searchResult.status_message) {
+    // todo: add rollbar/sentry event log
+    return [];
+  }
+
+  return searchResult.results;
+};
+
+export const getCompanyMovies = async (companyId: string): Promise<TMDBMovie[]> => {
+  // shortcut for custom companies which have non-integer IDs
+  if (!parseInt(companyId, 10)) return [];
+
+  const searchResult = await fetch(
+    `https://api.themoviedb.org/3/discover/movie?api_key=${config.theMovieDbApiKey}&with_companies=${companyId}`,
+  ).then((resp) => resp.json());
+
+  if (searchResult.status_message) {
+    // todo: add rollbar/sentry event log
+    return [];
+  }
+
+  return searchResult.results;
 };
 
 export const searchMovies = async (id: string, title: string, year: string)

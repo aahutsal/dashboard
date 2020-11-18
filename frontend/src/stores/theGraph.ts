@@ -2,9 +2,10 @@ import { RevenuePerMovie } from '@whiterabbitjs/dashboard-common';
 import { THE_GRAPH_API } from '../config';
 
 type RevenuePerMovieResponse = {
-  data: {
+  error?: string;
+  data?: {
     revenuePerMovie: RevenuePerMovie;
-  }
+  };
 };
 
 /* eslint-disable-next-line import/prefer-default-export */

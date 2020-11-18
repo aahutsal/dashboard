@@ -10,6 +10,7 @@ import userAPI from './datasources/UserAPI';
 import PriceAPI from './datasources/PriceAPI';
 import { first } from './util';
 import { verifyAuthToken } from '@whiterabbitjs/dashboard-common';
+import CompanyAPI from './datasources/companyApi';
 
 const app = express();
 app.use('*', cors());
@@ -22,6 +23,7 @@ const server = new ApolloServer({
     dataSources: (): any => ({ 
         userAPI,
         movieAPI,
+        companyAPI: new CompanyAPI(DB),
         priceAPI: new PriceAPI(DB),
     }),
     context: async ({ req }): Promise<object> => {     

@@ -17,6 +17,11 @@ export const toExtended = async (movie: TMDBMovie): Promise<TMDBMovieExtended> =
 
   extMovie.imdb_id = imdbId;
   const tokenId = wrUtils.imdbToToken(imdbId);
-  extMovie.revenue = (await getRevenuePerMovie(tokenId)).data.revenuePerMovie;
+  const revenue = await getRevenuePerMovie(tokenId);
+  if (revenue.data) {
+    extMovie.revenue = revenue.data.revenuePerMovie;
+  } else {
+    // todo: add rollbar/sentry event log
+  }
   return extMovie;
 };

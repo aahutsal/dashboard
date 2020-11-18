@@ -15,7 +15,7 @@ export enum ApprovalStatus {
 
 export enum PendingStatus {
   USER = 'Pending#USER',
-  MOVIE = 'Pending#MOVIE'
+  MOVIE = 'Pending#MOVIE',
 }
 
 export type RevenuePerMovieRegion = {
@@ -27,7 +27,7 @@ export type RevenuePerMovieRegion = {
 export type RevenuePerMovie = {
   id: string;
   total: BigInt;
-  revenuePerMovieRegions: [RevenuePerMovieRegion]
+  revenuePerMovieRegions: [RevenuePerMovieRegion];
 };
 
 interface TMDBEvent {
@@ -42,6 +42,11 @@ export interface TMDBPerson {
   profile_path?: string;
   known_for_department: string;
   known_for: [TMDBMovie & TMDBEvent];
+}
+
+export interface TMDBCompany {
+  id: string;
+  name: string;
 }
 
 // TODO: Merge together with MovieInterface
@@ -62,7 +67,7 @@ export type TMDBMovieExtended = TMDBMovie & {
 };
 
 export type TMDBMovieWithCredits = TMDBMovieExtended & {
-  jobs: { job: string, department?: string }[];
+  jobs: { job: string; department?: string }[];
 };
 
 export type Movie = {
@@ -88,6 +93,8 @@ export class User {
   roles: UserRole[] = [];
 
   movies: Movie[] = [];
+
+  company!: TMDBCompany;
 
   constructor(seed?: object) {
     if (seed) {

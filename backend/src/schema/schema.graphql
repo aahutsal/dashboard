@@ -65,6 +65,8 @@ type User {
   kind: String
   roles: [UserRole]
   movies: [Movie]
+  companyId: String
+  company: Company
   status(option: ApprovalStatus): String 
 }
 
@@ -92,6 +94,11 @@ type Movie {
   status(option: ApprovalStatus): String
 }
 
+type Company {
+  id: String
+  name: String
+}
+
 input MovieRecordInput {
   source: String
   value: String
@@ -115,6 +122,11 @@ type PriceResponse {
   pricing: Price
 }
 
+input CompanyInput {
+  id: String
+  name: String!
+}
+
 input MovieInput {
   id: Int
   IMDB: String
@@ -135,6 +147,7 @@ input UserInput {
   imdbId: String
   email: String
   kind: String
+  company: CompanyInput
   roles: [UserRole]
 }
 

@@ -40,6 +40,11 @@ export default () => {
 
   const columns = [
     {
+      title: 'Company',
+      dataIndex: ['company', 'name'],
+      key: 'company',
+    },
+    {
       title: 'Name',
       dataIndex: 'name',
       key: 'name',

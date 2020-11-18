@@ -9,7 +9,7 @@ class MovieAPI extends DataSource {
 
     // Add new record
     async add(movie: Movie, user: User): Promise<{item: Movie}> {
-        movie.pk = `USER#${user.accountAddress}`;
+        movie.pk = `COMPANY#${user.companyId}`;
         movie.sk = `MOVIE#${movie.IMDB}`;
 
         const dbRecord = await this.findById(movie.IMDB);
@@ -40,10 +40,10 @@ class MovieAPI extends DataSource {
         ).then(m => m[0]);
     }
 
-    async findByUser(userId: string): Promise<Movie[]> {
+    async findByCompany(companyId: number): Promise<Movie[]> {
         return toArray(
             DBConnection.query(Movie, {
-                pk: `USER#${userId}`,
+                pk: `COMPANY#${companyId}`,
                 sk: beginsWith('MOVIE#')
             })
         );
