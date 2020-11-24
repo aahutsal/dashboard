@@ -45,4 +45,8 @@ export class Movie extends Base {
 
     @attribute()
     pricing!: Price[];
+
+    companyId() {
+      return this.pk ? this.pk.split('#')[1] : null;
+    }
 }

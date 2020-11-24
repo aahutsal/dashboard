@@ -80,7 +80,7 @@ const resolverMap: IResolvers = {
 
             const movie = await dataSources.movieAPI.findById(pricing.IMDB);
             if (!movie) throw new UserInputError(`Movie ${movie.IMDB} does not exist`)
-            if (movie.pk !== user.pk) throw new ForbiddenError(`User is not authorized for the operation`);
+            if (movie.companyId() !== user.companyId) throw new ForbiddenError(`User is not authorized for the operation`);
 
             const mapped = Object.assign(new Price, pricing);
             const saved = await dataSources.priceAPI.add(pricing.IMDB, mapped);
@@ -96,7 +96,7 @@ const resolverMap: IResolvers = {
 
             const movie = await dataSources.movieAPI.findById(pricing.IMDB);
             if (!movie) throw new UserInputError(`Movie ${movie.IMDB} does not exist`)
-            if (movie.pk !== user.pk) throw new ForbiddenError(`User is not authorized for the operation`);
+            if (movie.companyId() !== user.companyId) throw new ForbiddenError(`User is not authorized for the operation`);
 
             const mapped = Object.assign(new Price, pricing);
             const saved = await dataSources.priceAPI.update(pricing.IMDB, pricing.priceId, mapped);
@@ -112,7 +112,7 @@ const resolverMap: IResolvers = {
 
             const movie = await dataSources.movieAPI.findById(pricing.IMDB);
             if (!movie) throw new UserInputError(`Movie ${movie.IMDB} does not exist`)
-            if (movie.pk !== user.pk) throw new ForbiddenError(`User is not authorized for the operation`);
+            if (movie.companyId() !== user.companyId) throw new ForbiddenError(`User is not authorized for the operation`);
 
             await dataSources.priceAPI.delete(pricing.IMDB, pricing.priceId);
             return {
