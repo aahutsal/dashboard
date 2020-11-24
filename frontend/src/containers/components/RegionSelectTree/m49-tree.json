@@ -1,0 +1,1184 @@
+[
+  {
+    "key": "001",
+    "title": "World",
+    "children": [
+      {
+        "key": "002",
+        "title": "Africa",
+        "children": [
+          {
+            "key": "202",
+            "title": "Sub-Saharan Africa",
+            "children": [
+              {
+                "key": "011",
+                "title": "Western Africa",
+                "children": [
+                  {
+                    "key": "204",
+                    "title": "Benin"
+                  },
+                  {
+                    "key": "854",
+                    "title": "Burkina Faso"
+                  },
+                  {
+                    "key": "132",
+                    "title": "Cabo Verde"
+                  },
+                  {
+                    "key": "384",
+                    "title": "Côte d’Ivoire"
+                  },
+                  {
+                    "key": "270",
+                    "title": "Gambia"
+                  },
+                  {
+                    "key": "288",
+                    "title": "Ghana"
+                  },
+                  {
+                    "key": "324",
+                    "title": "Guinea"
+                  },
+                  {
+                    "key": "624",
+                    "title": "Guinea-Bissau"
+                  },
+                  {
+                    "key": "430",
+                    "title": "Liberia"
+                  },
+                  {
+                    "key": "466",
+                    "title": "Mali"
+                  },
+                  {
+                    "key": "478",
+                    "title": "Mauritania"
+                  },
+                  {
+                    "key": "562",
+                    "title": "Niger"
+                  },
+                  {
+                    "key": "566",
+                    "title": "Nigeria"
+                  },
+                  {
+                    "key": "654",
+                    "title": "Saint Helena"
+                  },
+                  {
+                    "key": "686",
+                    "title": "Senegal"
+                  },
+                  {
+                    "key": "694",
+                    "title": "Sierra Leone"
+                  },
+                  {
+                    "key": "768",
+                    "title": "Togo"
+                  }
+                ]
+              },
+              {
+                "key": "018",
+                "title": "Southern Africa",
+                "children": [
+                  {
+                    "key": "072",
+                    "title": "Botswana"
+                  },
+                  {
+                    "key": "748",
+                    "title": "Eswatini"
+                  },
+                  {
+                    "key": "426",
+                    "title": "Lesotho"
+                  },
+                  {
+                    "key": "516",
+                    "title": "Namibia"
+                  },
+                  {
+                    "key": "710",
+                    "title": "South Africa"
+                  }
+                ]
+              },
+              {
+                "key": "017",
+                "title": "Middle Africa",
+                "children": [
+                  {
+                    "key": "024",
+                    "title": "Angola"
+                  },
+                  {
+                    "key": "120",
+                    "title": "Cameroon"
+                  },
+                  {
+                    "key": "140",
+                    "title": "Central African Republic"
+                  },
+                  {
+                    "key": "148",
+                    "title": "Chad"
+                  },
+                  {
+                    "key": "178",
+                    "title": "Congo"
+                  },
+                  {
+                    "key": "180",
+                    "title": "Democratic Republic of the Congo"
+                  },
+                  {
+                    "key": "226",
+                    "title": "Equatorial Guinea"
+                  },
+                  {
+                    "key": "266",
+                    "title": "Gabon"
+                  },
+                  {
+                    "key": "678",
+                    "title": "Sao Tome and Principe"
+                  }
+                ]
+              },
+              {
+                "key": "014",
+                "title": "Eastern Africa",
+                "children": [
+                  {
+                    "key": "086",
+                    "title": "British Indian Ocean Territory"
+                  },
+                  {
+                    "key": "108",
+                    "title": "Burundi"
+                  },
+                  {
+                    "key": "174",
+                    "title": "Comoros"
+                  },
+                  {
+                    "key": "262",
+                    "title": "Djibouti"
+                  },
+                  {
+                    "key": "232",
+                    "title": "Eritrea"
+                  },
+                  {
+                    "key": "231",
+                    "title": "Ethiopia"
+                  },
+                  {
+                    "key": "260",
+                    "title": "French Southern Territories"
+                  },
+                  {
+                    "key": "404",
+                    "title": "Kenya"
+                  },
+                  {
+                    "key": "450",
+                    "title": "Madagascar"
+                  },
+                  {
+                    "key": "454",
+                    "title": "Malawi"
+                  },
+                  {
+                    "key": "480",
+                    "title": "Mauritius"
+                  },
+                  {
+                    "key": "175",
+                    "title": "Mayotte"
+                  },
+                  {
+                    "key": "508",
+                    "title": "Mozambique"
+                  },
+                  {
+                    "key": "638",
+                    "title": "Réunion"
+                  },
+                  {
+                    "key": "646",
+                    "title": "Rwanda"
+                  },
+                  {
+                    "key": "690",
+                    "title": "Seychelles"
+                  },
+                  {
+                    "key": "706",
+                    "title": "Somalia"
+                  },
+                  {
+                    "key": "728",
+                    "title": "South Sudan"
+                  },
+                  {
+                    "key": "800",
+                    "title": "Uganda"
+                  },
+                  {
+                    "key": "834",
+                    "title": "United Republic of Tanzania"
+                  },
+                  {
+                    "key": "894",
+                    "title": "Zambia"
+                  },
+                  {
+                    "key": "716",
+                    "title": "Zimbabwe"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "key": "015",
+            "title": "Northern Africa",
+            "children": [
+              {
+                "key": "012",
+                "title": "Algeria"
+              },
+              {
+                "key": "818",
+                "title": "Egypt"
+              },
+              {
+                "key": "434",
+                "title": "Libya"
+              },
+              {
+                "key": "504",
+                "title": "Morocco"
+              },
+              {
+                "key": "729",
+                "title": "Sudan"
+              },
+              {
+                "key": "788",
+                "title": "Tunisia"
+              },
+              {
+                "key": "732",
+                "title": "Western Sahara"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "key": "019",
+        "title": "Americas",
+        "children": [
+          {
+            "key": "419",
+            "title": "Latin America and the Caribbean",
+            "children": [
+              {
+                "key": "005",
+                "title": "South America",
+                "children": [
+                  {
+                    "key": "032",
+                    "title": "Argentina"
+                  },
+                  {
+                    "key": "068",
+                    "title": "Bolivia (Plurinational State of)"
+                  },
+                  {
+                    "key": "074",
+                    "title": "Bouvet Island"
+                  },
+                  {
+                    "key": "076",
+                    "title": "Brazil"
+                  },
+                  {
+                    "key": "152",
+                    "title": "Chile"
+                  },
+                  {
+                    "key": "170",
+                    "title": "Colombia"
+                  },
+                  {
+                    "key": "218",
+                    "title": "Ecuador"
+                  },
+                  {
+                    "key": "238",
+                    "title": "Falkland Islands (Malvinas)"
+                  },
+                  {
+                    "key": "254",
+                    "title": "French Guiana"
+                  },
+                  {
+                    "key": "328",
+                    "title": "Guyana"
+                  },
+                  {
+                    "key": "600",
+                    "title": "Paraguay"
+                  },
+                  {
+                    "key": "604",
+                    "title": "Peru"
+                  },
+                  {
+                    "key": "239",
+                    "title": "South Georgia and the South Sandwich Islands"
+                  },
+                  {
+                    "key": "740",
+                    "title": "Suriname"
+                  },
+                  {
+                    "key": "858",
+                    "title": "Uruguay"
+                  },
+                  {
+                    "key": "862",
+                    "title": "Venezuela (Bolivarian Republic of)"
+                  }
+                ]
+              },
+              {
+                "key": "013",
+                "title": "Central America",
+                "children": [
+                  {
+                    "key": "084",
+                    "title": "Belize"
+                  },
+                  {
+                    "key": "188",
+                    "title": "Costa Rica"
+                  },
+                  {
+                    "key": "222",
+                    "title": "El Salvador"
+                  },
+                  {
+                    "key": "320",
+                    "title": "Guatemala"
+                  },
+                  {
+                    "key": "340",
+                    "title": "Honduras"
+                  },
+                  {
+                    "key": "484",
+                    "title": "Mexico"
+                  },
+                  {
+                    "key": "558",
+                    "title": "Nicaragua"
+                  },
+                  {
+                    "key": "591",
+                    "title": "Panama"
+                  }
+                ]
+              },
+              {
+                "key": "029",
+                "title": "Caribbean",
+                "children": [
+                  {
+                    "key": "660",
+                    "title": "Anguilla"
+                  },
+                  {
+                    "key": "028",
+                    "title": "Antigua and Barbuda"
+                  },
+                  {
+                    "key": "533",
+                    "title": "Aruba"
+                  },
+                  {
+                    "key": "044",
+                    "title": "Bahamas"
+                  },
+                  {
+                    "key": "052",
+                    "title": "Barbados"
+                  },
+                  {
+                    "key": "535",
+                    "title": "Bonaire, Sint Eustatius and Saba"
+                  },
+                  {
+                    "key": "092",
+                    "title": "British Virgin Islands"
+                  },
+                  {
+                    "key": "136",
+                    "title": "Cayman Islands"
+                  },
+                  {
+                    "key": "192",
+                    "title": "Cuba"
+                  },
+                  {
+                    "key": "531",
+                    "title": "Curaçao"
+                  },
+                  {
+                    "key": "212",
+                    "title": "Dominica"
+                  },
+                  {
+                    "key": "214",
+                    "title": "Dominican Republic"
+                  },
+                  {
+                    "key": "308",
+                    "title": "Grenada"
+                  },
+                  {
+                    "key": "312",
+                    "title": "Guadeloupe"
+                  },
+                  {
+                    "key": "332",
+                    "title": "Haiti"
+                  },
+                  {
+                    "key": "388",
+                    "title": "Jamaica"
+                  },
+                  {
+                    "key": "474",
+                    "title": "Martinique"
+                  },
+                  {
+                    "key": "500",
+                    "title": "Montserrat"
+                  },
+                  {
+                    "key": "630",
+                    "title": "Puerto Rico"
+                  },
+                  {
+                    "key": "652",
+                    "title": "Saint Barthélemy"
+                  },
+                  {
+                    "key": "659",
+                    "title": "Saint Kitts and Nevis"
+                  },
+                  {
+                    "key": "662",
+                    "title": "Saint Lucia"
+                  },
+                  {
+                    "key": "663",
+                    "title": "Saint Martin (French Part)"
+                  },
+                  {
+                    "key": "670",
+                    "title": "Saint Vincent and the Grenadines"
+                  },
+                  {
+                    "key": "534",
+                    "title": "Sint Maarten (Dutch part)"
+                  },
+                  {
+                    "key": "780",
+                    "title": "Trinidad and Tobago"
+                  },
+                  {
+                    "key": "796",
+                    "title": "Turks and Caicos Islands"
+                  },
+                  {
+                    "key": "850",
+                    "title": "United States Virgin Islands"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "key": "021",
+            "title": "Northern America",
+            "children": [
+              {
+                "key": "060",
+                "title": "Bermuda"
+              },
+              {
+                "key": "124",
+                "title": "Canada"
+              },
+              {
+                "key": "304",
+                "title": "Greenland"
+              },
+              {
+                "key": "666",
+                "title": "Saint Pierre and Miquelon"
+              },
+              {
+                "key": "840",
+                "title": "United States of America"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "key": "150",
+        "title": "Europe",
+        "children": [
+          {
+            "key": "154",
+            "title": "Northern Europe",
+            "children": [
+              {
+                "key": "830",
+                "title": "Channel Islands",
+                "children": [
+                  {
+                    "key": "831",
+                    "title": "Guernsey"
+                  },
+                  {
+                    "key": "832",
+                    "title": "Jersey"
+                  },
+                  {
+                    "key": "680",
+                    "title": "Sark"
+                  }
+                ]
+              },
+              {
+                "key": "248",
+                "title": "Åland Islands"
+              },
+              {
+                "key": "208",
+                "title": "Denmark"
+              },
+              {
+                "key": "233",
+                "title": "Estonia"
+              },
+              {
+                "key": "234",
+                "title": "Faroe Islands"
+              },
+              {
+                "key": "246",
+                "title": "Finland"
+              },
+              {
+                "key": "352",
+                "title": "Iceland"
+              },
+              {
+                "key": "372",
+                "title": "Ireland"
+              },
+              {
+                "key": "833",
+                "title": "Isle of Man"
+              },
+              {
+                "key": "428",
+                "title": "Latvia"
+              },
+              {
+                "key": "440",
+                "title": "Lithuania"
+              },
+              {
+                "key": "578",
+                "title": "Norway"
+              },
+              {
+                "key": "744",
+                "title": "Svalbard and Jan Mayen Islands"
+              },
+              {
+                "key": "752",
+                "title": "Sweden"
+              },
+              {
+                "key": "826",
+                "title": "United Kingdom of Great Britain and Northern Ireland"
+              }
+            ]
+          },
+          {
+            "key": "151",
+            "title": "Eastern Europe",
+            "children": [
+              {
+                "key": "112",
+                "title": "Belarus"
+              },
+              {
+                "key": "100",
+                "title": "Bulgaria"
+              },
+              {
+                "key": "203",
+                "title": "Czechia"
+              },
+              {
+                "key": "348",
+                "title": "Hungary"
+              },
+              {
+                "key": "616",
+                "title": "Poland"
+              },
+              {
+                "key": "498",
+                "title": "Republic of Moldova"
+              },
+              {
+                "key": "642",
+                "title": "Romania"
+              },
+              {
+                "key": "643",
+                "title": "Russian Federation"
+              },
+              {
+                "key": "703",
+                "title": "Slovakia"
+              },
+              {
+                "key": "804",
+                "title": "Ukraine"
+              }
+            ]
+          },
+          {
+            "key": "039",
+            "title": "Southern Europe",
+            "children": [
+              {
+                "key": "008",
+                "title": "Albania"
+              },
+              {
+                "key": "020",
+                "title": "Andorra"
+              },
+              {
+                "key": "070",
+                "title": "Bosnia and Herzegovina"
+              },
+              {
+                "key": "191",
+                "title": "Croatia"
+              },
+              {
+                "key": "292",
+                "title": "Gibraltar"
+              },
+              {
+                "key": "300",
+                "title": "Greece"
+              },
+              {
+                "key": "336",
+                "title": "Holy See"
+              },
+              {
+                "key": "380",
+                "title": "Italy"
+              },
+              {
+                "key": "470",
+                "title": "Malta"
+              },
+              {
+                "key": "499",
+                "title": "Montenegro"
+              },
+              {
+                "key": "807",
+                "title": "North Macedonia"
+              },
+              {
+                "key": "620",
+                "title": "Portugal"
+              },
+              {
+                "key": "674",
+                "title": "San Marino"
+              },
+              {
+                "key": "688",
+                "title": "Serbia"
+              },
+              {
+                "key": "705",
+                "title": "Slovenia"
+              },
+              {
+                "key": "724",
+                "title": "Spain"
+              }
+            ]
+          },
+          {
+            "key": "155",
+            "title": "Western Europe",
+            "children": [
+              {
+                "key": "040",
+                "title": "Austria"
+              },
+              {
+                "key": "056",
+                "title": "Belgium"
+              },
+              {
+                "key": "250",
+                "title": "France"
+              },
+              {
+                "key": "276",
+                "title": "Germany"
+              },
+              {
+                "key": "438",
+                "title": "Liechtenstein"
+              },
+              {
+                "key": "442",
+                "title": "Luxembourg"
+              },
+              {
+                "key": "492",
+                "title": "Monaco"
+              },
+              {
+                "key": "528",
+                "title": "Netherlands"
+              },
+              {
+                "key": "756",
+                "title": "Switzerland"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "key": "010",
+        "title": "Antarctica"
+      },
+      {
+        "key": "142",
+        "title": "Asia",
+        "children": [
+          {
+            "key": "143",
+            "title": "Central Asia",
+            "children": [
+              {
+                "key": "398",
+                "title": "Kazakhstan"
+              },
+              {
+                "key": "417",
+                "title": "Kyrgyzstan"
+              },
+              {
+                "key": "762",
+                "title": "Tajikistan"
+              },
+              {
+                "key": "795",
+                "title": "Turkmenistan"
+              },
+              {
+                "key": "860",
+                "title": "Uzbekistan"
+              }
+            ]
+          },
+          {
+            "key": "030",
+            "title": "Eastern Asia",
+            "children": [
+              {
+                "key": "156",
+                "title": "China"
+              },
+              {
+                "key": "344",
+                "title": "China, Hong Kong Special Administrative Region"
+              },
+              {
+                "key": "446",
+                "title": "China, Macao Special Administrative Region"
+              },
+              {
+                "key": "408",
+                "title": "Democratic People's Republic of Korea"
+              },
+              {
+                "key": "392",
+                "title": "Japan"
+              },
+              {
+                "key": "496",
+                "title": "Mongolia"
+              },
+              {
+                "key": "410",
+                "title": "Republic of Korea"
+              }
+            ]
+          },
+          {
+            "key": "035",
+            "title": "South-eastern Asia",
+            "children": [
+              {
+                "key": "096",
+                "title": "Brunei Darussalam"
+              },
+              {
+                "key": "116",
+                "title": "Cambodia"
+              },
+              {
+                "key": "360",
+                "title": "Indonesia"
+              },
+              {
+                "key": "418",
+                "title": "Lao People's Democratic Republic"
+              },
+              {
+                "key": "458",
+                "title": "Malaysia"
+              },
+              {
+                "key": "104",
+                "title": "Myanmar"
+              },
+              {
+                "key": "608",
+                "title": "Philippines"
+              },
+              {
+                "key": "702",
+                "title": "Singapore"
+              },
+              {
+                "key": "764",
+                "title": "Thailand"
+              },
+              {
+                "key": "626",
+                "title": "Timor-Leste"
+              },
+              {
+                "key": "704",
+                "title": "Viet Nam"
+              }
+            ]
+          },
+          {
+            "key": "034",
+            "title": "Southern Asia",
+            "children": [
+              {
+                "key": "004",
+                "title": "Afghanistan"
+              },
+              {
+                "key": "050",
+                "title": "Bangladesh"
+              },
+              {
+                "key": "064",
+                "title": "Bhutan"
+              },
+              {
+                "key": "356",
+                "title": "India"
+              },
+              {
+                "key": "364",
+                "title": "Iran (Islamic Republic of)"
+              },
+              {
+                "key": "462",
+                "title": "Maldives"
+              },
+              {
+                "key": "524",
+                "title": "Nepal"
+              },
+              {
+                "key": "586",
+                "title": "Pakistan"
+              },
+              {
+                "key": "144",
+                "title": "Sri Lanka"
+              }
+            ]
+          },
+          {
+            "key": "145",
+            "title": "Western Asia",
+            "children": [
+              {
+                "key": "051",
+                "title": "Armenia"
+              },
+              {
+                "key": "031",
+                "title": "Azerbaijan"
+              },
+              {
+                "key": "048",
+                "title": "Bahrain"
+              },
+              {
+                "key": "196",
+                "title": "Cyprus"
+              },
+              {
+                "key": "268",
+                "title": "Georgia"
+              },
+              {
+                "key": "368",
+                "title": "Iraq"
+              },
+              {
+                "key": "376",
+                "title": "Israel"
+              },
+              {
+                "key": "400",
+                "title": "Jordan"
+              },
+              {
+                "key": "414",
+                "title": "Kuwait"
+              },
+              {
+                "key": "422",
+                "title": "Lebanon"
+              },
+              {
+                "key": "512",
+                "title": "Oman"
+              },
+              {
+                "key": "634",
+                "title": "Qatar"
+              },
+              {
+                "key": "682",
+                "title": "Saudi Arabia"
+              },
+              {
+                "key": "275",
+                "title": "State of Palestine"
+              },
+              {
+                "key": "760",
+                "title": "Syrian Arab Republic"
+              },
+              {
+                "key": "792",
+                "title": "Turkey"
+              },
+              {
+                "key": "784",
+                "title": "United Arab Emirates"
+              },
+              {
+                "key": "887",
+                "title": "Yemen"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "key": "009",
+        "title": "Oceania",
+        "children": [
+          {
+            "key": "053",
+            "title": "Australia and New Zealand",
+            "children": [
+              {
+                "key": "036",
+                "title": "Australia"
+              },
+              {
+                "key": "162",
+                "title": "Christmas Island"
+              },
+              {
+                "key": "166",
+                "title": "Cocos (Keeling) Islands"
+              },
+              {
+                "key": "334",
+                "title": "Heard Island and McDonald Islands"
+              },
+              {
+                "key": "554",
+                "title": "New Zealand"
+              },
+              {
+                "key": "574",
+                "title": "Norfolk Island"
+              }
+            ]
+          },
+          {
+            "key": "054",
+            "title": "Melanesia",
+            "children": [
+              {
+                "key": "242",
+                "title": "Fiji"
+              },
+              {
+                "key": "540",
+                "title": "New Caledonia"
+              },
+              {
+                "key": "598",
+                "title": "Papua New Guinea"
+              },
+              {
+                "key": "090",
+                "title": "Solomon Islands"
+              },
+              {
+                "key": "548",
+                "title": "Vanuatu"
+              }
+            ]
+          },
+          {
+            "key": "057",
+            "title": "Micronesia",
+            "children": [
+              {
+                "key": "316",
+                "title": "Guam"
+              },
+              {
+                "key": "296",
+                "title": "Kiribati"
+              },
+              {
+                "key": "584",
+                "title": "Marshall Islands"
+              },
+              {
+                "key": "583",
+                "title": "Micronesia (Federated States of)"
+              },
+              {
+                "key": "520",
+                "title": "Nauru"
+              },
+              {
+                "key": "580",
+                "title": "Northern Mariana Islands"
+              },
+              {
+                "key": "585",
+                "title": "Palau"
+              },
+              {
+                "key": "581",
+                "title": "United States Minor Outlying Islands"
+              }
+            ]
+          },
+          {
+            "key": "061",
+            "title": "Polynesia",
+            "children": [
+              {
+                "key": "016",
+                "title": "American Samoa"
+              },
+              {
+                "key": "184",
+                "title": "Cook Islands"
+              },
+              {
+                "key": "258",
+                "title": "French Polynesia"
+              },
+              {
+                "key": "570",
+                "title": "Niue"
+              },
+              {
+                "key": "612",
+                "title": "Pitcairn"
+              },
+              {
+                "key": "882",
+                "title": "Samoa"
+              },
+              {
+                "key": "772",
+                "title": "Tokelau"
+              },
+              {
+                "key": "776",
+                "title": "Tonga"
+              },
+              {
+                "key": "798",
+                "title": "Tuvalu"
+              },
+              {
+                "key": "876",
+                "title": "Wallis and Futuna Islands"
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  }
+]
