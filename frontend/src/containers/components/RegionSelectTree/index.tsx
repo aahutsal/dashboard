@@ -28,14 +28,15 @@ export type RegionSelectTreeResult = {
 };
 
 type RegionSelectTreeProps = {
+  regionCodes: string[];
   onChange?: (selection: RegionSelectTreeResult) => void
 };
 
-export default ({ onChange }: RegionSelectTreeProps) => {
+export default ({ regionCodes, onChange }: RegionSelectTreeProps) => {
   const [searchValue, setSearchValue] = useState<string>('');
   const [expandedKeys, setExpandedKeys] = useState<Key[]>([]);
-  const [checkedKeys, setCheckedKeys] = useState<any>([]);
-  const [checkedRegionGroups, setCheckedRegionGroups] = useState<any>([]);
+  const [checkedKeys, setCheckedKeys] = useState<any>(regionCodes);
+  const [checkedRegionGroups, setCheckedRegionGroups] = useState<any>(groupRegions(regionCodes, m49flat));
 
   const filterTreeNode = (node: any) => node.title.props.text.indexOf(searchValue) !== -1;
 

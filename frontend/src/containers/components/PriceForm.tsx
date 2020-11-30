@@ -1,4 +1,6 @@
-import React, { FC, useContext, useEffect } from 'react';
+import React, {
+  FC, useContext, useEffect,
+} from 'react';
 import moment from 'moment';
 import Web3 from 'web3';
 import {
@@ -13,6 +15,7 @@ import { codeToName as Regions } from '../../stores/humanizeM49';
 import { PriceInterface } from './PriceType';
 import humanizeError from '../../stores/utils/humanizeError';
 import removeNullAttributes from '../../stores/utils/removeNullAttributes';
+import RegionPicker from './RegionPicker';
 
 
 const { RangePicker } = DatePicker;
@@ -43,6 +46,12 @@ const PriceForm: FC<ComponentProps> = ({ price, onClear }) => {
   useEffect(() => {
     form.setFieldsValue(price);
 
+    if (price.regions) {
+      form.setFieldsValue({
+        regions: price.regions,
+      });
+    }
+
     if (price.fromWindow) {
       form.setFieldsValue({
         window: [moment(price.fromWindow, 'YYYY-MM-DD'), moment(price.toWindow, 'YYYY-MM-DD')],
@@ -56,6 +65,12 @@ const PriceForm: FC<ComponentProps> = ({ price, onClear }) => {
     }
   }, [price, form, applyFactor]);
 
+
+  const onRegionChanged = (regionCodes: string[]) => {
+    form.setFieldsValue({
+      regions: regionCodes,
+    });
+  };
 
   const createPrice = (pricing: PriceInterface) => {
     addPrice({
@@ -110,7 +125,7 @@ const PriceForm: FC<ComponentProps> = ({ price, onClear }) => {
     const pricing = {
       IMDB: price.IMDB,
       type: priceType,
-      region: values.region,
+      regions: values.regions,
       amount: factorAdjustedPrice.toString(),
       medium: values.medium,
       fromWindow: values.window && values.window[0].format('YYYY-MM-DD'),
@@ -147,23 +162,17 @@ const PriceForm: FC<ComponentProps> = ({ price, onClear }) => {
         <Row gutter={16}>
           <Col className="gutter-row" xs={{ span: 24 }} lg={{ span: 12 }}>
             <Form.Item
-              label="Region"
-              name="region"
+              label="Regions/Territory"
+              name="regions"
             >
-              <Select
-                showSearch
-                placeholder="Select a region"
-                optionFilterProp="children"
-              >
-                { regionOptions }
-              </Select>
+              <RegionPicker regionCodes={price?.regions || []} onChange={onRegionChanged} />
             </Form.Item>
             <Form.Item
               label="Price"
               name="amount"
               rules={[
                 () => ({
-                  validator(rule, value) {
+                  validator(_, value) {
                     const numValue = parseFloat(value);
                     if (!value || Object.is(numValue, NaN) || numValue <= 0) {
                       return Promise.reject(new Error('Price should be a positive number'));

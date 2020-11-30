@@ -24,7 +24,7 @@ export class Price extends Base {
     amount!: string;
 
     @attribute()
-    region!: string;
+    regions!: string[];
 
     @attribute()
     medium!: MovieMedium;

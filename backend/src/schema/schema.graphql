@@ -44,7 +44,7 @@ type Price {
   priceId: String
   type(option: PriceType): String
   amount: String
-  region: String
+  regions: [String]
   medium(option: MovieMedium): String
   fromWindow: DateTime
   toWindow: DateTime
@@ -110,7 +110,7 @@ input PriceInput {
   priceId: String
   type: String
   amount: String
-  region: String
+  regions: [String]
   medium: String
   fromWindow: DateTime
   toWindow: DateTime

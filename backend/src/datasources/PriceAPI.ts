@@ -1,4 +1,4 @@
-import { ConditionExpression, equals } from '@aws/dynamodb-expressions';
+import { ConditionExpression, contains, equals } from '@aws/dynamodb-expressions';
 import { DataSource } from 'apollo-datasource';
 import { v4 as uuidv4 } from 'uuid';
 import { Price } from './models/Price';
@@ -41,8 +41,8 @@ export class PriceAPI extends DataSource {
             type: 'And',
             conditions: [
                 {
-                    ...equals(filter.region),
-                    subject: 'region',
+                    ...contains(filter.region),
+                    subject: 'regions',
                 },
                 {
                     ...equals(filter.medium),
@@ -55,6 +55,7 @@ export class PriceAPI extends DataSource {
             this.db.query(Price, { pk: `MOVIE#${filter.IMDB}` }, { filter: andExpression })
         );
 
+
         let price = prices.find((p) => 
             (!p.fromWindow || new Date(p.fromWindow) < date) 
             && (!p.toWindow || new Date(p.toWindow) > date)
@@ -66,7 +67,7 @@ export class PriceAPI extends DataSource {
             price = Object.assign(new Price, {
                 "priceId": "DEFAULT",
                 "type": "WHITERABBIT",
-                "region": "DEFAULT",
+                "regions": ["001"], // World aka Global
                 "medium": "EST",
                 "amount": "20000000000000000", // 2 cents
                 "fromWindow": date.toUTCString(),

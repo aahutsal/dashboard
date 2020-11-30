@@ -73,7 +73,7 @@ export const GET_MOVIE = gql`
       pricing {
         priceId
         medium
-        region
+        regions
         amount
         fromWindow
         toWindow
