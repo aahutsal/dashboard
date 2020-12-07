@@ -1,18 +1,10 @@
 import { attribute, table } from '@aws/dynamodb-data-mapper-annotations';
 import { Base } from './Base';
+import { Medium } from '@whiterabbitjs/dashboard-common';
 
 enum PriceType {
     WHITERABBIT = "WHITERABBIT",
     RIGHTSHOLDER = "RIGHTSHOLDER"
-}
-
-enum MovieMedium {
-    THEATER = "THEATER",
-    EST = "EST",
-    DTR = "DTR",
-    PAYTV = "PAYTV",
-    SVOD = "SVOD",
-    FREETV = "FREETV"
 }
 
 @table('movies')
@@ -27,7 +19,7 @@ export class Price extends Base {
     regions!: string[];
 
     @attribute()
-    medium!: MovieMedium;
+    medium!: Medium;
 
     @attribute()
     fromWindow!: string;
@@ -36,7 +28,7 @@ export class Price extends Base {
     toWindow!: string;
 
     priceId(): string {
-        return this.sk;
+        return this.sk.replace('PRICE#', '');
     }
 }
 

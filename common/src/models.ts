@@ -13,11 +13,6 @@ export enum ApprovalStatus {
   REJECTED = 'REJECTED',
 }
 
-export enum PendingStatus {
-  USER = 'Pending#USER',
-  MOVIE = 'Pending#MOVIE',
-}
-
 export type RevenuePerMovieRegion = {
   region: number;
   total: BigInt;
@@ -75,6 +70,12 @@ export type Movie = {
   metadata: TMDBMovieExtended;
 };
 
+export type Company = {
+  id: string;
+  name: string;
+  kind: string;
+};
+
 export class User {
   accountAddress!: string;
 
@@ -94,7 +95,7 @@ export class User {
 
   movies: Movie[] = [];
 
-  company!: TMDBCompany;
+  company!: Company;
 
   constructor(seed?: object) {
     if (seed) {
@@ -110,6 +111,10 @@ export class User {
     return this.isApproved() && this.roles.indexOf(UserRole.ADMIN) >= 0;
   }
 
+  isProducer(): boolean {
+    return this.company && this.company.kind === 'PRODUCTION';
+  }
+
   isApproved(): boolean {
     return this.status === ApprovalStatus.APPROVED;
   }
@@ -117,4 +122,31 @@ export class User {
   ownsMovie(imdbId: string) {
     return !!this.movies.find((m) => m.IMDB === imdbId);
   }
+}
+
+export enum CompanyType {
+  PRODUCTION = 'Production',
+  SALES = 'Sales',
+  DISTRIBUTION = 'Distribution',
+  FINANCING = 'Financing',
+  PUBLIC_INSTITUION = 'Public Institution',
+  OTHER = 'Other',
+}
+
+export type License = {
+  licenseId?: string;
+  movieId: string;
+  companyId: string;
+  regions?: string[];
+  fromDate?: Date;
+  toDate?: Date;
+};
+
+export enum Medium {
+  THEATER = 'THEATER',
+  EST = 'EST',
+  DTR = 'DTR',
+  PAYTV = 'PAYTV',
+  SVOD = 'SVOD',
+  FREETV = 'FREETV',
 }

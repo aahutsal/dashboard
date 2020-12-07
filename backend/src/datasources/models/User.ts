@@ -15,7 +15,8 @@ export class User extends BaseUser {
 
   @rangeKey({
     indexKeyConfigurations: {
-        movieByIdIndex: 'HASH',
+      byIdIndex: 'HASH',
+      pendingItemsIndex: 'RANGE',
     }
   })
   sk!: string;
@@ -44,9 +45,6 @@ export class User extends BaseUser {
 
   @attribute()
   imdbId!: string;
-
-  @attribute()
-  kind!: string;
 
   @attribute()
   companyId!: string;

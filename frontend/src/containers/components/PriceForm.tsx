@@ -72,20 +72,25 @@ const PriceForm: FC<ComponentProps> = ({ price, onClear }) => {
     });
   };
 
+  const refetchQueries = [
+    {
+      query: GET_MOVIE,
+      variables: {
+        IMDB: price.IMDB,
+        companyId: user?.company.id,
+      },
+    },
+  ];
+
   const createPrice = (pricing: PriceInterface) => {
     addPrice({
       variables: {
         pricing: removeNullAttributes(pricing),
       },
-      refetchQueries: [
-        {
-          query: GET_MOVIE,
-          variables: { IMDB: price.IMDB },
-        },
-      ],
+      refetchQueries,
     })
       .then(() => onClear())
-      .catch(() => {});
+      .catch(() => { });
   };
 
   const updatePrice = (pricing: PriceInterface) => {
@@ -93,15 +98,10 @@ const PriceForm: FC<ComponentProps> = ({ price, onClear }) => {
       variables: {
         pricing: { ...removeNullAttributes(pricing), priceId: price.priceId },
       },
-      refetchQueries: [
-        {
-          query: GET_MOVIE,
-          variables: { IMDB: price.IMDB },
-        },
-      ],
+      refetchQueries,
     })
       .then(() => onClear())
-      .catch(() => {});
+      .catch(() => { });
   };
 
   const deletePriceAction = () => {
@@ -109,15 +109,10 @@ const PriceForm: FC<ComponentProps> = ({ price, onClear }) => {
       variables: {
         pricing: { IMDB: price.IMDB, priceId: price.priceId },
       },
-      refetchQueries: [
-        {
-          query: GET_MOVIE,
-          variables: { IMDB: price.IMDB },
-        },
-      ],
+      refetchQueries,
     })
       .then(() => onClear())
-      .catch(() => {});
+      .catch(() => { });
   };
 
   const onFinish = async (values: Store) => {

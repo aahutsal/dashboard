@@ -1,6 +1,6 @@
 {
   "name": "@whiterabbitjs/dashboard-common",
-  "version": "1.3.0",
+  "version": "1.4.0",
   "description": "",
   "main": "dist/index.js",
   "license": "MPL-2.0",

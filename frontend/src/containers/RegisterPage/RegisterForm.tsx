@@ -1,10 +1,13 @@
+/* eslint-disable max-len */
+// TODO: make sure npm run lint:fix doesn't introduce fixes which
+// break lint check later (e.g. max-len)
 import React, { useContext, useState, useEffect } from 'react';
 import {
   Form, Input, Button, Alert, Spin, Select,
 } from 'antd';
 import { Store } from 'antd/lib/form/interface';
 import { useMutation } from '@apollo/react-hooks';
-import { TMDBMovie } from '@whiterabbitjs/dashboard-common';
+import { TMDBMovie, CompanyType } from '@whiterabbitjs/dashboard-common';
 import { GET_USER } from '../../apollo/queries';
 import { ADD_USER } from '../../apollo/mutations';
 import { DashboardContext } from '../../components/DashboardContextProvider';
@@ -48,10 +51,10 @@ export default () => {
             id: values.person.id,
             imdbId: values.person.imdbId,
             email: values.email,
-            kind: values.kind,
             company: {
               id: values.company.id,
               name: values.company.name,
+              kind: values.kind,
             },
             roles: ['RIGHTSHOLDER'],
           },
@@ -132,12 +135,7 @@ export default () => {
             rules={[{ required: true, message: 'Please enter your email' }]}
           >
             <Select>
-              <Option value="Production">Production</Option>
-              <Option value="Sales">Sales</Option>
-              <Option value="Distribution">Distribution</Option>
-              <Option value="Financing">Financing</Option>
-              <Option value="Public Institution">Public Institution</Option>
-              <Option value="Other">Other</Option>
+              {Object.entries(CompanyType).map(([value, name]) => <Option key={value} value={value}>{name}</Option>)}
             </Select>
           </Form.Item>
           <Form.Item

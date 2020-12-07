@@ -74,6 +74,9 @@ const AppLayout: React.FC<AppLayoutProps> = ({ section, children }: AppLayoutPro
             <Menu.Item key="movies">
               <Link to="/">My Movies</Link>
             </Menu.Item>
+            <Menu.Item key="sublicensees">
+              <Link to="/sublicensees">My Licensees</Link>
+            </Menu.Item>
             {user && user.isAdmin() && (
               <Menu.Item key="admin">
                 <Link to="/admin">Admin</Link>
@@ -82,9 +85,7 @@ const AppLayout: React.FC<AppLayoutProps> = ({ section, children }: AppLayoutPro
           </TopMenu>
         )}
         {user && account && (
-          <div style={{ width: '100%', textAlign: 'right', whiteSpace: 'nowrap' }}>
-            <UserMenu user={user} account={account} />
-          </div>
+          <UserMenu user={user} account={account} />
         )}
       </Header>
       <Content>

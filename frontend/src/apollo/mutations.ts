@@ -68,3 +68,30 @@ export const DECLINE_USER = gql`
     }
   }
 `;
+
+export const ADD_LICENSE = gql`
+  mutation addLicense ($license: LicenseInput!) {
+    addLicense(license: $license) {
+      success
+      message
+    }
+  }
+`;
+
+export const UPDATE_LICENSE = gql`
+  mutation updateLicense ($license: LicenseInput!) {
+    updateLicense(license: $license) {
+      success
+      message
+    }
+  }
+`;
+
+export const DELETE_LICENSE = gql`
+  mutation deleteLicense ($license: LicenseInput!) {
+    deleteLicense(license: $license) {
+      success
+      message
+    }
+  }
+`;

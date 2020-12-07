@@ -25,7 +25,6 @@ const ClickablePanel = styled.div`
   }
 `;
 
-
 const m49flat = flattenRegionTree(m49tree);
 
 export default ({ regionCodes, placeholder, onChange }: RegionPickerProps) => {

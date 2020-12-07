@@ -50,8 +50,7 @@ const WithUser = ({ account, children }: { account: string, children: ReactNode 
   );
 
   const { data: configData, loading: configLoading } = useQuery(GET_CONFIG);
-
-  const user = userData && userData.user.status ? new User(userData.user) : null;
+  const user = userData?.user && userData.user.status ? new User(userData.user) : null;
 
   if (user === undefined || userLoading || configLoading) {
     return (

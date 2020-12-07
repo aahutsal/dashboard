@@ -1,54 +1,62 @@
 import { DataSource } from 'apollo-datasource';
-import DBConnection from './DB';
 import { User } from './models/User';
 import { toArray } from '../util';
-import { PendingStatus, ApprovalStatus } from '@whiterabbitjs/dashboard-common';
+import { ApprovalStatus } from '@whiterabbitjs/dashboard-common';
+import { DataMapper } from '@aws/dynamodb-data-mapper';
 
 class UserAPI extends DataSource {
+    private db: DataMapper;
+
+    constructor(db: DataMapper) {
+        super();
+        this.db = db;
+    }    
 
     // Add new record
-    async add(user: User, companyId: string): Promise<{item: User}> {
+    async add(user: User, companyId: string): Promise<User> {
         user.pk = `USER#${user.accountAddress}`;
         user.sk = 'PROFILE';
-        user.pendingStatus = PendingStatus.USER;
+        user.pendingStatus = `USER#${ApprovalStatus.PENDING}`;
         user.status = ApprovalStatus.PENDING;
         user.companyId = companyId;
-        return DBConnection.put({ item: user });
+        return this.db.put({ item: user }).then(({ item }) => item);
     }
 
     // Get record by id
-    async findById(accountAddress: string): Promise<{ item?: User }> {
+    async findById(accountAddress: string): Promise<User | undefined> {
         const toFind = Object.assign(new User(), { 
             pk: `USER#${accountAddress}`,
             sk: 'PROFILE',
         });
-        return DBConnection.get({ item: toFind }).catch(() => ({}));
+        const result = await this.db.get({ item: toFind }).catch(() => undefined);
+        return result as unknown as User;
     }   
 
     async getPending(): Promise<User[]> {
         return toArray(
-            DBConnection.query(User, {
-                pendingStatus: `Pending#USER`
+            this.db.query(User, {
+                pendingStatus: `USER#${ApprovalStatus.PENDING}`
             }, { 
                 indexName: 'pendingItemsIndex'
             })
         );
     }
 
-    async approve(userId: string): Promise<{ item?: User}> {
+    async approve(userId: string): Promise<User> {
         const user = await this.findById(userId) as User;
         if (!user) throw new Error(`No such user ${userId}`);
         user.status = ApprovalStatus.APPROVED;
-        user.pendingStatus = 'Approved';
-        return DBConnection.update({ item: user });
+        user.pendingStatus = `USER#${ApprovalStatus.APPROVED}`;
+        const result = this.db.update({ item: user });
+        return result as unknown as User;
     }
 
     async decline(userId: string): Promise<void> {
         const user = await this.findById(userId) as User;
         if (!user) throw new Error(`No such user ${userId}`);
-        await DBConnection.delete({ item: user });
+        await this.db.delete({ item: user });
     }
 
 }
 
-export default new UserAPI();
+export default UserAPI;

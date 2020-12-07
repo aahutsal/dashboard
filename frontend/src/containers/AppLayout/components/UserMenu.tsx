@@ -1,6 +1,6 @@
 import React from 'react';
 import { Button, Dropdown, Menu } from 'antd';
-import { UserOutlined, DownOutlined } from '@ant-design/icons';
+import { UserOutlined } from '@ant-design/icons';
 import { User } from '@whiterabbitjs/dashboard-common';
 import styled from 'styled-components';
 import { disconnect } from '../../../stores/Web3';
@@ -32,19 +32,38 @@ const userActions = (account: string) => (
   </Menu>
 );
 
-const UserMenu: React.FC<UserMenuProps> = ({ user, account } : UserMenuProps) => (
-  <Dropdown overlay={userActions(account)} trigger={['click']}>
-    <Button
-      className="ant-dropdown-link"
-      type="link"
-    >
-      <UserOutlined />
-      {' '}
-      {user.name}
-      {' '}
-      <DownOutlined />
-    </Button>
-  </Dropdown>
+const UserCompanyBadge = styled.div`
+  display: flex;
+  flex-direction: column;
+  line-height: 18px;
+  justify-content: center;
+`;
+
+const UserCompanyDropdownTopMenuWrapper = styled.div`
+  width: 100%;
+  white-space: nowrap;
+  display: flex;
+  justify-content: right;
+  text-align: right;
+  cursor: pointer;
+`;
+
+const UserMenu: React.FC<UserMenuProps> = ({ user, account }) => (
+  <UserCompanyDropdownTopMenuWrapper>
+    <Dropdown overlay={userActions(account)} trigger={['click']}>
+      <UserCompanyBadge>
+        <div>
+          {user.company.name}
+        </div>
+        <div style={{ fontSize: '0.7rem' }}>
+          <UserOutlined />
+          {' '}
+          {user.name}
+          {' '}
+        </div>
+      </UserCompanyBadge>
+    </Dropdown>
+  </UserCompanyDropdownTopMenuWrapper>
 );
 
 export default UserMenu;

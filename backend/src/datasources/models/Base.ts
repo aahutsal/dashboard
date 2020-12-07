@@ -8,7 +8,7 @@ export class Base {
 
   @rangeKey({
     indexKeyConfigurations: {
-        movieByIdIndex: 'HASH',
+      byIdIndex: 'HASH',
     }
   })
   sk!: string;

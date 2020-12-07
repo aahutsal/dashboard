@@ -14,9 +14,11 @@ export default () => {
     <AppLayout section="movies">
       <div style={{ display: 'flex', marginBottom: '14px' }}>
         <h1>My Movies</h1>
+        {user?.isProducer() && (
         <Button type="primary" style={{ marginLeft: 'auto' }}>
           <Link to="/add_movie">Add Movie</Link>
         </Button>
+)}
       </div>
       <MovieListWithRevenue
         movies={movies}

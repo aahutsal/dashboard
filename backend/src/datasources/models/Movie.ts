@@ -1,6 +1,6 @@
 import { attribute, table } from '@aws/dynamodb-data-mapper-annotations';
 import { Base } from './Base';
-import { ApprovalStatus, PendingStatus, TMDBMovieExtended } from '@whiterabbitjs/dashboard-common';
+import { TMDBMovieExtended } from '@whiterabbitjs/dashboard-common';
 import { Price } from './Price';
 
 
@@ -22,8 +22,6 @@ export class MovieRecord {
 export class Movie extends Base {
     constructor() {
       super();
-      this.status = ApprovalStatus.PENDING;
-      this.pendingStatus = PendingStatus.MOVIE;
     }
 
     @attribute()
@@ -46,7 +44,7 @@ export class Movie extends Base {
     @attribute()
     pricing!: Price[];
 
-    companyId() {
+    companyId(): string | null {
       return this.pk ? this.pk.split('#')[1] : null;
     }
 }

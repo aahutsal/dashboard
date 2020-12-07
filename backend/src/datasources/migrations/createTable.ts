@@ -7,7 +7,7 @@ const tableOptions = {
     readCapacityUnits: 1,
     writeCapacityUnits: 1,
     indexOptions: {
-        movieByIdIndex: {
+        byIdIndex: {
             type: 'global',
             projection: 'all',
             readCapacityUnits: 1,

@@ -1,4 +1,4 @@
-import { ConditionExpression, contains, equals } from '@aws/dynamodb-expressions';
+import { beginsWith, ConditionExpression, contains, equals } from '@aws/dynamodb-expressions';
 import { DataSource } from 'apollo-datasource';
 import { v4 as uuidv4 } from 'uuid';
 import { Price } from './models/Price';
@@ -14,23 +14,23 @@ export class PriceAPI extends DataSource {
     }
 
     // Add new record
-    async add(IMDB: string, price: Price): Promise<{ item: Price }> {
+    async add(IMDB: string, price: Price): Promise<Price> {
         price.pk = `MOVIE#${IMDB}`;
-        price.sk = uuidv4(); //need unique identifier to allow updates
-        return await this.db.put({ item: price });
+        price.sk = `PRICE#${uuidv4()}`; //need unique identifier to allow updates
+        return await this.db.put({ item: price }).then(({ item }) => item );
     }
 
     // Update a record
-    async update(IMDB: string, priceId: string, price: Price): Promise<{ item: Price }> {
+    async update(IMDB: string, priceId: string, price: Price): Promise<Price> {
         price.pk = `MOVIE#${IMDB}`;
-        price.sk = priceId;
-        return await this.db.update({ item: price });
+        price.sk = `PRICE#${priceId}`;
+        return await this.db.update({ item: price }).then(({ item }) => item );
     }
 
     // findByMovie
     async findByMovie(movieId: string): Promise<Price[]> {
         return await toArray(
-            this.db.query(Price, {  pk: `MOVIE#${movieId}` })
+            this.db.query(Price, {  pk: `MOVIE#${movieId}`, sk: beginsWith('PRICE#') })
         );
     }
 
@@ -52,7 +52,7 @@ export class PriceAPI extends DataSource {
         };
 
         const prices = await toArray(
-            this.db.query(Price, { pk: `MOVIE#${filter.IMDB}` }, { filter: andExpression })
+            this.db.query(Price, { pk: `MOVIE#${filter.IMDB}`, sk: beginsWith('PRICE#') }, { filter: andExpression })
         );
 
 
@@ -78,11 +78,11 @@ export class PriceAPI extends DataSource {
     }
 
     // Delete a record
-    async delete(IMDB: string, priceId: string): Promise<{ item: Price } | undefined> {
+    async delete(IMDB: string, priceId: string): Promise<void> {
         const price = new Price();
         price.pk = `MOVIE#${IMDB}`;
-        price.sk = priceId;
-        return await this.db.delete({ item: price });
+        price.sk = `PRICE#${priceId}`;
+        await this.db.delete({ item: price });
     }
 }
 

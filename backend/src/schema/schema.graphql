@@ -7,13 +7,15 @@ type Query {
   price(filter: PriceFilter): Price!
   config: Config!
   allMovies: [Movie]!
+  distributors: [Company]
+  companySublicensees: [License]
 }
 
 type Config {
   factor: Int
 }
 
-enum MovieMedium {
+enum Medium {
   THEATER
   EST
   DTR
@@ -45,7 +47,7 @@ type Price {
   type(option: PriceType): String
   amount: String
   regions: [String]
-  medium(option: MovieMedium): String
+  medium(option: Medium): String
   fromWindow: DateTime
   toWindow: DateTime
 }
@@ -62,12 +64,12 @@ type User {
   id: Int
   imdbId: String
   email: String
-  kind: String
   roles: [UserRole]
   movies: [Movie]
   companyId: String
   company: Company
-  status(option: ApprovalStatus): String 
+  status(option: ApprovalStatus): String
+  licenses: [License]
 }
 
 type MovieMetadata {
@@ -92,11 +94,13 @@ type Movie {
   rightsHolder: User
   pricing: [Price]
   status(option: ApprovalStatus): String
+  licenses(companyId: String): [License]
 }
 
 type Company {
   id: String
   name: String
+  kind: String
 }
 
 input MovieRecordInput {
@@ -125,6 +129,7 @@ type PriceResponse {
 input CompanyInput {
   id: String
   name: String!
+  kind: String
 }
 
 input MovieInput {
@@ -146,7 +151,6 @@ input UserInput {
   id: Int
   imdbId: String
   email: String
-  kind: String
   company: CompanyInput
   roles: [UserRole]
 }
@@ -155,6 +159,34 @@ type UserResponse {
   success: Boolean!
   message: String
   user: User
+}
+
+input LicenseInput {
+  licenseId: String
+  movieId: String
+  companyId: String
+  regions: [String]
+  medium: String
+  fromDate: DateTime
+  toDate: DateTime
+}
+
+type License {
+  licenseId: String
+  movieId: String
+  companyId: String
+  regions: [String]
+  medium: String
+  fromDate: DateTime
+  toDate: DateTime
+  movie: Movie
+  company: Company
+}
+
+type LicenseResponse {
+  success: Boolean!
+  message: String
+  license: License
 }
 
 type Mutation {
@@ -167,4 +199,7 @@ type Mutation {
   declineUser(userId: String): UserResponse!
   deleteMovie(imdbId: String): MovieResponse!
   deleteAllMovies: MovieResponse!
+  addLicense(license: LicenseInput): LicenseResponse!
+  updateLicense(license: LicenseInput): LicenseResponse!
+  deleteLicense(license: LicenseInput): LicenseResponse!
 }

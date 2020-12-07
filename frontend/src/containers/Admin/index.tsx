@@ -2,7 +2,7 @@ import React, { useContext, Fragment } from 'react';
 import { useHistory } from 'react-router';
 import { useQuery, useMutation } from '@apollo/react-hooks';
 import { Table, Button, Space } from 'antd';
-import { User } from '@whiterabbitjs/dashboard-common';
+import { User, CompanyType } from '@whiterabbitjs/dashboard-common';
 import AppLayout from '../AppLayout';
 import { DashboardContext } from '../../components/DashboardContextProvider';
 import { PENDING_USERS, GET_USER } from '../../apollo/queries';
@@ -61,8 +61,9 @@ export default () => {
     },
     {
       title: 'Kind',
-      dataIndex: 'kind',
+      dataIndex: ['company', 'kind'],
       key: 'kind',
+      render: (kind: string) => (CompanyType as any)[kind],
     },
     {
       title: 'Address',
