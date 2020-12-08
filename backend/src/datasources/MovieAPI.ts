@@ -19,6 +19,7 @@ class MovieAPI extends DataSource {
         movie.pk = `COMPANY#${user.companyId}`;
         movie.sk = `MOVIE#${movie.IMDB}`;
         movie.status = ApprovalStatus.PENDING;
+        movie.companyId = user.companyId;
         movie.pendingStatus = `MOVIE#${ApprovalStatus.PENDING}`;
 
         const dbRecord = await this.findById(movie.IMDB);
@@ -45,11 +46,11 @@ class MovieAPI extends DataSource {
     // Get record by id
     async findById(imdb: string): Promise<Movie|undefined> {
         return toArray(
-            this.db.query(Movie, { sk: `MOVIE#${imdb}`}, { indexName: 'byIdIndex' })
+            this.db.query(Movie, { sk: `MOVIE#${imdb}`}, { indexName: 'byIdIndex', limit: 1 })
         ).then(m => m[0]);
     }
 
-    async findByCompany(companyId: number): Promise<Movie[]> {
+    async findByCompany(companyId: string): Promise<Movie[]> {
         return toArray(
             this.db.query(Movie, {
                 pk: `COMPANY#${companyId}`,

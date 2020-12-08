@@ -31,9 +31,6 @@ export class Movie extends Base {
     IMDB!: string;
 
     @attribute()
-    ISAN!: string;
-
-    @attribute()
     record!: MovieRecord;
 
     metadata!: TMDBMovieExtended;
@@ -44,7 +41,6 @@ export class Movie extends Base {
     @attribute()
     pricing!: Price[];
 
-    companyId(): string | null {
-      return this.pk ? this.pk.split('#')[1] : null;
-    }
+    @attribute()
+    companyId!: string;
 }

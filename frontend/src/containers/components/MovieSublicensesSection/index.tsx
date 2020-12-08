@@ -3,20 +3,16 @@ import { Button, Table } from 'antd';
 import moment from 'moment';
 import React, { useState } from 'react';
 import { useQuery } from '@apollo/react-hooks';
-import flattenRegionTree from '../RegionSelectTree/flattenRegionTree';
-import groupRegions from '../RegionSelectTree/groupRegions';
-import { RegionRecord } from '../RegionSelectTree/types';
 import Section from '../Section';
 import SublicenseForm from './sublicenseForm';
-import m49tree from '../RegionSelectTree/m49-tree.json';
 import { DISTRIBUTORS } from '../../../apollo/queries';
+import RegionTags from '../RegionTags';
 
 type MovieSublicensesSectionProps = {
   movieId: string;
   licenses: License[];
 };
 
-const m49flat = flattenRegionTree(m49tree);
 
 const MovieSublicensesSection: React.FC<MovieSublicensesSectionProps> = ({ movieId, licenses }) => {
   const [formVisible, setFormVisible] = useState<boolean>(false);
@@ -37,7 +33,7 @@ const MovieSublicensesSection: React.FC<MovieSublicensesSectionProps> = ({ movie
       title: 'Regions',
       dataIndex: 'regions',
       key: 'regions',
-      render: (regions: string[]) => (regions?.length ? groupRegions(regions, m49flat).map(({ title }: RegionRecord) => title).join(', ') : 'Global'),
+      render: (regions: string[]) => <RegionTags regions={regions} />,
     },
     {
       title: 'Medium',
@@ -90,12 +86,12 @@ const MovieSublicensesSection: React.FC<MovieSublicensesSectionProps> = ({ movie
         </Button>
       </div>
       {formVisible && (
-      <SublicenseForm
-        movieId={movieId}
-        license={license}
-        onCancel={() => setFormVisible(false)}
-        onSave={() => setFormVisible(false)}
-      />
+        <SublicenseForm
+          movieId={movieId}
+          license={license}
+          onCancel={() => setFormVisible(false)}
+          onSave={() => setFormVisible(false)}
+        />
       )}
       <Table
         showHeader

@@ -32,13 +32,20 @@ export const GET_USER = gql`
         name
         kind
       }
-      movies {
-        IMDB
-        metadata {
-          id
-          title
-          posterUrl
-          year
+      licenses {
+        regions
+        fromDate
+        toDate
+        medium
+        movie {
+          IMDB
+          metadata {
+            id
+            imdbId
+            title
+            posterUrl
+            year
+          }
         }
       }
     }
@@ -61,11 +68,12 @@ export const PENDING_USERS = gql`
 `;
 
 export const GET_MOVIE = gql`
-  query GET_MOVIE($IMDB: String, $companyId: String) {
+  query GET_MOVIE($IMDB: String) {
     movie(IMDB: $IMDB) {
       IMDB
       metadata {
         id
+        imdbId
         title
         posterUrl
         year
@@ -78,7 +86,7 @@ export const GET_MOVIE = gql`
         fromWindow
         toWindow
       }
-      licenses(companyId: $companyId) {
+      licenses {
         licenseId
         companyId
         medium

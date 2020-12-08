@@ -1,8 +1,9 @@
 import React, { ReactNode } from 'react';
 import { useQuery } from '@apollo/react-hooks';
 import { Spin } from 'antd';
-import { User, Config } from '@whiterabbitjs/dashboard-common';
+import { Config } from '@whiterabbitjs/dashboard-common';
 import { GET_PROVIDER_INFO, GET_USER, GET_CONFIG } from '../apollo/queries';
+import { User } from '../apollo/models';
 
 const BigSpin = () => (
   <div style={{
@@ -50,7 +51,7 @@ const WithUser = ({ account, children }: { account: string, children: ReactNode 
   );
 
   const { data: configData, loading: configLoading } = useQuery(GET_CONFIG);
-  const user = userData?.user && userData.user.status ? new User(userData.user) : null;
+  const user = userData?.user && userData.user.status ? Object.assign(new User(), userData.user) : null;
 
   if (user === undefined || userLoading || configLoading) {
     return (

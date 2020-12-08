@@ -28,9 +28,12 @@ export class PriceAPI extends DataSource {
     }
 
     // findByMovie
-    async findByMovie(movieId: string): Promise<Price[]> {
+    async findByMovie(movieId: string, priceId?: string): Promise<Price[]> {
         return await toArray(
-            this.db.query(Price, {  pk: `MOVIE#${movieId}`, sk: beginsWith('PRICE#') })
+            this.db.query(Price, {
+                pk: `MOVIE#${movieId}`,
+                sk: beginsWith(`PRICE#${priceId || ''}`),
+            })
         );
     }
 
@@ -83,6 +86,28 @@ export class PriceAPI extends DataSource {
         price.pk = `MOVIE#${IMDB}`;
         price.sk = `PRICE#${priceId}`;
         await this.db.delete({ item: price });
+    }
+
+    async deleteAllByMovie(movieId: string): Promise<void> {
+        for await (const _ of this.db.batchDelete(await this.findByMovie(movieId))) {
+            // nothing
+        }
+    }
+
+    async deleteAll(): Promise<void> {
+        for await (const _ of this.db.batchDelete(await this.getAll())) {
+            // nothing
+        }
+    }
+
+    async getAll(): Promise<Price[]> {
+        const onlyPriceCriteria = {
+            filter: {
+                ...beginsWith('PRICE#'),
+                subject: 'sk',
+            }
+        };
+        return toArray(this.db.scan(Price, onlyPriceCriteria));
     }
 }
 

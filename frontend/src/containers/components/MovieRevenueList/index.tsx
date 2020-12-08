@@ -5,7 +5,7 @@ import {
   Table, Tooltip, Button, Space,
 } from 'antd';
 import Web3 from 'web3';
-import { TMDBMovieExtended, RevenuePerMovieRegion } from '@whiterabbitjs/dashboard-common';
+import { RevenuePerMovieRegion } from '@whiterabbitjs/dashboard-common';
 import { Key, ColumnsType } from 'antd/lib/table/interface';
 import { Channel } from 'pusher-js';
 import humanizeM49 from '../../../stores/humanizeM49';
@@ -13,21 +13,30 @@ import { claimRevenue } from '../../../stores/claimAPI';
 import { DashboardContext } from '../../../components/DashboardContextProvider';
 import MovieRevenueClaimProgress from './MovieRevenueClaimProgress';
 import { Claims, ClaimStatus } from './types';
+import { MovieExtended } from '../../../apollo/models';
 
 type MovieRevenueListProps = {
-  movie: TMDBMovieExtended;
+  movie: MovieExtended;
   pusherChannel: Channel;
 };
 
 export default ({ movie, pusherChannel }: MovieRevenueListProps) => {
-  const { applyFactor } = useContext(DashboardContext);
+  const { user, applyFactor } = useContext(DashboardContext);
   const [selectedRowKeys, setSelectedRowKeys] = useState<Key[]>([]);
   const [claims, setClaims] = useState<Claims>({});
   const cl = useRef<Claims>({});
 
-  if (!movie.revenue) return <>No revenue yet</>;
+  const licensedRegionsRevenue = useMemo(() => {
+    const licensedRegions = user?.licensedRegions(movie.imdbId);
+    if (!licensedRegions) return [];
+    if (licensedRegions.length === 0) return movie.revenue?.revenuePerMovieRegions;
+    return movie.revenue?.revenuePerMovieRegions
+      .filter(({ region }) => licensedRegions?.includes(String(region)));
+  }, [user, movie.imdbId, movie.revenue]);
 
-  const withRevenue = movie.revenue.revenuePerMovieRegions
+  if (!licensedRegionsRevenue) return <>No revenue yet</>;
+
+  const withRevenue = licensedRegionsRevenue
     .filter((r) => BigInt(r.unclaimed) > 0)
     .map((r) => r.region);
 
@@ -102,7 +111,7 @@ export default ({ movie, pusherChannel }: MovieRevenueListProps) => {
 
     await Promise.all(selectedRowKeys.map((region) => {
       if (withRevenue.indexOf(Number(region)) < 0) return null;
-      return claimRevenue(movie.imdb_id || '', String(region));
+      return claimRevenue(movie.imdbId || '', String(region));
     }));
 
     setSelectedRowKeys([]);
@@ -119,7 +128,7 @@ export default ({ movie, pusherChannel }: MovieRevenueListProps) => {
     <div>
       <Table
         rowSelection={rowSelection}
-        dataSource={movie.revenue.revenuePerMovieRegions || []}
+        dataSource={licensedRegionsRevenue || []}
         columns={columns}
         bordered={false}
         rowKey="region"

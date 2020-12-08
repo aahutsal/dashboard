@@ -1,12 +1,13 @@
-import React, { useState, useContext, useEffect } from 'react';
+import React, {
+  useState, useContext, useEffect, useMemo,
+} from 'react';
 import moment from 'moment';
 import Web3 from 'web3';
 import {
-  Table, Spin, Row, Col, Button, Tabs,
+  Table, Spin, Row, Col, Button, Tabs, Space,
 } from 'antd';
 import { useParams, useHistory } from 'react-router-dom';
 import { useQuery } from '@apollo/react-hooks';
-import { TMDBMovieExtended } from '@whiterabbitjs/dashboard-common';
 import Pusher, { Channel } from 'pusher-js';
 import { DashboardContext } from '../components/DashboardContextProvider';
 import { GET_MOVIE } from '../apollo/queries';
@@ -18,27 +19,27 @@ import { toExtended } from '../stores/movieAPI';
 import Section from './components/Section';
 import { PUSHER_KEY } from '../config';
 
-import m49tree from './components/RegionSelectTree/m49-tree.json';
-import flattenRegionTree from './components/RegionSelectTree/flattenRegionTree';
-import groupRegions from './components/RegionSelectTree/groupRegions';
-import { RegionRecord } from './components/RegionSelectTree/types';
 import MovieSublicensesSection from './components/MovieSublicensesSection';
+import { MovieExtended } from '../apollo/models';
+import RegionTags from './components/RegionTags';
+import LicenseRestrictions from './components/LicenseRestrictions';
 
-const m49flat = flattenRegionTree(m49tree);
 
 export default () => {
   const { user, applyFactor } = useContext(DashboardContext);
   const { IMDB } = useParams();
   const [currentPrice, setCurrentPrice] = useState<PriceInterface>();
-  const [extendedMovie, setExtendedMovie] = useState<TMDBMovieExtended>();
+  const [extendedMovie, setExtendedMovie] = useState<MovieExtended>();
   const { data, loading } = useQuery(GET_MOVIE, {
     variables: {
       IMDB,
-      companyId: user?.company.id,
     },
   });
   const history = useHistory();
   const [pusherChannel, setPusherChannel] = useState<Channel>();
+
+  const license = useMemo(() => user?.licenses.find((l) => !!l.movie && l.movie.IMDB === IMDB),
+    [user, IMDB]);
 
   useEffect(() => {
     if (!data || !data.movie) return;
@@ -46,9 +47,9 @@ export default () => {
   }, [data]);
 
   useEffect(() => {
-    if (!extendedMovie || !extendedMovie.imdb_id) return () => { };
+    if (!extendedMovie || !extendedMovie.imdbId) return () => { };
     const pusher = new Pusher(PUSHER_KEY, { cluster: 'eu' });
-    const channel = pusher.subscribe(extendedMovie.imdb_id);
+    const channel = pusher.subscribe(extendedMovie.imdbId);
     setPusherChannel(channel);
     return () => {
       channel?.unsubscribe();
@@ -56,7 +57,7 @@ export default () => {
     };
   }, [extendedMovie]);
 
-  if (!user || !user.isApproved() || !user.ownsMovie(IMDB)) { // TODO:: move to route middleware
+  if (!user || !user.isApproved()) { // TODO:: move to route middleware
     history.push('/');
   }
 
@@ -73,7 +74,7 @@ export default () => {
       title: 'Regions',
       dataIndex: 'regions',
       key: 'regions',
-      render: (regions: string[]) => (regions ? groupRegions(regions, m49flat).map(({ title }: RegionRecord) => title).join(', ') : 'Global'),
+      render: (regions: string[]) => <RegionTags regions={regions} />,
     },
     {
       title: 'Medium',
@@ -119,52 +120,69 @@ export default () => {
         <Col className="gutter-row" xs={{ span: 24 }} lg={{ span: 6 }}>
           <img src={(data && data.movie.metadata.posterUrl)} height={300} alt="Movie Poster" />
           {data && (
-            <h2>
-              {data.movie.metadata.title}
-              {' ('}
-              {data.movie.metadata.year}
-              )
-            </h2>
+            <Space direction="vertical" size="middle" style={{ marginTop: '20px' }}>
+              <h2>
+                {data.movie.metadata.title}
+                {' ('}
+                {data.movie.metadata.year}
+                )
+              </h2>
+              <div>
+                IMDB:
+                {' '}
+                <a href={`https://imdb.com/title/${IMDB}`} target="_blank" rel="noopener noreferrer">{IMDB}</a>
+              </div>
+              <div>
+                <h4>My license:</h4>
+                {license && <LicenseRestrictions license={license} />}
+                {!license && <>No license</>}
+              </div>
+            </Space>
           )}
         </Col>
-        <Col className="gutter-row" xs={{ span: 24 }} lg={{ span: 18 }}>
-          <Tabs defaultActiveKey="1">
-            <Tabs.TabPane tab="Revenue" key="1">
-              <Section>
-                <h2>Revenue</h2>
-                {extendedMovie && pusherChannel
-                  && <MovieRevenueList movie={extendedMovie} pusherChannel={pusherChannel} />}
-              </Section>
-            </Tabs.TabPane>
-            <Tabs.TabPane tab="Prices" key="2">
-              <Section>
-                {currentPrice && <PriceForm price={currentPrice} onClear={onClearForm} />}
-                {!currentPrice && (
-                  <>
-                    <div style={{ display: 'flex', marginBottom: '14px' }}>
-                      <h2>Prices</h2>
-                      <Button type="primary" htmlType="button" style={{ marginLeft: 'auto' }} onClick={() => openPriceForm({ IMDB })}>New Price</Button>
-                    </div>
-                    <Spin spinning={loading}>
-                      <Table
-                        showHeader
-                        bordered={false}
-                        dataSource={(data && data.movie.pricing) || []}
-                        columns={columns}
-                        pagination={{ pageSize: 40 }}
-                        rowKey="priceId"
-                      />
-                    </Spin>
-                  </>
-                )}
-              </Section>
-            </Tabs.TabPane>
-            <Tabs.TabPane tab="Sublicenses" key="3">
-              <MovieSublicensesSection movieId={IMDB} licenses={data && data.movie.licenses} />
-            </Tabs.TabPane>
-          </Tabs>
-
-        </Col>
+        {license && (
+          <Col className="gutter-row" xs={{ span: 24 }} lg={{ span: 18 }}>
+            <Tabs defaultActiveKey="1">
+              {!user?.isSales() && (
+                <Tabs.TabPane tab="Revenue" key="1">
+                  <Section>
+                    <h2>Revenue</h2>
+                    {extendedMovie && pusherChannel
+                      && <MovieRevenueList movie={extendedMovie} pusherChannel={pusherChannel} />}
+                  </Section>
+                </Tabs.TabPane>
+              )}
+              {!user?.isSales() && (
+                <Tabs.TabPane tab="Prices" key="2">
+                  <Section>
+                    {currentPrice && <PriceForm price={currentPrice} onClear={onClearForm} />}
+                    {!currentPrice && (
+                      <>
+                        <div style={{ display: 'flex', marginBottom: '14px' }}>
+                          <h2>Prices</h2>
+                          <Button type="primary" htmlType="button" style={{ marginLeft: 'auto' }} onClick={() => openPriceForm({ IMDB })}>New Price</Button>
+                        </div>
+                        <Spin spinning={loading}>
+                          <Table
+                            showHeader
+                            bordered={false}
+                            dataSource={(data && data.movie.pricing) || []}
+                            columns={columns}
+                            pagination={{ pageSize: 40 }}
+                            rowKey="priceId"
+                          />
+                        </Spin>
+                      </>
+                    )}
+                  </Section>
+                </Tabs.TabPane>
+              )}
+              <Tabs.TabPane tab="Sublicenses" key="3">
+                <MovieSublicensesSection movieId={IMDB} licenses={data && data.movie.licenses} />
+              </Tabs.TabPane>
+            </Tabs>
+          </Col>
+        )}
       </Row>
     </AppLayout>
   );

@@ -75,7 +75,7 @@ const AppLayout: React.FC<AppLayoutProps> = ({ section, children }: AppLayoutPro
               <Link to="/">My Movies</Link>
             </Menu.Item>
             <Menu.Item key="sublicensees">
-              <Link to="/sublicensees">My Licensees</Link>
+              <Link to="/licensees">My Licensees</Link>
             </Menu.Item>
             {user && user.isAdmin() && (
               <Menu.Item key="admin">

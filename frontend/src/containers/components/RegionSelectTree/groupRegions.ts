@@ -17,16 +17,17 @@ export default (
   const groups = [] as ExtendedRegionRecord[];
 
   // if all the subregions are selected, collapse selection list into a single entry.
-  // we do this by excluding all the ancestor regions of the selected one
-  selectedRegionCodes.forEach((k: string) => regionsToExclude.push(...m49flat[k].descendents));
+  // we do this by excluding all the descendants regions of the selected one
+  // selectedRegionCodes.forEach((k: string) => regionsToExclude.push(...m49flat[k]?.descendents));
 
   Object.values(m49flat).forEach((region: ExtendedRegionRecord) => {
+    // country, not region
     if (region.descendents.length === 0) return;
 
     const uncheckedDescendents = difference(
       region.descendents,
       selectedRegionCodes,
-      (code: string) => !m49flat[code].descendents.length,
+      (code: string) => !m49flat[code]?.descendents.length,
     );
 
     if (uncheckedDescendents.length === region.descendents.length) {
@@ -36,20 +37,22 @@ export default (
     // if all the subregions are selected, mark the current region as selected
     if (uncheckedDescendents.length === 0) {
       selectedRegionCodes.push(region.key);
+      regionsToExclude.push(...region.descendents);
       return;
     }
+
+    // exclude the region itself, it will be replaced by a special group record below
+    regionsToExclude.push(region.key);
 
     // if selected all but few descendents, collapse selection list into a single entry
     // like `Western Europe (except Germany, France)`
     if (uncheckedDescendents.length < 4) {
       // exclude individual countries to be listed as groups
       regionsToExclude.push(...region.descendents);
-      // exclude the region itself, it will be replaced by a special group record below
-      regionsToExclude.push(region.key);
 
       // add a "group" selection entry with a specially formatted title
       const uncheckedNames = uncheckedDescendents.map(
-        (code: string) => m49flat[code].title,
+        (code: string) => m49flat[code]?.title,
       );
       groups.push({
         ...region,

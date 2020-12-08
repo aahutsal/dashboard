@@ -2,7 +2,7 @@ import { DataSource } from "apollo-datasource";
 import { toArray } from "../util";
 import { DataMapper } from "@aws/dynamodb-data-mapper";
 import { Company } from "./models/Company";
-import { CompanyType, ApprovalStatus } from "@whiterabbitjs/dashboard-common";
+import { CompanyType, ApprovalStatus, toCompanyType } from "@whiterabbitjs/dashboard-common";
 
 
 export class CompanyAPI extends DataSource {
@@ -50,7 +50,7 @@ export class CompanyAPI extends DataSource {
   }
 
   getApprovedStatus({ kind }: Company): string {
-    const companyType = (CompanyType as any)[kind];
+    const companyType = toCompanyType(kind);
     const isDistributor = companyType === CompanyType.DISTRIBUTION || companyType === CompanyType.SALES;
     return `COMPANY#APPROVED${isDistributor ? '#SUBLICENSEE' : ''}`;
   }

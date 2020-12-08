@@ -1,5 +1,5 @@
 import React, {
-  FC, useContext, useEffect,
+  FC, useContext, useEffect, useMemo,
 } from 'react';
 import moment from 'moment';
 import Web3 from 'web3';
@@ -43,6 +43,9 @@ const PriceForm: FC<ComponentProps> = ({ price, onClear }) => {
   const [deletePrice, { error: deleteError }] = useMutation(DELETE_PRICE);
   const priceType = user && user.isAdmin() ? 'WHITERABBIT' : 'RIGHTSHOLDER';
 
+  const licensedRegions = useMemo(() => user?.licensedRegions(price.IMDB),
+    [user, price.IMDB]);
+
   useEffect(() => {
     form.setFieldsValue(price);
 
@@ -77,7 +80,6 @@ const PriceForm: FC<ComponentProps> = ({ price, onClear }) => {
       query: GET_MOVIE,
       variables: {
         IMDB: price.IMDB,
-        companyId: user?.company.id,
       },
     },
   ];
@@ -160,7 +162,11 @@ const PriceForm: FC<ComponentProps> = ({ price, onClear }) => {
               label="Regions/Territory"
               name="regions"
             >
-              <RegionPicker regionCodes={price?.regions || []} onChange={onRegionChanged} />
+              <RegionPicker
+                regionCodes={price?.regions || []}
+                onChange={onRegionChanged}
+                availableRegions={licensedRegions}
+              />
             </Form.Item>
             <Form.Item
               label="Price"

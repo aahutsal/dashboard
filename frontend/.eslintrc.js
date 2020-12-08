@@ -9,5 +9,6 @@ module.exports = {
     'react/jsx-props-no-spreading': 'off',
     'react/prop-types': 'off',
     'no-else-return': 'off',
+    'max-len': 'off'
   }
 };

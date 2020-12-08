@@ -2,7 +2,7 @@
 // TODO: make sure npm run lint:fix doesn't introduce fixes which
 // break lint check later (e.g. max-len)
 import React, {
-  useState, ChangeEvent, useCallback,
+  useState, ChangeEvent, useCallback, useMemo,
 } from 'react';
 import {
   Tag,
@@ -20,7 +20,7 @@ import m49tree from './m49-tree.json';
 import groupRegions from './groupRegions';
 import getMatchingAncestry from './getMatchingAncestry';
 
-const m49flat = flattenRegionTree(m49tree);
+const flatFullRegionTree = flattenRegionTree(m49tree);
 
 export type RegionSelectTreeResult = {
   regions: string[];
@@ -29,14 +29,35 @@ export type RegionSelectTreeResult = {
 
 type RegionSelectTreeProps = {
   regionCodes: string[];
+  availableRegions?: string[] | null;
   onChange?: (selection: RegionSelectTreeResult) => void
 };
 
-export default ({ regionCodes, onChange }: RegionSelectTreeProps) => {
+export default ({ regionCodes, availableRegions, onChange }: RegionSelectTreeProps) => {
   const [searchValue, setSearchValue] = useState<string>('');
   const [expandedKeys, setExpandedKeys] = useState<Key[]>([]);
   const [checkedKeys, setCheckedKeys] = useState<any>(regionCodes);
-  const [checkedRegionGroups, setCheckedRegionGroups] = useState<any>(groupRegions(regionCodes, m49flat));
+
+  const regionTree = useMemo(() => {
+    if (availableRegions && availableRegions.length === 0) return m49tree;
+    m49tree[0].title = 'All licensed regions';
+    const visibleNodes = [
+      ...(availableRegions || []),
+      ...Array.from(new Set(availableRegions?.map((r) => flatFullRegionTree[r].parents).flat())),
+    ];
+
+    const loop = (data: RegionRecord[]): RegionRecord[] => data.filter((r) => visibleNodes.includes(r.key)).map((r) => ({
+      key: r.key,
+      title: r.title,
+      children: r.children ? loop(r.children) : undefined,
+    }));
+
+    return loop(m49tree);
+  }, [availableRegions]);
+
+  const flatRegionTree = useMemo(() => flattenRegionTree(regionTree), [regionTree]);
+
+  const [checkedRegionGroups, setCheckedRegionGroups] = useState<any>(groupRegions(regionCodes, flatFullRegionTree));
 
   const filterTreeNode = (node: any) => node.title.props.text.indexOf(searchValue) !== -1;
 
@@ -46,7 +67,7 @@ export default ({ regionCodes, onChange }: RegionSelectTreeProps) => {
       const { value } = e.target;
       const normalizedValue = value.toLowerCase();
       if (normalizedValue !== '') {
-        setExpandedKeys(getMatchingAncestry(m49flat, normalizedValue));
+        setExpandedKeys(getMatchingAncestry(flatRegionTree, normalizedValue));
         setSearchValue(value);
       } else {
         setExpandedKeys([]);
@@ -62,8 +83,8 @@ export default ({ regionCodes, onChange }: RegionSelectTreeProps) => {
   }));
 
   const isKeyOrSubKey = useCallback(
-    (key1: string, key2: string) => key1 === key2 || m49flat[key1].parents?.includes(key2),
-    [],
+    (key1: string, key2: string) => key1 === key2 || flatRegionTree[key1].parents?.includes(key2),
+    [flatRegionTree],
   );
 
   const removeRegion = (key: string) => {
@@ -72,9 +93,9 @@ export default ({ regionCodes, onChange }: RegionSelectTreeProps) => {
   };
 
   const onCheck = (fullyCheckedKeys: any) => {
-    const checkedRegionCodes = fullyCheckedKeys as string[];
+    const checkedRegionCodes = (fullyCheckedKeys as string[]).filter((k) => !flatRegionTree[k].descendents.length);
     setCheckedKeys(checkedRegionCodes);
-    setCheckedRegionGroups(groupRegions(checkedRegionCodes, m49flat));
+    setCheckedRegionGroups(groupRegions(checkedRegionCodes, flatFullRegionTree));
 
     if (onChange) {
       onChange({
@@ -99,7 +120,7 @@ export default ({ regionCodes, onChange }: RegionSelectTreeProps) => {
         onCheck={onCheck}
         checkedKeys={checkedKeys}
         filterTreeNode={filterTreeNode}
-        treeData={loop(m49tree)}
+        treeData={loop(regionTree)}
       />
     </div>
   );

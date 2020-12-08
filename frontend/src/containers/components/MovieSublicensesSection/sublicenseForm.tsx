@@ -2,7 +2,8 @@
 // TODO: make sure npm run lint:fix doesn't introduce fixes which
 // break lint check later (e.g. max-len)
 import {
-  Button, Card, Col, DatePicker, Form, message, Row, Select,
+  Alert,
+  Button, Card, DatePicker, Form, Select,
 } from 'antd';
 import { Store } from 'antd/lib/form/interface';
 import React, { useContext, useEffect, useMemo } from 'react';
@@ -13,6 +14,7 @@ import { COMPANY_SUBLICENSEES, DISTRIBUTORS, GET_MOVIE } from '../../../apollo/q
 import RegionPicker from '../RegionPicker';
 import { ADD_LICENSE, UPDATE_LICENSE, DELETE_LICENSE } from '../../../apollo/mutations';
 import { DashboardContext } from '../../../components/DashboardContextProvider';
+import humanizeError from '../../../stores/utils/humanizeError';
 
 type MovieSublicenseFormProps = {
   movieId: string;
@@ -26,19 +28,21 @@ const maybeDate = (dateStr?: Date) => (dateStr ? moment(dateStr) : undefined);
 const SublicenseForm: React.FC<MovieSublicenseFormProps> = ({
   movieId, license, onCancel, onSave,
 }) => {
-  const [form] = Form.useForm();
   const { user } = useContext(DashboardContext);
+  const [form] = Form.useForm();
   const [addLicense, { error: addError }] = useMutation(ADD_LICENSE);
   const [updateLicense, { error: updateError }] = useMutation(UPDATE_LICENSE);
   const [deleteLicense, { error: deleteError }] = useMutation(DELETE_LICENSE);
   const distributorsQuery = useQuery(DISTRIBUTORS);
+
+  const licensedRegions = useMemo(() => user?.licensedRegions(movieId),
+    [user, movieId]);
 
   const refetchQueries = [
     {
       query: GET_MOVIE,
       variables: {
         IMDB: movieId,
-        companyId: user?.company.id,
       },
     },
     {
@@ -47,9 +51,6 @@ const SublicenseForm: React.FC<MovieSublicenseFormProps> = ({
   ];
 
   const error = addError || updateError || deleteError;
-  if (error) {
-    message.error(error, 0);
-  }
 
   useEffect(() => {
     if (!license) {
@@ -72,19 +73,19 @@ const SublicenseForm: React.FC<MovieSublicenseFormProps> = ({
   const add = (newLicense: License) => addLicense({
     variables: { license: newLicense },
     refetchQueries,
-  });
+  }).catch(() => { });
 
   const update = (newLicense: License) => updateLicense({
     variables: { license: newLicense },
     refetchQueries,
-  });
+  }).catch(() => { });
 
   const remove = () => deleteLicense({
     variables: {
       license: { movieId, licenseId: license?.licenseId },
     },
     refetchQueries,
-  }).then(onCancel);
+  }).then(onCancel).catch(() => { });
 
   const distributorsMap = useMemo(() => {
     const toValueLabel = ({ id, name }: Company) => ({ label: name, value: id });
@@ -104,17 +105,19 @@ const SublicenseForm: React.FC<MovieSublicenseFormProps> = ({
       toDate: values.window && values.window[1],
     };
 
+    let result;
     if (license) {
-      await update(newLicense);
+      result = await update(newLicense);
     } else {
-      await add(newLicense);
+      result = await add(newLicense);
     }
-    if (onSave) onSave(newLicense);
+    if (result && onSave) onSave(newLicense);
   };
 
   return (
     <Card style={{ marginBottom: '42px' }}>
       <h3>{license ? 'Update license' : 'New license'}</h3>
+      {error && <Alert type="error" message={humanizeError(error)} />}
       <Form
         name="add"
         form={form}
@@ -136,28 +139,27 @@ const SublicenseForm: React.FC<MovieSublicenseFormProps> = ({
           label="Regions/Territory"
           name="regions"
         >
-          <RegionPicker regionCodes={license?.regions || []} onChange={onRegionChanged} />
+          <RegionPicker
+            regionCodes={license?.regions || []}
+            onChange={onRegionChanged}
+            availableRegions={licensedRegions}
+          />
         </Form.Item>
-        <Row gutter={24}>
-          <Col lg={11}>
-            <Form.Item
-              label="Medium"
-              name="medium"
-            >
-              <Select>
-                {Object.keys(Medium).map((medium: string) => <Select.Option value={medium}>{medium}</Select.Option>)}
-              </Select>
-            </Form.Item>
-          </Col>
-          <Col>
-            <Form.Item
-              label="License Window"
-              name="window"
-            >
-              <DatePicker.RangePicker />
-            </Form.Item>
-          </Col>
-        </Row>
+        <Form.Item
+          label="Medium"
+          name="medium"
+          style={{ maxWidth: '130px' }}
+        >
+          <Select>
+            {Object.keys(Medium).map((medium: string) => <Select.Option value={medium}>{medium}</Select.Option>)}
+          </Select>
+        </Form.Item>
+        <Form.Item
+          label="License Window"
+          name="window"
+        >
+          <DatePicker.RangePicker />
+        </Form.Item>
 
         <Form.Item>
           <div style={{ display: 'flex' }}>

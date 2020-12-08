@@ -44,6 +44,15 @@ export interface TMDBCompany {
   name: string;
 }
 
+// TODO: cleanup the types for Movie
+export type MovieBase = {
+  id: number;
+  imdbId: string;
+  title: string;
+  year: string;
+  posterUrl: string;
+};
+
 // TODO: Merge together with MovieInterface
 export type TMDBMovie = {
   poster_path: string;
@@ -67,7 +76,7 @@ export type TMDBMovieWithCredits = TMDBMovieExtended & {
 
 export type Movie = {
   IMDB?: string;
-  metadata: TMDBMovieExtended;
+  metadata: MovieBase;
 };
 
 export type Company = {
@@ -93,10 +102,6 @@ export class User {
 
   roles: UserRole[] = [];
 
-  movies: Movie[] = [];
-
-  company!: Company;
-
   constructor(seed?: object) {
     if (seed) {
       Object.assign(this, seed);
@@ -111,16 +116,8 @@ export class User {
     return this.isApproved() && this.roles.indexOf(UserRole.ADMIN) >= 0;
   }
 
-  isProducer(): boolean {
-    return this.company && this.company.kind === 'PRODUCTION';
-  }
-
   isApproved(): boolean {
     return this.status === ApprovalStatus.APPROVED;
-  }
-
-  ownsMovie(imdbId: string) {
-    return !!this.movies.find((m) => m.IMDB === imdbId);
   }
 }
 
@@ -133,11 +130,14 @@ export enum CompanyType {
   OTHER = 'Other',
 }
 
+export const toCompanyType = (type: string) => (CompanyType as any)[type];
+
 export type License = {
   licenseId?: string;
   movieId: string;
   companyId: string;
   regions?: string[];
+  medium?: Medium;
   fromDate?: Date;
   toDate?: Date;
 };
@@ -150,3 +150,11 @@ export enum Medium {
   SVOD = 'SVOD',
   FREETV = 'FREETV',
 }
+
+export const movieFromTMDB = (tmdbMovie: TMDBMovie): MovieBase => ({
+  id: tmdbMovie.id,
+  title: tmdbMovie.title,
+  imdbId: tmdbMovie.imdb_id || '',
+  posterUrl: `https://image.tmdb.org/t/p/w500${tmdbMovie.poster_path}`,
+  year: tmdbMovie.release_date ? tmdbMovie.release_date.slice(0, 4) : '',
+});

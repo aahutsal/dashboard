@@ -1,9 +1,9 @@
 import React from 'react';
 import { Button, Dropdown, Menu } from 'antd';
 import { UserOutlined } from '@ant-design/icons';
-import { User } from '@whiterabbitjs/dashboard-common';
 import styled from 'styled-components';
 import { disconnect } from '../../../stores/Web3';
+import { User } from '../../../apollo/models';
 
 type UserMenuProps = {
   account: string;

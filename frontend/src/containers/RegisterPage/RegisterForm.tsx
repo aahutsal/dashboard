@@ -7,7 +7,7 @@ import {
 } from 'antd';
 import { Store } from 'antd/lib/form/interface';
 import { useMutation } from '@apollo/react-hooks';
-import { TMDBMovie, CompanyType } from '@whiterabbitjs/dashboard-common';
+import { CompanyType, MovieBase, movieFromTMDB } from '@whiterabbitjs/dashboard-common';
 import { GET_USER } from '../../apollo/queries';
 import { ADD_USER } from '../../apollo/mutations';
 import { DashboardContext } from '../../components/DashboardContextProvider';
@@ -29,14 +29,15 @@ export default () => {
   const [company, setCompany] = useState<CompanySearchValue>();
   const [formValues, setFormValues] = useState<Store>();
 
-  const [selectedCompanyMovies, setSelectedCompanyMovies] = useState<TMDBMovie[]>();
+  const [selectedCompanyMovies, setSelectedCompanyMovies] = useState<MovieBase[]>();
 
   useEffect(() => {
     if (!company || !company.id) {
       setSelectedCompanyMovies([]);
       return;
     }
-    getCompanyMovies(company.id).then(setSelectedCompanyMovies);
+    getCompanyMovies(company.id)
+      .then((tmdbMovies) => setSelectedCompanyMovies(tmdbMovies.map(movieFromTMDB)));
   }, [company]);
 
   const onFinish = (values: Store) => {

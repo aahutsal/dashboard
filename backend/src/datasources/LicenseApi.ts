@@ -32,11 +32,17 @@ export class LicenseApi extends DataSource {
     }
 
     // Delete a record
-    async delete(licenseId: string): Promise<void> {
+    async delete(companyId: string, licenseId: string): Promise<void> {
         const license = new License();
-        license.pk = `COMPANY#${license.companyId}`;
+        license.pk = `COMPANY#${companyId}`;
         license.sk = `MOVIE_LICENSE#${licenseId}`;
         await this.db.delete({ item: license });
+    }
+
+    async deleteAll(): Promise<void> {
+      for await (const _ of this.db.batchDelete(await this.getAll())) {
+          // nothing
+      }
     }
 
     async findById(licenseId: string): Promise<License|undefined> {
@@ -56,7 +62,7 @@ export class LicenseApi extends DataSource {
       } as StringToAnyObjectMap;
 
       if (movieId) {
-        query.sk = beginsWith(`MOVIE_LICENSE#${movieId}`);
+        query.sk = beginsWith(`MOVIE_LICENSE#${movieId || ''}`);
       }
 
       return await toArray(
@@ -64,14 +70,24 @@ export class LicenseApi extends DataSource {
      );
     }
 
-    async findByLicensedCompany(companyId: string): Promise<License[]> {
+    async findByLicensedCompany(companyId: string, movieId?: string): Promise<License[]> {
       return await toArray(
         this.db.query(License, { 
           pk: `COMPANY#${companyId}`,
-          sk: beginsWith('MOVIE_LICENSE'),
+          sk: beginsWith(`MOVIE_LICENSE#${movieId || ''}`),
         })
      );
     }
+
+    async getAll(): Promise<License[]> {
+      const onlyLicenseCriteria = {
+          filter: {
+              ...beginsWith('MOVIE_LICENSE#'),
+              subject: 'sk',
+          }
+      };
+      return toArray(this.db.scan(License, onlyLicenseCriteria));
+  }
 
 }
 

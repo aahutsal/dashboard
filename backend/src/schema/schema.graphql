@@ -74,6 +74,7 @@ type User {
 
 type MovieMetadata {
   id: Int
+  imdbId: String
   title: String
   posterUrl: String 
   year: String
@@ -94,7 +95,7 @@ type Movie {
   rightsHolder: User
   pricing: [Price]
   status(option: ApprovalStatus): String
-  licenses(companyId: String): [License]
+  licenses: [License]
 }
 
 type Company {

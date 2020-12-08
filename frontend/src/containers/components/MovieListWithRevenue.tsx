@@ -4,16 +4,15 @@ import React, {
 import { Table, Tooltip } from 'antd';
 import Web3 from 'web3';
 import { ColumnType } from 'antd/lib/table';
-import { TMDBMovie, TMDBMovieExtended, TMDBMovieWithCredits } from '@whiterabbitjs/dashboard-common';
 import { toExtended } from '../../stores/movieAPI';
 import { DashboardContext } from '../../components/DashboardContextProvider';
-
-type MovieOrCredit = TMDBMovieExtended | TMDBMovieWithCredits;
+import { MovieExtended } from '../../apollo/models';
 
 type MovieListWithRevenueProps = {
-  movies: MovieOrCredit[];
+  movies: MovieExtended[];
   hideExactNumbers?: boolean;
-  extraColumns?: ColumnType<MovieOrCredit>[];
+  extraColumns?: ColumnType<MovieExtended>[];
+  showHeader?: boolean;
 };
 
 const vaguelyRangeify = (value: number | string) => {
@@ -31,20 +30,11 @@ const vaguelyRangeify = (value: number | string) => {
   return '$50,000+';
 };
 
-const renderJob = (movieOrCredit: MovieOrCredit) => {
-  const movie = movieOrCredit as TMDBMovieWithCredits;
-  return movie.jobs && (
-  <div style={{ fontSize: '0.9em', opacity: 0.8 }}>
-    Roles:
-    {' '}
-    {movie.jobs.map((j: any) => j.job).join(', ')}
-  </div>
-  );
-};
-
-export default ({ movies, hideExactNumbers = false, extraColumns }: MovieListWithRevenueProps) => {
+export default ({
+  movies, showHeader, hideExactNumbers = false, extraColumns,
+}: MovieListWithRevenueProps) => {
   const { applyFactor } = useContext(DashboardContext);
-  const [extMovies, setExtMovies] = useState<MovieOrCredit[]>();
+  const [extMovies, setExtMovies] = useState<MovieExtended[]>([]);
 
   const columns = useMemo(() => [
     {
@@ -52,33 +42,33 @@ export default ({ movies, hideExactNumbers = false, extraColumns }: MovieListWit
       dataIndex: 'posterUrl',
       key: 'posterUrl',
       width: 50,
-      render: (url: string, movie: TMDBMovie) => <img src={url} height={50} alt={movie.title} />,
+      render: (url: string, movie: MovieExtended) => <img src={url} height={50} alt={movie.title} />,
     },
     {
       title: '',
       dataIndex: 'title',
       key: 'title',
-      render: (title: string, movie: MovieOrCredit) => (
+      render: (title: string, movie: MovieExtended) => (
         <div>
           <div>
             {title}
-            {movie.release_date && (
+            {movie.year && (
             <React.Fragment>
               {' '}
               (
-              {movie.release_date.split('-')[0]}
+              {movie.year}
               )
             </React.Fragment>
             )}
           </div>
-          {renderJob(movie)}
         </div>
       ),
     },
     {
-      title: 'Pending revenue on WhiteRabbit',
+      title: 'Pending revenue',
       key: 'revenue',
-      render: (r: any, movie: TMDBMovieExtended) => {
+      align: 'right' as any,
+      render: (r: any, movie: MovieExtended) => {
         let dollarAmount = movie.revenue ? Web3.utils.fromWei(applyFactor(movie.revenue.total).toString()) : '0';
         if (hideExactNumbers) {
           dollarAmount = vaguelyRangeify(dollarAmount);
@@ -101,14 +91,14 @@ export default ({ movies, hideExactNumbers = false, extraColumns }: MovieListWit
       return;
     }
 
-    Promise.all(movies.map((m) => (m.revenue ? m : toExtended(m)))).then(setExtMovies);
+    Promise.all(movies.map(toExtended)).then(setExtMovies);
   }, [movies]);
 
   return (
     <Table
       dataSource={extMovies}
       columns={[...columns, ...(extraColumns || [])]}
-      showHeader={false}
+      showHeader={showHeader}
       loading={!extMovies}
       bordered={false}
       rowKey="id"

@@ -27,11 +27,11 @@ const UNREGISTER_ALL = gql`
 const ALL_MOVIES = gql`
 {
   allMovies {
-    IMDB
     rightsHolder {
       name
     }
     metadata {
+      imdbId
       title
       year
     }
@@ -67,10 +67,10 @@ export default () => {
     },
     {
       title: '',
-      render: ({ IMDB }: Movie) => (
+      render: (movie: Movie) => (
         <Fragment>
           <Space>
-            <Button danger onClick={() => unregister(IMDB || '')}>Unregister</Button>
+            <Button danger onClick={() => unregister(movie.metadata.imdbId || '')}>Unregister</Button>
           </Space>
         </Fragment>
       ),

@@ -23,7 +23,7 @@
     "@aws/dynamodb-data-mapper": "^0.7.3",
     "@aws/dynamodb-data-mapper-annotations": "^0.7.3",
     "@aws/dynamodb-expressions": "^0.7.3",
-    "@whiterabbitjs/dashboard-common": "^1.4.0",
+    "@whiterabbitjs/dashboard-common": "^1.5.0",
     "apollo-datasource-rest": "^0.9.0",
     "apollo-server": "^2.14.2",
     "apollo-server-express": "^2.14.2",

@@ -1,25 +1,18 @@
 
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { Table, Tag } from 'antd';
+import { Table } from 'antd';
 import { useQuery } from '@apollo/react-hooks';
-import moment from 'moment';
 import { CompanyType } from '@whiterabbitjs/dashboard-common';
 import AppLayout from './AppLayout';
 import { COMPANY_SUBLICENSEES } from '../apollo/queries';
 
-import m49tree from './components/RegionSelectTree/m49-tree.json';
-import flattenRegionTree from './components/RegionSelectTree/flattenRegionTree';
-import groupRegions from './components/RegionSelectTree/groupRegions';
-import { RegionRecord } from './components/RegionSelectTree/types';
+import RegionTags from './components/RegionTags';
+import Timeframe from './components/Timeframe';
 
-
-const maybeDate = (dateStr?: Date) => (dateStr ? moment(dateStr).format('DD/MM/YYYY') : '');
-
-const m49flat = flattenRegionTree(m49tree);
 
 export default () => {
-  const { data, loading } = useQuery(COMPANY_SUBLICENSEES);
+  const { data, loading } = useQuery(COMPANY_SUBLICENSEES, { fetchPolicy: 'network-only' });
 
   const columns = [
     {
@@ -32,13 +25,7 @@ export default () => {
       title: 'Regions',
       dataIndex: 'regions',
       key: 'regions',
-      render: (regions: string[]) => {
-        if (!regions?.length) {
-          return <Tag key="001">Global</Tag>;
-        }
-        const groupedRegions = groupRegions(regions, m49flat);
-        return groupedRegions.map(({ key, title }: RegionRecord) => <Tag key={key}>{title}</Tag>);
-      },
+      render: (regions: string[]) => <RegionTags regions={regions} />,
     },
     {
       title: 'Company',
@@ -60,7 +47,7 @@ export default () => {
       title: 'Time window',
       dataIndex: 'fromDate',
       key: 'window',
-      render: (_: string, record: any) => `${maybeDate(record.fromDate)}—${maybeDate(record.toDate)}`,
+      render: (_: string, record: any) => <Timeframe from={record.fromDate} to={record.toDate} />,
     },
   ];
 

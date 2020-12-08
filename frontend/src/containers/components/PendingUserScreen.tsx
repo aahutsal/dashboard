@@ -1,19 +1,21 @@
 import React, { useState, useEffect } from 'react';
 import { ClockCircleOutlined } from '@ant-design/icons';
 import { Alert } from 'antd';
-import { User, TMDBMovie } from '@whiterabbitjs/dashboard-common';
+import { MovieBase, movieFromTMDB } from '@whiterabbitjs/dashboard-common';
 import { getCompanyMovies } from '../../stores/API';
 import MovieListWithRevenue from './MovieListWithRevenue';
+import { User } from '../../apollo/models';
 
 export type PendingUserScreenProps = {
   user: User;
 };
 
 export default ({ user }: PendingUserScreenProps) => {
-  const [movies, setMovies] = useState<TMDBMovie[]>();
+  const [movies, setMovies] = useState<MovieBase[]>();
 
   useEffect(() => {
-    getCompanyMovies(user.company.id).then(setMovies);
+    getCompanyMovies(user.company.id)
+      .then((tmdbMovies) => setMovies(tmdbMovies.map(movieFromTMDB)));
   }, [user]);
 
   return (

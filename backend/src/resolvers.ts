@@ -5,32 +5,53 @@ import { UserResponse, User } from './datasources/models/User';
 import { PriceResponse, Price } from './datasources/models/Price';
 import config from './config';
 import { AuthenticationError, ForbiddenError, UserInputError } from 'apollo-server-express';
-import { Config } from '@whiterabbitjs/dashboard-common';
+import { MovieBase, Config, movieFromTMDB, TMDBMovie, CompanyType, toCompanyType } from '@whiterabbitjs/dashboard-common';
 import { Company } from './datasources/models/Company';
 import { BackendDataSources } from './server';
 import { License, LicenseResponse } from './datasources/models/License';
+
+
+const isMainRightsholder = async (user: User, movieId: string, dataSources: BackendDataSources): Promise<boolean> => {
+    const movie = await dataSources.movieAPI.findById(movieId);
+    if (!movie) throw new UserInputError(`Movie ${movieId} does not exist`);
+    return movie.companyId === user.companyId;
+};
 
 const authorizeForMovie = async (
     user: User,
     movieId: string,
     dataSources: BackendDataSources
-): Promise<void> => {
+): Promise<License> => {
     if (!user.accountAddress) throw new AuthenticationError('User is not authenticated');
     if (!user.isRightsHolder()) throw new ForbiddenError('User is not authorized for the operation');
 
-    const movie = await dataSources.movieAPI.findById(movieId);
-    if (!movie) throw new UserInputError(`Movie ${movieId} does not exist`)
-    if (movie.companyId() !== user.companyId) throw new ForbiddenError(`User is not authorized for the operation`);
+    if (await isMainRightsholder(user, movieId, dataSources)) {
+        return Object.assign(new License(), {
+            movieId: movieId,
+            companyId: user.companyId,
+        });
+    }
+
+    const licenses = await dataSources.licenseAPI.findByLicensedCompany(user.companyId);
+    const license = licenses.find(license => license.movieId === movieId);
+
+    if (!license) throw new ForbiddenError(`User is not authorized for the operation`);
+    return license;
 };
 
 const isProducer = async (user: User, { companyAPI }: BackendDataSources): Promise<boolean> => {
     const company = await companyAPI.findById(user.companyId);
-    console.log(company);
-    return company.kind === 'PRODUCTION';
+    return toCompanyType(company.kind) === CompanyType.PRODUCTION;
 };
 
 const authorizeProducer = async (user: User, dataSources: BackendDataSources): Promise<void> => {
     if (!await isProducer(user, dataSources)) throw new ForbiddenError('User is not authorized for the operation');
+};
+
+const authorizeTypes = async (user: User, { companyAPI }: BackendDataSources, types: CompanyType[]): Promise<void> => {
+    const company = await companyAPI.findById(user.companyId);
+    if (!types.includes(toCompanyType(company.kind)))
+        throw new ForbiddenError('User is not authorized for the operation');
 };
 
 interface ServerContext {
@@ -40,7 +61,7 @@ interface ServerContext {
 
 const resolverMap: IResolvers = {
     Query: {
-        movie: (_, { IMDB }, { dataSources }: ServerContext): Promise<Movie | undefined> => {
+        movie: async (_, { IMDB }, { dataSources }: ServerContext): Promise<Movie | undefined> => {
             return dataSources.movieAPI.findById(IMDB);
         },
         allMovies: (_, params, { user, dataSources }: ServerContext): Promise<Movie[]> => {
@@ -112,10 +133,13 @@ const resolverMap: IResolvers = {
             };
         },
         addPrice: async (_, { pricing }, { user, dataSources }: ServerContext): Promise<PriceResponse> => {
-            await authorizeForMovie(user, pricing.IMDB, dataSources);
+            const license = await authorizeForMovie(user, pricing.IMDB, dataSources);
+            await authorizeTypes(user, dataSources, [CompanyType.DISTRIBUTION, CompanyType.PRODUCTION]);
             
-            const mapped = Object.assign(new Price, pricing);
-            const saved = await dataSources.priceAPI.add(pricing.IMDB, mapped);
+            const price = Object.assign(new Price, pricing);
+            if (!price.matchesLicense(license, true)) throw new ForbiddenError('User is not licensed for the operation'); 
+            
+            const saved = await dataSources.priceAPI.add(pricing.IMDB, price);
             return {
                 success: true,
                 message: 'Pricing added successfully',
@@ -123,9 +147,13 @@ const resolverMap: IResolvers = {
             };
         },
         updatePrice: async (_, { pricing }, { user, dataSources }: ServerContext): Promise<PriceResponse> => {
-            await authorizeForMovie(user, pricing.IMDB, dataSources);
-            const mapped = Object.assign(new Price, pricing);
-            const saved = await dataSources.priceAPI.update(pricing.IMDB, pricing.priceId, mapped);
+            const license = await authorizeForMovie(user, pricing.IMDB, dataSources);
+            await authorizeTypes(user, dataSources, [CompanyType.DISTRIBUTION, CompanyType.PRODUCTION]);
+
+            const price = Object.assign(new Price, pricing);
+            if (!price.matchesLicense(license, true)) throw new ForbiddenError('User is not licensed for the operation'); 
+  
+            const saved = await dataSources.priceAPI.update(pricing.IMDB, pricing.priceId, price);
             return {
                 success: true,
                 message: 'Pricing updated successfully',
@@ -133,8 +161,12 @@ const resolverMap: IResolvers = {
             };
         },
         deletePrice: async (_, { pricing }, { user, dataSources }: ServerContext): Promise<PriceResponse> => {
-            await authorizeForMovie(user, pricing.IMDB, dataSources);
+            const license = await authorizeForMovie(user, pricing.IMDB, dataSources);
+            await authorizeTypes(user, dataSources, [CompanyType.DISTRIBUTION, CompanyType.PRODUCTION]);
 
+            const [price] = await dataSources.priceAPI.findByMovie(pricing.IMDB, pricing.priceId);
+            if (!price.matchesLicense(license, true)) throw new ForbiddenError('User is not licensed for the operation'); 
+   
             await dataSources.priceAPI.delete(pricing.IMDB, pricing.priceId);
             return {
                 success: true,
@@ -169,7 +201,14 @@ const resolverMap: IResolvers = {
             if (!user) throw new AuthenticationError('User is not authenticated');
             if (!user.isAdmin()) throw new ForbiddenError('User is not authorized for the operation');
             
+            const movie = await dataSources.movieAPI.findById(imdbId);
+            if (!movie) throw new UserInputError(`Movie ${imdbId} does not exist`);
             await dataSources.movieAPI.delete(imdbId);
+            await dataSources.priceAPI.deleteAllByMovie(imdbId);
+            const licenses = await dataSources.licenseAPI.findByIssuingCompany(movie.companyId, imdbId);
+            await Promise.all(
+                licenses.map(({ companyId, licenseId }) => dataSources.licenseAPI.delete(companyId, licenseId))
+            );
 
             return {
                 success: true,
@@ -182,6 +221,8 @@ const resolverMap: IResolvers = {
             if (!user.isAdmin()) throw new ForbiddenError('User is not authorized for the operation');
             
             await dataSources.movieAPI.deleteAll();
+            await dataSources.priceAPI.deleteAll();
+            await dataSources.licenseAPI.deleteAll();
 
             return {
                 success: true,
@@ -190,9 +231,12 @@ const resolverMap: IResolvers = {
         },
 
         addLicense: async (_, { license }, { user, dataSources }: ServerContext): Promise<LicenseResponse> => {
-            await authorizeForMovie(user, license.movieId, dataSources);
+            const userLicense = await authorizeForMovie(user, license.movieId, dataSources);
+            await authorizeTypes(user, dataSources, [CompanyType.SALES, CompanyType.DISTRIBUTION, CompanyType.PRODUCTION]);
 
             const mappedLicense = Object.assign(new License, license);
+            if (!mappedLicense.matchesLicense(userLicense, true)) throw new ForbiddenError('User is not licensed for the operation'); 
+ 
             const saved = await dataSources.licenseAPI.add(user.companyId, mappedLicense);
             return {
                 success: true,
@@ -201,11 +245,13 @@ const resolverMap: IResolvers = {
             };
         },
         updateLicense: async (_, { license }, { user, dataSources }: ServerContext): Promise<LicenseResponse> => {
-            await authorizeForMovie(user, license.movieId, dataSources);
+            const userLicense = await authorizeForMovie(user, license.movieId, dataSources);
+            await authorizeTypes(user, dataSources, [CompanyType.SALES, CompanyType.DISTRIBUTION, CompanyType.PRODUCTION]);
 
             const oldLicense = await dataSources.licenseAPI.findById(license.licenseId);
             
             const mappedLicense = Object.assign(new License, oldLicense, license);
+            if (!mappedLicense.matchesLicense(userLicense, true)) throw new ForbiddenError('User is not licensed for the operation');  
 
             await dataSources.licenseAPI.update(mappedLicense);
             return {
@@ -215,44 +261,47 @@ const resolverMap: IResolvers = {
             };
         },
         deleteLicense: async (_, { license }, { user, dataSources }: ServerContext): Promise<LicenseResponse> => {
-            await authorizeForMovie(user, license.movieId, dataSources);
+            const userLicense = await authorizeForMovie(user, license.movieId, dataSources);
+            await authorizeTypes(user, dataSources, [CompanyType.SALES, CompanyType.DISTRIBUTION, CompanyType.PRODUCTION]);
 
-            await dataSources.licenseAPI.delete(license.licenseId);
+            const oldLicense = await dataSources.licenseAPI.findById(license.licenseId);
+            if (!oldLicense) throw new UserInputError(`No such license: ${license.licenseId}`);
+            if (!oldLicense.matchesLicense(userLicense, true)) throw new ForbiddenError('User is not licensed for the operation'); 
+
+            await dataSources.licenseAPI.delete(oldLicense.companyId, license.licenseId);
             return {
                 success: true,
                 message: 'License has been deleted successfully'
             };
         },
-
-
-
     },
     Movie : {
-        rightsHolder: (parent, _ , { dataSources }: ServerContext): Promise<Company> => {
+        rightsHolder: (parent: Movie, _ , { dataSources }: ServerContext): Promise<Company> => {
             return dataSources.companyAPI.findById(parent.companyId);
         },
-        metadata: (parent): Promise<{ title?: string; posterUrl?: string }> => {
+        metadata: (parent: Movie): Promise<MovieBase | null> => {
             if (!parent.record || !parent.record.value) {
-                return Promise.resolve({});
+                return Promise.resolve(null);
             }
-            const metadata = parent.record.value;
             return Promise.resolve({
-                id: metadata.id,
-                title: metadata.title,
-                posterUrl: `https://image.tmdb.org/t/p/w500${metadata.poster_path}`,
-                year: metadata.release_date ? metadata.release_date.slice(0, 4) : '',
-            });
+                ...movieFromTMDB(parent.record.value as TMDBMovie),
+                imdbId: parent.IMDB
+             });
         },
-        pricing: (parent, _ , { dataSources }: ServerContext): Promise<Price[]> => {
-            return dataSources.priceAPI.findByMovie(parent.IMDB);
+        pricing: async (parent: Movie, _ , { user, dataSources }: ServerContext): Promise<Price[]> => {
+            const [license] = await dataSources.licenseAPI.findByLicensedCompany(user.companyId, parent.IMDB);
+            const prices = await dataSources.priceAPI.findByMovie(parent.IMDB);
+            if (await isMainRightsholder(user, parent.IMDB, dataSources)) return prices; // Global
+            if (!license) return [];
+            return prices.filter(price => price.matchesLicense(license));
         },
-        licenses: async (parent, params, { user, dataSources }: ServerContext): Promise<License[]> => {
+        licenses: async (parent: Movie, _, { user, dataSources }: ServerContext): Promise<License[]> => {
             const licenses = await dataSources.licenseAPI.findByIssuingCompany(user.companyId, parent.IMDB);
             return licenses;
         },
     },
     User: {
-        movies: async (parent, _ , { user, dataSources }: ServerContext): Promise<Movie[]> => {
+        movies: async (parent: User, _ , { user, dataSources }: ServerContext): Promise<Movie[]> => {
             
             if (!user) return [];
             if (await isProducer(user, dataSources)) {
@@ -266,18 +315,28 @@ const resolverMap: IResolvers = {
             
             return movies.filter((movie?: Movie) => !!movie) as Movie[];
         },
-        company: async (parent, _, { dataSources }: ServerContext): Promise<Company> => {
+        company: async (parent: User, _, { dataSources }: ServerContext): Promise<Company> => {
             return dataSources.companyAPI.findById(parent.companyId);
         },
-        licenses: async (parent, _, { dataSources }: ServerContext): Promise<License[]> => {
+        licenses: async (parent: User, _, { user, dataSources }: ServerContext): Promise<License[]> => {
+            if (!user) return [];
+            if (await isProducer(user, dataSources)) {
+                const movies = await dataSources.movieAPI.findByCompany(parent.companyId);
+                return movies.map((movie) => Object.assign(
+                    new License(), {
+                        movieId: movie.IMDB,
+                        companyId: parent.companyId,
+                    }
+                ));
+            }
             return dataSources.licenseAPI.findByLicensedCompany(parent.companyId);
         },
     },
     License: {
-        company: async (parent, _, { dataSources }: ServerContext): Promise<Company> => {
+        company: async (parent: License, _, { dataSources }: ServerContext): Promise<Company> => {
             return dataSources.companyAPI.findById(parent.companyId);
         },
-        movie: async (parent, _, { dataSources }: ServerContext): Promise<Movie> => {
+        movie: async (parent: License, _, { dataSources }: ServerContext): Promise<Movie> => {
             const movie = await dataSources.movieAPI.findById(parent.movieId);
             if (!movie) throw new UserInputError(`Movie ${parent.movieId} does not exist`);
             return movie;
