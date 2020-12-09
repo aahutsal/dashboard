@@ -1,21 +1,43 @@
 {
+    "executionRoleArn": "arn:aws:iam::728191876882:role/whiterabbit-staging-role",
     "containerDefinitions": [
         {
+            "logConfiguration": {
+                "logDriver": "awslogs",
+                "options": {
+                    "awslogs-group": "/ecs/staging-api-task",
+                    "awslogs-region": "eu-central-1",
+                    "awslogs-stream-prefix": "ecs"
+                }
+            },
             "portMappings": [
                 {
-                    "containerPort": 4000,
-                    "hostPort": 0,
-                    "protocol": "tcp"
+                    "hostPort": 4000,
+                    "protocol": "tcp",
+                    "containerPort": 4000
                 }
             ],
             "cpu": 0,
-            "memory": 500,
             "image": "728191876882.dkr.ecr.eu-central-1.amazonaws.com/wr-dashboard",
-            "name": "dashboard"
+            "name": "staging-api-container",
+            "environment": [
+                {
+                    "name": "TABLE_NAME",
+                    "value": "whiterabbit-staging"
+                }
+            ]
         }
     ],
-    "family": "dashboard-task",
+    "memory": "512",
+    "taskRoleArn": "arn:aws:iam::728191876882:role/whiterabbit-staging-role",
+    "compatibilities": [
+        "EC2",
+        "FARGATE"
+    ],
+    "family": "staging-api-task",
     "requiresCompatibilities": [
-        "EC2"
-    ]
+        "FARGATE"
+    ],
+    "networkMode": "awsvpc",
+    "cpu": "256"
 }

@@ -1,9 +1,10 @@
 import { attribute, table } from "@aws/dynamodb-data-mapper-annotations";
 import { Medium } from "@whiterabbitjs/dashboard-common";
 import { isStrictSubset, intersects, DateFrame, dateFrameIncluded, dateFramesOverlap } from "../../util";
+import { TABLE_NAME } from "../DB";
 import { Base } from "./Base";
 
-@table("movies")
+@table(TABLE_NAME)
 export class License extends Base {
   constructor() {
     super();

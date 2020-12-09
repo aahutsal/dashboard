@@ -3,13 +3,14 @@ import { Base } from "./Base";
 import { Medium } from "@whiterabbitjs/dashboard-common";
 import { DateFrame, dateFrameIncluded, dateFramesOverlap, intersects, isStrictSubset } from "../../util";
 import { License } from "./License";
+import { TABLE_NAME } from "../DB";
 
 enum PriceType {
   WHITERABBIT = "WHITERABBIT",
   RIGHTSHOLDER = "RIGHTSHOLDER",
 }
 
-@table("movies")
+@table(TABLE_NAME)
 export class Price extends Base {
   @attribute()
   type!: PriceType;

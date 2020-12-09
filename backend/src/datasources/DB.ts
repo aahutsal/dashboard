@@ -7,6 +7,8 @@ if (process.env.NODE_ENV === 'development') {
     config.endpoint = 'http://localhost:4567';
 }
 
+export const TABLE_NAME = process.env.TABLE_NAME || 'movies';
+
 const client = new DynamoDB(config);
 const DBConnection = new DataMapper({ client });
 

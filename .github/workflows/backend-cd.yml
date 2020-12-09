@@ -1,9 +1,10 @@
-name: Backend CD
+name: Backend CD (Staging)
 
 on:
   push:
     branches:
       - master
+      - chore/#129-add-staging-env
     paths:
       - 'common/**'
       - 'backend/**'
@@ -44,13 +45,13 @@ jobs:
       uses: aws-actions/amazon-ecs-render-task-definition@v1
       with:
         task-definition: backend/dashboard-task.json
-        container-name: dashboard
+        container-name: staging-api-container
         image: ${{ steps.build-image.outputs.image }}
 
     - name: Deploy to Amazon ECS
       uses: aws-actions/amazon-ecs-deploy-task-definition@v1
       with:
         task-definition: ${{ steps.task-def.outputs.task-definition }}
-        service: dashboard-app-service
-        cluster: dashboard
+        service: staging-api-service
+        cluster: staging-api
         wait-for-service-stability: true

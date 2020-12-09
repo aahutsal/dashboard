@@ -1,7 +1,8 @@
 import { attribute, hashKey, table, rangeKey } from '@aws/dynamodb-data-mapper-annotations';
 import { ApprovalStatus } from '@whiterabbitjs/dashboard-common';
+import { TABLE_NAME } from '../DB';
 
-@table('movies')
+@table(TABLE_NAME)
 export class Base {
   @hashKey()
   pk!: string;

@@ -1,12 +1,10 @@
+import { apiEndpoint } from '@whiterabbitjs/dashboard-common';
 import ApolloClient from 'apollo-boost';
 import { GET_AUTH } from './queries';
 
-const backendEndpoint = process.env.NODE_ENV === 'development'
-  ? 'http://localhost:4000/graphql'
-  : 'https://be-dashboard.whiterabbit.one/graphql';
 
 const client = new ApolloClient({
-  uri: backendEndpoint,
+  uri: apiEndpoint(process.env.REACT_APP_RABBIT_ENV),
   resolvers: {
     Mutation: {
       setAppState: (_root, { stateChange }, { cache }) => {
@@ -18,7 +16,7 @@ const client = new ApolloClient({
     },
   },
   request: async (operation) => {
-    const { data } = await client.query({ query: GET_AUTH }) as any;
+    const { data } = (await client.query({ query: GET_AUTH })) as any;
     operation.setContext({
       headers: {
         'x-wr-signature': data.auth.message,

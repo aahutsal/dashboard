@@ -1,8 +1,9 @@
 import { attribute, table } from '@aws/dynamodb-data-mapper-annotations';
 import { ApprovalStatus } from '@whiterabbitjs/dashboard-common';
+import { TABLE_NAME } from '../DB';
 import { Base } from './Base';
 
-@table('movies')
+@table(TABLE_NAME)
 export class Company extends Base {
 
     constructor() {

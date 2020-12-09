@@ -1,5 +1,6 @@
 import { attribute, hashKey, rangeKey, table } from '@aws/dynamodb-data-mapper-annotations';
 import { ApprovalStatus, User as BaseUser, UserRole } from '@whiterabbitjs/dashboard-common';
+import { TABLE_NAME } from '../DB';
 
 export class UserResponse {
   success!: boolean;
@@ -7,7 +8,7 @@ export class UserResponse {
   user?: User;
 }
 
-@table('movies')
+@table(TABLE_NAME)
 export class User extends BaseUser {
 
   @hashKey()

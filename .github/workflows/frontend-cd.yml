@@ -4,6 +4,7 @@ on:
   push:
     branches:
       - master
+      - chore/#129-add-staging-env
     paths:
       - 'common/**'
       - 'frontend/**'
@@ -26,7 +27,7 @@ jobs:
     - name: Build Code
       run: |
        cd frontend/
-       npm run build
+       npm run build:staging
 
     - name: Configure AWS credentials
       uses: aws-actions/configure-aws-credentials@v1
@@ -37,8 +38,8 @@ jobs:
 
     - name: Copy files to AWS S3
       run: |
-        aws s3 sync ./frontend/build s3://dashboard.whiterabbit.one  --acl public-read
+        aws s3 sync ./frontend/build s3://staging-dashboard.whiterabbit.one  --acl public-read
 
     - name: Invalidate AWS CloudFront distribution
       run: |
-        aws cloudfront create-invalidation --distribution-id E2EJGKCLCBMRN1 --paths '/*'
+        aws cloudfront create-invalidation --distribution-id E2ABDEWHTRFH30 --paths '/*'

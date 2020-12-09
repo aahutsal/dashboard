@@ -2,6 +2,7 @@ import { attribute, table } from '@aws/dynamodb-data-mapper-annotations';
 import { Base } from './Base';
 import { TMDBMovieExtended } from '@whiterabbitjs/dashboard-common';
 import { Price } from './Price';
+import { TABLE_NAME } from '../DB';
 
 
 export class MovieResponse {
@@ -18,7 +19,7 @@ export class MovieRecord {
     value!: object; 
 }
 
-@table('movies')
+@table(TABLE_NAME)
 export class Movie extends Base {
     constructor() {
       super();
