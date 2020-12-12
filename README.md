@@ -1,3 +1,5 @@
+[![Gitpod ready-to-code](https://img.shields.io/badge/Gitpod-ready--to--code-blue?logo=gitpod)](https://gitpod.io/#https://github.com/WhiteRabbitTheWorldIsYours/dashboard)
+
 # Monorepo for WhiteRabbit Rights Holders Dashboard
 
 ![image](https://user-images.githubusercontent.com/163447/76832214-802d8180-685b-11ea-9572-68bc3e6f7c95.png)
