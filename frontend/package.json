@@ -9,7 +9,7 @@
     "@whiterabbitjs/dashboard-common": "^1.5.0",
     "antd": "^4.4.2",
     "apollo-boost": "^0.4.8",
-    "bnc-onboard": "^1.9.1",
+    "bnc-onboard": "^1.17.0",
     "fetch-jsonp": "^1.1.3",
     "graphql": "^15.0.0",
     "graphql-tag": "^2.10.3",
