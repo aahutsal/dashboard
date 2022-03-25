@@ -7,10 +7,14 @@
     "deploy": "graph deploy whiterabbittheworldisyours/collectionpool --node https://api.thegraph.com/deploy/ --ipfs https://api.thegraph.com/ipfs/",
     "create-local": "graph create --node http://localhost:8020/ clearwood/white-rabbit-cp",
     "remove-local": "graph remove --node http://localhost:8020/ clearwood/white-rabbit-cp",
-    "deploy-local": "graph deploy --node http://localhost:8020/ --ipfs http://localhost:5001 clearwood/white-rabbit-cp"
+    "deploy-local": "graph deploy --node http://localhost:8020/ --ipfs http://localhost:5001 clearwood/white-rabbit-cp",
+    "prepare": "npm run snyk-protect",
+    "snyk-protect": "snyk-protect"
   },
   "dependencies": {
     "@graphprotocol/graph-cli": "0.18.0",
-    "@graphprotocol/graph-ts": "0.18.0"
-  }
+    "@graphprotocol/graph-ts": "0.18.0",
+    "@snyk/protect": "latest"
+  },
+  "snyk": true
 }
