@@ -24,8 +24,8 @@
     "typescript": "^3.7.5"
   },
   "dependencies": {
-    "eth-sig-util": "^2.5.3",
-    "ethereumjs-util": "^7.0.2"
+    "eth-sig-util": "^3.0.1",
+    "ethereumjs-util": "^7.0.3"
   },
   "jest": {
     "preset": "ts-jest",
