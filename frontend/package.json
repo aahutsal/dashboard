@@ -17,10 +17,10 @@
     "pusher-js": "^6.0.3",
     "react": "^16.13.1",
     "react-dom": "^16.13.1",
-    "react-router": "^5.2.0",
-    "react-router-dom": "^5.2.0",
+    "react-router": "^6.0.0",
+    "react-router-dom": "^6.0.0",
     "styled-components": "^5.1.0",
-    "web3": "^1.2.7",
+    "web3": "^4.0.1",
     "web3-core": "^1.2.7"
   },
   "scripts": {
