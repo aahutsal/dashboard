@@ -15,7 +15,7 @@ RUN npm prune --production
 RUN apk del build_deps
 
 # Build stage 2. Deploy Image
-FROM node:12.16.3-alpine3.11
+FROM node:12.22.4-alpine3.11
 
 EXPOSE 4000
 
